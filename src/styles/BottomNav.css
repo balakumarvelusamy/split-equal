@@ -38,4 +38,7 @@
     color: #edbf59;
     font-weight: normal;
 }
+.bottom-nav-recipe-bottom-radius
+{ border-top-left-radius: 20px !important;
+ border-top-right-radius: 20px !important;}
 

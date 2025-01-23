@@ -99,7 +99,7 @@ const ForgotPassword = ({ useremail, showChangePassword, setShowChangePassword }
         <form onSubmit={handleSendOtp}>
           <label>Email Address:</label>
           <input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value.toLowerCase())} required className="form-control" />
-          <button type="submit" className="btn btn-warning mt-2">
+          <button type="submit" className="btn bg-myapp-recipe-ai-warning mt-2">
             {sendingOtp ? "Sending OTP..." : "Send OTP"}
           </button>
         </form>

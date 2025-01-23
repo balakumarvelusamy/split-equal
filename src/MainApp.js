@@ -9,7 +9,7 @@ import App3 from "./App3";
 import App4 from "./App4";
 import App5 from "./App5"; // BMI calculator
 import App6 from "./App6"; // Financial calculator
-import App7 from "./App7"; // Financial calculator
+import App7 from "./App7"; // Recepie AI
 import Admin from "./AppAdmin";
 import BottomNav from "./Manage/BottomNav";
 import AppManage from "./AppManage";
@@ -31,7 +31,7 @@ import config from "./config.json";
 import LoginPage from "./LoginPage";
 import apps from "./data/apps";
 
-import banner from "./images/banner.jpg";
+import banner from "./images/recipeailogo.jpg";
 import admin from "./images/admin.jpg";
 
 const MainApp = () => {
@@ -100,12 +100,7 @@ const MainApp = () => {
       setIsLoggedIn(userData);
       setError(false);
       const currentUrl = window.location.hostname; // Get the current hostname
-
-      if (currentUrl.includes("aiapps.eshope.com") || currentUrl.includes("testapps.eshope.com") || currentUrl.includes(config.localhost)) {
-        navigate("/app7/home");
-        return;
-      } else {
-      }
+      navigate("/app7/home");
     } catch {
       setError(true);
     }
@@ -114,7 +109,7 @@ const MainApp = () => {
     if (window.confirm("Are you sure you want to log out from all apps?")) {
       localStorage.removeItem("loggedInUser");
       localStorage.setItem("isLoggedOut", true);
-      navigate("/");
+      navigate("/app7/home");
     }
   };
 
@@ -135,7 +130,7 @@ const MainApp = () => {
         <AppCarousel />{" "}
         <div className="mt-0 d-flex flex-column align-items-center">
           <div>
-            <img src={banner} height="180" alt="Login Banner" />
+            <img src={banner} className="rounded" height="200" alt="Login Banner" />
           </div>
         </div>
         <LoginPage onLogin={handleLogin} />
@@ -164,7 +159,7 @@ const MainApp = () => {
   const NotFoundPage = () => {
     return (
       <div className="container" style={{ textAlign: "center", padding: "20px" }}>
-        <h1>Welcome to Pocket Apps</h1>
+        <h1>Welcome to {config.apptitle}</h1>
 
         <p>Please reload the App</p>
         <button className="btn btn-success" onClick={() => (window.location.href = "/")} style={{ padding: "10px 30px", fontSize: "16px" }}>

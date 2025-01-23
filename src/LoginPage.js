@@ -232,13 +232,13 @@ const LoginPage = ({ onLogin }) => {
 
   return (
     <div className="">
-      <header className="header bg-myapp">
-        <h1 className="titlename bg-success mb-0 px-3 p-3  w-75">{config.apptitle}</h1>
+      <header className="header bg-myapp-recipe-ai">
+        <h1 className="titlename-recipe-ai  mb-0 px-3 p-3  w-75">{config.apptitle}</h1>
         {process.env.REACT_APP_ENV === "QA" && <small className="px-2">NonProd</small>}
       </header>
       <div className="login-container1 px-3">
         <div className="mt-4">
-          <button type="button" className="btn btn-lg btn-warning w-100  px-2 rounded " onClick={() => (setShowLoginOptionModal(true), setError(""))}>
+          <button type="button" className="btn btn-lg bg-myapp-recipe-ai-warning w-100  px-2 rounded " onClick={() => (setShowLoginOptionModal(true), setError(""))}>
             <small>Login</small>
           </button>
           <button type="button" className="btn btn-lg bg-dark w-100 text-light mt-2" onClick={() => (setShowRegister(true), setError(""), setShowRegisterModal(true), setIsOtpSent(false))}>
@@ -275,7 +275,7 @@ const LoginPage = ({ onLogin }) => {
 
       <Modal show={showLoginModal} top backdrop="static" keyboard={false} onHide={() => setShowLoginModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Login to Pocket Apps</Modal.Title>
+          <Modal.Title>Login to {config.apptitle}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={handleLogin}>
@@ -328,7 +328,7 @@ const LoginPage = ({ onLogin }) => {
               </div>
             </div>
             <div className="text-end">
-              <button type="submit" className="btn btn-lg btn-warning" disabled={loading}>
+              <button type="submit" className="btn btn-lg bg-myapp-recipe-ai-warning" disabled={loading}>
                 {loading ? "Logging in..." : "Login"}
               </button>
             </div>
@@ -369,14 +369,18 @@ const LoginPage = ({ onLogin }) => {
                 ) : (
                   <>
                     <div className="mt-2" align="center">
-                      <GoogleOAuthProvider clientId={CLIENT_ID}>
-                        <GoogleLogin className="google-login-button" onSuccess={handleLoginSuccess} onError={handleLoginError} shape="rectangular" width={"250px"} type="standard" theme="filled_black" />
-                      </GoogleOAuthProvider>
+                      {CLIENT_ID && (
+                        <GoogleOAuthProvider clientId={CLIENT_ID}>
+                          <GoogleLogin className="google-login-button" onSuccess={handleLoginSuccess} onError={handleLoginError} shape="rectangular" width={"250px"} type="standard" theme="filled_black" />
+                        </GoogleOAuthProvider>
+                      )}
                     </div>
                     <div className="d-none">
-                      <GoogleOAuthProvider clientId={CLIENT_ID}>
-                        <GoogleLoginWrapper />
-                      </GoogleOAuthProvider>
+                      {CLIENT_ID && (
+                        <GoogleOAuthProvider clientId={CLIENT_ID}>
+                          <GoogleLoginWrapper />
+                        </GoogleOAuthProvider>
+                      )}
                     </div>
                   </>
                 )}
@@ -393,7 +397,7 @@ const LoginPage = ({ onLogin }) => {
 
       <Modal show={showRegisterModal} top backdrop="static" keyboard={false} onHide={() => setShowRegisterModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Register for Pocket Apps</Modal.Title>
+          <Modal.Title>Register for {config.apptitle}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <form onSubmit={isOtpSent ? handleRegister : handleSendOtp} className="login-form">
@@ -477,7 +481,7 @@ const LoginPage = ({ onLogin }) => {
             {!isOtpSent && (
               <>
                 <small className="text-danger">{error}</small>
-                <button type="submit" onClick={handleSendOtp} className="btn btn-lg btn-warning mt-2 w-100 rounded-start border-white" disabled={loading}>
+                <button type="submit" onClick={handleSendOtp} className="btn btn-lg bg-myapp-recipe-ai-warning mt-2 w-100 rounded-start border-white" disabled={loading}>
                   <small> {sendingOtp ? "Please wait..." : "Get OTP & Register"}</small>
                 </button>
               </>
@@ -486,7 +490,7 @@ const LoginPage = ({ onLogin }) => {
               <p>
                 <small className="text-danger"> {error}</small>
 
-                <button type="button" onClick={handleRegister} className="btn btn-lg btn-warning mt-2 w-100 rounded-start border-white " disabled={loading}>
+                <button type="button" onClick={handleRegister} className="btn btn-lg bg-myapp-recipe-ai-warning mt-2 w-100 rounded-start border-white " disabled={loading}>
                   <small>{loading ? "Please wait..." : "Register"}</small>
                 </button>
               </p>
@@ -499,16 +503,14 @@ const LoginPage = ({ onLogin }) => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <footer className="bottom-nav rounded-top bg-myapp py-2">
-        <small className="text-dark px-2">
-          <small href="#" className="text-dark">
-            {config.footertext}
-          </small>
-          <div className="d-flex">
-            <a href="/public/privacypolicy" className="text-dark px-2 text-decoration-underline ">
+      <footer className="bottom-nav bottom-nav-recipe-bottom-radius rounded-top bg-myapp-recipe-ai py-3">
+        <small className="text-light px-2">
+          <small href="#">{config.footertext}</small>
+          <div className="d-flex justify-content-center">
+            <a href="/public/privacypolicy" className=" px-2 text-decoration-underline ">
               Privacy Policy
             </a>
-            <a href="/public/contact" className="text-dark px-2 text-decoration-underline ">
+            <a href="/public/contact" className=" px-2 text-decoration-underline ">
               Contact us
             </a>
           </div>
