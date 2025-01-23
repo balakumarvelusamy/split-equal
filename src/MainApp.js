@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Route, Routes, useMatch } from "react-router-d
 import { useNavigate } from "react-router-dom";
 import ErrorBoundary from "./ErrorBoundary";
 import { Link } from "react-router-dom";
-import App1 from "./App1";
-import App2 from "./App2";
 
 import App7 from "./App7"; // Recepie AI
 import Admin from "./AppAdmin";
@@ -261,14 +259,10 @@ const MainApp = () => {
           )}
           <ErrorBoundary>
             <Routes>
-              <Route path="/app1/*" element={<App1 />} />
-              <Route path="/app2/*" element={<App2 />} />
-
               <Route path="/app7/*" element={<App7 />} />
               <Route path="/manage/*" element={<AppManage />} />
               <Route path="/admin/*" element={<Admin />} />
               <Route path="/public/*" element={<AppPublic />} />
-              {/* <Route path="/*" element={<NotFoundPage />} /> */}
             </Routes>
           </ErrorBoundary>
 

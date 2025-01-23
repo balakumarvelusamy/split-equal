@@ -9,7 +9,7 @@ import CalHistory from "./pages7-recipie-ai/CalHistory";
 import Blog from "./pages7-recipie-ai/Blog";
 import CalorieCheck from "./pages7-recipie-ai/CalorieCheck";
 import Profile from "./pages7-recipie-ai/Profile";
-
+import "./App.css";
 const App1 = () => {
   return (
     <div className="centered-container">
