@@ -1,0 +1,41 @@
+/* src/components1/BottomNav.css */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    max-width: 1500px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 8px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    z-index: 1000;
+}
+
+.bottom-nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: color 0.3s ease;
+}
+
+.bottom-nav a span  {
+    font-size: 20px !important;
+}
+.bottom-nav a div  {
+    font-size: 12px;
+    margin-bottom: 1px;
+}
+
+.bottom-nav a.active {
+    color: #232323;
+    font-weight: normal;
+}
+.bottom-nav-recipe a.active {
+    color: #edbf59;
+    font-weight: normal;
+}
+

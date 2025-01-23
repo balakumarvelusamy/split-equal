@@ -1,0 +1,10 @@
+{
+  "apptitle": "Pocket Apps",
+  "appdescription": "Single login to access all the current and future apps.",
+  "appdescription2": "Please note that Guest User data will be lost if the app is uninstalled from your device.",
+  "footertext": "Copyright @ 2025 Pocket Apps.",
+  "iosurl": "https://apps.apple.com/us/app/pocket-apps-hub/id6738062260",
+  "androidurl": "https://play.google.com/store/apps/details?id=com.pocketapps&pcampaignid=web_share",
+  "welcometext": "",
+  "localhost": "localhost"
+}

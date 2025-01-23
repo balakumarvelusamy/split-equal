@@ -1,0 +1,269 @@
+import React, { useState, useEffect } from "react";
+import { uploadFileToS3, imagetoCaption, addData, formatRecipe } from "../service/APIService";
+import { v4 as uuid } from "uuid";
+import secureLocalStorage from "react-secure-storage";
+import CalorieHistoryComponent from "./CalorieHistoryComponent";
+import NutritionComponent from "./NutritionComponent";
+
+import Loading from "./Loading";
+import img5 from "../images/pot.gif";
+import logo from "../images/recipeailogo.jpg";
+const ImageUpload = () => {
+  const [file, setFile] = useState(null); // Stores the uploaded file
+  const [imageUrl, setImageUrl] = useState(""); // Stores the S3 URL
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [caption, setCaption] = useState("");
+  const [uploaded, setUploaded] = useState(false);
+  const [nutritionInfo, setNutritionInfo] = useState({ title: "", calories: "", carbs: "", protein: "", fat: "" });
+  const [remainingUploads, setRemainingUploads] = useState(0);
+  const [isGuest, setIsGuest] = useState(false);
+  const [guestCount, setguestCount] = useState(1);
+  const [userCount, setUserCount] = useState(3);
+
+  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  const userKey = loggedInUser?.email || "guest";
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    const recipeData = JSON.parse(secureLocalStorage.getItem("UploadrecipeData")) || {};
+    // Check if logged in or guest
+    setIsGuest(!loggedInUser);
+    // Check uploads for today
+    const userKey = loggedInUser?.email || "guest";
+    const dailyUploads = recipeData[today]?.[userKey] || 0;
+
+    // Set remaining uploads based on user type
+    setRemainingUploads(isGuest ? Math.max(0, guestCount - dailyUploads) : Math.max(0, userCount - dailyUploads));
+  }, [isGuest]);
+  const handleFileChange = (e) => {
+    handleUploadAgain();
+    const uploadedFile = e.target.files[0];
+    if (uploadedFile?.size > 5000000) {
+      alert("Please upload a file smaller than 5MB.");
+      return;
+    }
+
+    setFile(uploadedFile);
+    setError("");
+  };
+  const extractNutritionInfo = (caption) => {
+    const sanitizeValue = (value) => {
+      return value
+        .replace(/Approximately/gi, "")
+        .replace(/approximately/gi, "")
+        .replace(/calories/gi, "")
+        .replace(/Calories/gi, "")
+        .replace(/\bgrams?\b/gi, "g")
+        .trim();
+    };
+
+    const titleMatch = caption.match(/\*\*Food Name:\*\* (.*?)\n/);
+    const caloriesMatch = caption.match(/\*\*Calories:\*\* (.*?)\n/);
+    const carbsMatch = caption.match(/\*\*Carbohydrates:\*\* (.*?)\n/);
+    const proteinMatch = caption.match(/\*\*Protein:\*\* (.*?)\n/);
+    const fatMatch = caption.match(/\*\*Fat:\*\* (.*?)\n/);
+
+    return {
+      title: titleMatch ? sanitizeValue(titleMatch[1]) : "Unknown",
+      calories: caloriesMatch ? sanitizeValue(caloriesMatch[1]) : "N/A",
+      carbs: carbsMatch ? sanitizeValue(carbsMatch[1]) : "N/A",
+      protein: proteinMatch ? sanitizeValue(proteinMatch[1]) : "N/A",
+      fat: fatMatch ? sanitizeValue(fatMatch[1]) : "N/A",
+    };
+  };
+  const handleUpload = async () => {
+    if (!file) {
+      alert("Please select a file to upload.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    const imagename = `${uuid()}-uploaded-image.jpg`; // Unique file name
+
+    try {
+      const url = await uploadFileToS3(imagename, file);
+      setImageUrl(url); // Set the S3 URL to display the image
+      const generatedCaption = await GetImageCaption(url);
+      const nutritionData = extractNutritionInfo(generatedCaption);
+      setNutritionInfo(nutritionData);
+      await saveDataToDB(nutritionData, url, generatedCaption);
+      setUploaded(true);
+      // Update daily uploads in local storage
+      const today = new Date().toISOString().split("T")[0];
+      const recipeData = JSON.parse(secureLocalStorage.getItem("UploadrecipeData")) || {};
+      const userKey = JSON.parse(localStorage.getItem("loggedInUser"))?.email || "guest";
+
+      if (!recipeData[today]) {
+        recipeData[today] = {};
+      }
+      recipeData[today][userKey] = (recipeData[today][userKey] || 0) + 1;
+
+      secureLocalStorage.setItem("UploadrecipeData", JSON.stringify(recipeData));
+      setRemainingUploads((prev) => prev - 1); // Update remaining uploads
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+      setFile(null);
+      setImageUrl("");
+      setCaption("");
+      setUploaded(false);
+      setError("Failed to upload the image. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const GetImageCaption = async (imageUrl) => {
+    try {
+      const generatedCaption = await imagetoCaption(imageUrl); // Call the caption service
+      setCaption(generatedCaption); // Update the caption state
+      return generatedCaption;
+    } catch (err) {
+      console.error("Error generating caption:", err);
+      setError("Failed to generate a caption for the image.");
+    }
+  };
+  const handleUploadAgain = () => {
+    setFile(null);
+    setImageUrl("");
+    setCaption("");
+    setError("");
+    setUploaded(false); // Reset upload status
+    setNutritionInfo({ title: "", calories: "", carbs: "", protein: "", fat: "" });
+  };
+
+  const saveDataToDB = async ({ title, calories, carbs, protein, fat }, imageUrl, generatedCaption) => {
+    const addRecipe = {
+      id: uuid(), // Unique ID for the data
+      title,
+      calories,
+      carbs,
+      protein,
+      fat,
+      recipeText: generatedCaption,
+      image: imageUrl,
+      type: "recipe-ai-food-calorie",
+      email: userKey,
+      date: new Date().toISOString().replace("T", " ").split(".")[0], // Current timestamp
+    };
+
+    try {
+      await addData(addRecipe);
+      console.log("Data saved successfully:", addRecipe);
+    } catch (error) {
+      console.error("Error saving data to DB:", error);
+      setError("Failed to save data to the database.");
+    }
+  };
+
+  return (
+    <div className="container">
+      <h5 className="" align="center">
+        <span className="p-1 px-2 ">Capture the Calories!</span>
+      </h5>
+
+      <div className="form-group d-flex align-items-center">
+        <label htmlFor="fileUpload" className="mr-2 d-none">
+          Select Image:
+        </label>
+        <div className="border border-warning p-1 rounded" style={{ display: "flex", gap: "10px" }}>
+          {/* File Input */}
+          <input
+            type="file"
+            id="fileUpload"
+            className="form-control border-0"
+            onChange={handleFileChange}
+            disabled={loading || uploaded || remainingUploads === 0} // Disable file input if loading or uploaded
+            accept="image/*" // Allow only image files
+            style={{ flex: 1 }} // Adjust width to align with the camera button
+          />
+
+          {/* Camera Button */}
+          <button
+            type="button"
+            className="btn btn-warning bg-myapp-recipe-ai-warning px-4"
+            onClick={() => document.getElementById("cameraInput").click()} // Trigger hidden camera input
+            disabled={loading || uploaded || remainingUploads === 0}
+          >
+            {uploaded || file ? <i className="fas fa-check"></i> : <i className="fas fa-camera"></i>}
+          </button>
+
+          {/* Hidden Camera Input */}
+          <input
+            type="file"
+            id="cameraInput"
+            className="d-none"
+            onChange={handleFileChange}
+            accept="image/*"
+            capture="environment" // Opens the camera for image capture
+          />
+        </div>
+      </div>
+      <p className="mb-0">
+        <small>
+          Remaining Uploads Today: <b>{remainingUploads}</b>
+        </small>
+        <span>
+          <small>{remainingUploads === 0 ? " Please Try again Tomorrow" : ""}</small>
+        </span>
+      </p>
+      {!uploaded ? (
+        <button
+          className="btn btn-warning bg-myapp-recipe-ai-warning mt-3 px-5"
+          onClick={handleUpload}
+          disabled={loading || !file || remainingUploads === 0} // Disable if loading or no file selected
+        >
+          {loading ? "Uploading..." : "Upload"}
+        </button>
+      ) : (
+        <button className="btn btn-secondary mt-3" onClick={handleUploadAgain}>
+          Upload Again
+        </button>
+      )}
+
+      {error && <p className="text-danger mt-3">{error}</p>}
+      {loading ? (
+        <div align="center">
+          <Loading />
+          <p>
+            Calculating Calorie...
+            <span className="px-1">
+              <i className="fas fa-spinner fa-spin text-success"></i>
+            </span>
+          </p>
+        </div>
+      ) : (
+        <>
+          {imageUrl ? (
+            <div className="mt-4">
+              <div className="mt-2" align="center">
+                <img src={imageUrl} alt="Uploaded" className="rounded" style={{ maxWidth: "100%", maxHeight: "300px" }} />
+                <NutritionComponent nutritionInfo={nutritionInfo} />
+              </div>
+            </div>
+          ) : (
+            //sample before uploading image
+            <div className="mt-4">
+              <div className="mt-2" align="center">
+                <img src={logo} alt="Uploaded" className="rounded" style={{ maxWidth: "100%", maxHeight: "300px" }} />
+                <NutritionComponent nutritionInfo={[]} />
+              </div>
+            </div>
+          )}
+
+          {caption && (
+            <div className="mt-4">
+              <p>{formatRecipe(caption)}</p>
+            </div>
+          )}
+        </>
+      )}
+      <div className="mt-3">
+        <CalorieHistoryComponent showLatest={true} />
+      </div>
+    </div>
+  );
+};
+
+export default ImageUpload;

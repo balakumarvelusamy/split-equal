@@ -1,0 +1,245 @@
+/* General Container Styling */
+
+.title{
+    font-size: x-large;
+    background-color: #fae2a6;
+    color: #000 !important;
+}
+.titlesplitequally {
+    font-size: x-large;
+    background-color: #f2b216;
+    color: #ffffff !important;
+}
+h1,
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Form Grid for Larger Screens */
+form.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+form input, form select,
+form button {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    /* Ensure full width for mobile */
+    box-sizing: border-box;
+}
+
+/* Button Styling */
+form button {
+    background-color: #ffcc00;
+    color: rgb(0, 0, 0);
+    border: none;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #d99400;
+}
+
+/* Responsive Expense Grid */
+.expense-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.total-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-top: 2px solid #000;
+}
+.categorytitle
+{
+    color: #d99400;
+}
+
+/* Strong Text */
+strong {
+    font-weight: bold;
+}
+.text-primary{
+    color: #e7aa03 !important;
+    font-weight: bold;
+}
+/* Mobile-Friendly Form Adjustments */
+@media (max-width: 768px) {
+    form.grid {
+        grid-template-columns: 1fr;
+        /* Stack form inputs vertically on mobile */
+    }
+
+    .expense-grid {
+        grid-template-columns: 1fr 1fr;
+        /* Show less columns for expense list on mobile */
+    }
+
+    .total-grid {
+        grid-template-columns: 1fr;
+        /* Stack total grid */
+    }
+}
+
+/* Additional Padding and Centering for Smaller Devices */
+@media (max-width: 480px) {
+  
+
+    form button {
+        padding: 12px;
+        font-size: 16px;
+        /* Larger tap targets for mobile */
+    }
+
+    form input select {
+        font-size: 14px;
+        /* Larger input text for mobile */
+    }
+
+    h1,
+    h2 {
+        font-size: 24px;
+    }
+}
+/* General container styling */
+.grid {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+}
+
+.expense-grid {
+  grid-template-columns: 2fr 1fr 1fr; /* 3 columns for larger screens */
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.expense-grid div {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Stack grid columns vertically for smaller screens */
+@media (max-width: 768px) {
+  .expense-grid {
+    grid-template-columns: 1fr; /* Stacks the rows */
+    grid-template-rows: auto;
+  }
+
+  .expense-description,
+  .expense-amount,
+  .expense-action {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .expense-amount {
+    font-weight: bold;
+  }
+
+  .expense-date {
+    font-size: 12px;
+    color: #888;
+  }
+
+  .expense-details {
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+  }
+}
+
+/* Styling for buttons */
+button {
+  background-color: #f44336;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* General container styling */
+.expense-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    /* 5 columns on larger screens */
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.expense-grid div {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+    .expense-grid {
+        grid-template-columns: 1fr;
+        /* Stack items on smaller screens */
+    }
+
+    .expense-grid div {
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+.expense-action button {
+    background-color: #f44336;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.expense-action button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+ .compact-list-item {
+     margin-bottom: 0;
+ }
+
+ .compact-list-item strong {
+     font-size: 0.85rem;
+ }
+
+ .compact-list-item p {
+     font-size: 0.75rem;
+     line-height: normal;
+ }
+ .select-arrow {
+     -webkit-appearance: none;
+     /* Remove default styling */
+     -moz-appearance: none;
+     appearance: none;
+     background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><polygon points='0,0 10,0 5,5' style='fill:black;'/></svg>") no-repeat right 10px center;
+     padding-right: 30px;
+     /* Add padding to make space for the arrow */
+     background-color: #fff;
+     /* Optional: Ensure a consistent background */
+     border: 1px solid #ccc;
+     /* Optional: Adjust the border */
+ }

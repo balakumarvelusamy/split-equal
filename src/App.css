@@ -1,0 +1,111 @@
+/* src/App.css */
+.app {
+  padding-top: 60px;
+  /* Header height */
+  padding-bottom: 50px;
+  /* Bottom navigation height */
+}
+
+.content {
+  margin-top: 20px;
+}
+
+.centered-container {
+  max-width: 1500px;
+  /* Adjust the max-width as needed */
+  margin: 0 auto;
+  /* Centers the container */
+  /* Adds padding on the sides */
+}
+
+.container
+{
+  margin-top: 70px;
+  margin-bottom: 90px;
+}
+.bottomspace{
+  margin-bottom: 140px !important;
+}
+.accordion-button
+{
+  padding: 7px !important;
+  color: black !important;
+  border: none !important;
+}
+.accordion-button:not(.collapsed)
+{
+  background-color: #ffc107;
+}
+.viewbutton {
+  transition: all 0.3s ease;
+  font-size:small;
+}
+
+.viewbutton:hover {
+  background-color: #e9f5e9;
+  border-color: #28a745 !important;
+  color: #28a745;
+}
+
+.viewbutton:active {
+  background-color: #d4edda;
+  border-color: #218838;
+  color: #218838;
+}
+.addexpense:hover {
+  background-color: #e9f5e9;
+  border-color: #605f5f !important;
+  color: #28a745;
+}
+/* split equal css */
+.balance-summary {
+  min-height: 70px;
+ 
+}
+.skeleton-loader {
+  width: 100%;
+  text-align: center;
+}
+
+.skeleton-line {
+
+  background-color: #e0e0e0;
+  border-radius: 5px;
+ 
+}
+
+.skeleton-box {
+  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  min-height: 70px;
+}
+.form-check-input:checked
+{
+background-color:#ad8304 !important;
+border-color: #605f5f !important;
+}
+
+.loginbtn
+{
+width: 250px !important;
+}
+.LgbsSe-Bz112c
+{
+  width: 20px !important;
+}
+.googlebutton svg
+{
+width: 20px !important;
+}
+.myapph1-title
+{
+  font-size: 25px !important;
+}
+.bg-myapp-recipe-ai
+{
+ background-color:  #4386aa !important;
+}
+.bg-myapp-recipe-ai-warning {
+  background-color: #edbf59 !important;
+}
