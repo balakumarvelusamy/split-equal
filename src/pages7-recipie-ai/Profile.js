@@ -175,7 +175,7 @@ const Profile = () => {
             <p>Welcome, {loggedInUserName}!</p>
           </div>
           <div className="mb-0">
-            <a className="btn btn-sm w-auto text-dark bg-warning px-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
+            <a className="btn btn-sm w-auto text-dark bg-myapp-recipe-ai-warning px-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
               Logout{" "}
               <span>
                 <i className="fas fa-sign-out-alt"></i>
@@ -190,7 +190,7 @@ const Profile = () => {
           <div className="p-2">
             <strong>Email:</strong> {loggedInUser}
           </div>
-          <div className="d-flex align-items-center p-2">
+          <div className="d-flex align-items-center p-2 d-none">
             <strong>Country:</strong>{" "}
             <select value={country} defaultvalue={country} onChange={(e) => handleCountryChange(e.target.value)} className="form-control p-2 m-0 mx-1">
               <option value="">Select Country</option>
@@ -211,7 +211,7 @@ const Profile = () => {
 
         {loggedInUserEmail === "guest" && (
           <div align="center" className="p-3">
-            <a className="btn btn-sm w-auto text-dark bg-warning p-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
+            <a className="btn btn-sm w-auto text-dark bg-myapp-recipe-ai-warning p-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
               Login to access all features
             </a>
           </div>
@@ -220,7 +220,7 @@ const Profile = () => {
         <div className="mt-2" align="right">
           {loggedInUserEmail != "guest" && (
             <div className="d-flex justify-content-between">
-              <button className="btn btn-warning p-1 px-1 btn-sm w-auto" onClick={() => setShowModal(!showModal)}>
+              <button className="btn bg-myapp-recipe-ai-warning p-1 px-1 btn-sm w-auto" onClick={() => setShowModal(!showModal)}>
                 <span>
                   <i className="fi fi-rr-user"></i>
                 </span>{" "}

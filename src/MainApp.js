@@ -5,10 +5,7 @@ import ErrorBoundary from "./ErrorBoundary";
 import { Link } from "react-router-dom";
 import App1 from "./App1";
 import App2 from "./App2";
-import App3 from "./App3";
-import App4 from "./App4";
-import App5 from "./App5"; // BMI calculator
-import App6 from "./App6"; // Financial calculator
+
 import App7 from "./App7"; // Recepie AI
 import Admin from "./AppAdmin";
 import BottomNav from "./Manage/BottomNav";
@@ -266,10 +263,7 @@ const MainApp = () => {
             <Routes>
               <Route path="/app1/*" element={<App1 />} />
               <Route path="/app2/*" element={<App2 />} />
-              <Route path="/app3/*" element={<App3 />} />
-              <Route path="/app4/*" element={<App4 />} />
-              <Route path="/app5/*" element={<App5 />} />
-              <Route path="/app6/*" element={<App6 />} />
+
               <Route path="/app7/*" element={<App7 />} />
               <Route path="/manage/*" element={<AppManage />} />
               <Route path="/admin/*" element={<Admin />} />
