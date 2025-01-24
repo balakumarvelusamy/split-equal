@@ -16,12 +16,6 @@ const Header = ({ title }) => (
         <img src={logo} alt="Logo" className="rounded" width="40" />
       </div>
     </div>
-
-    {/* <Link to={config.localhost === "localhost" ? "/app7/home" : "/"} className="home-link px-3 d-none">
-      <a className="navbar-brand text-white" href="#">
-        <img src={home} alt="Logo" className="" width="30" />
-      </a>
-    </Link> */}
   </header>
 );
 

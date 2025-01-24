@@ -6,7 +6,7 @@ import config from "../config.json";
 const BottomNav = () => (
   <>
     <nav className="bottom-nav bottom-nav bg-myapp-recipe-ai">
-      <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
+      <NavLink to="/app7/home" className={({ isActive }) => (isActive ? "active" : "")}>
         <span>
           <i className="fi fi-rr-home"></i>
         </span>

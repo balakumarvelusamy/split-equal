@@ -64,7 +64,7 @@ const Profile = () => {
     if (window.confirm("Are you sure you want to log out from all apps?")) {
       localStorage.removeItem("loggedInUser");
       localStorage.setItem("isLoggedOut", true);
-      navigate("/");
+      navigate("/app7/home");
     }
   };
   const handleDeleteProfile = async () => {
@@ -163,7 +163,7 @@ const Profile = () => {
             <p>Welcome, {loggedInUserName}!</p>
           </div>
           <div className="mb-0">
-            <a className="btn btn-sm w-auto text-dark bg-warning px-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
+            <a className="btn btn-sm w-auto text-dark bg-warning px-2 mb-0 text-decoration-none " href="/app7/home" onClick={handleLogout}>
               Logout{" "}
               <span>
                 <i className="fas fa-sign-out-alt"></i>
@@ -199,7 +199,7 @@ const Profile = () => {
 
         {loggedInUserEmail === "guest" && (
           <div align="center" className="p-3">
-            <a className="btn btn-sm w-auto text-dark bg-warning p-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
+            <a className="btn btn-sm w-auto text-dark bg-warning p-2 mb-0 text-decoration-none " href="/app7/home" onClick={handleLogout}>
               Login to access all features
             </a>
           </div>

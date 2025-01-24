@@ -32,7 +32,7 @@ const Profile = () => {
   useEffect(() => {
     const initializeUserSession = async () => {
       if (deleteSuccess) {
-        navigate("/");
+        navigate("/app7/home");
         return;
       }
       const countryList = getCountryCurrency().map((item) => item.country);
@@ -188,7 +188,7 @@ const Profile = () => {
             <p>Welcome, {loggedInUserName}!</p>
           </div>
           <div className="mb-0">
-            <a className="btn btn-sm w-auto text-dark bg-myapp-recipe-ai-warning px-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
+            <a className="btn btn-sm w-auto text-dark bg-myapp-recipe-ai-warning px-2 mb-0 text-decoration-none " href="/app7/home" onClick={handleLogout}>
               Logout{" "}
               <span>
                 <i className="fas fa-sign-out-alt"></i>
@@ -224,7 +224,7 @@ const Profile = () => {
 
         {loggedInUserEmail === "guest" && (
           <div align="center" className="p-3">
-            <a className="btn btn-sm w-auto text-dark bg-myapp-recipe-ai-warning p-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
+            <a className="btn btn-sm w-auto text-dark bg-myapp-recipe-ai-warning p-2 mb-0 text-decoration-none " href="/app7/home" onClick={handleLogout}>
               Login to access all features
             </a>
           </div>

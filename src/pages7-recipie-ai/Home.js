@@ -101,7 +101,7 @@ const Home = () => {
             <small>Welcome, {(loggedInUser && loggedInUser.name) || "Guest"}!</small>
           </div>
           <div className="mb-0">
-            <a className="btn btn-sm w-auto text-danger px-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
+            <a className="btn btn-sm w-auto text-danger px-2 mb-0 text-decoration-none " href="/app7/home" onClick={handleLogout}>
               <small> Logout </small>
               <span>
                 <i className="fas fa-sign-out-alt"></i>
