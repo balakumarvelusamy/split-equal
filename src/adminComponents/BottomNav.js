@@ -3,7 +3,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 const BottomNav = () => (
-  <nav className="bottom-nav bg-myapp">
+  <nav className="bottom-nav bottom-nav-recipe bg-myapp-recipe-ai">
     <NavLink to="/admin/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>
       <span>
         <i className="fi fi-rr-home"></i>
@@ -14,7 +14,7 @@ const BottomNav = () => (
       <span>
         <i className="fi fi-rr-users"></i>
       </span>
-      <div>Support Case</div>
+      <div>Support</div>
     </NavLink>
     <NavLink to="/admin/shared" className={({ isActive }) => (isActive ? "active" : "")}>
       <span>

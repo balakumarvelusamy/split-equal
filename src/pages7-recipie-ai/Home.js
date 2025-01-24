@@ -8,7 +8,7 @@ import { getData, fetchRecipe, generateImage_usingBedrock, addData } from "../se
 import { v4 as uuid } from "uuid";
 import recipeai from "../images/recipeailogo.jpg";
 import secureLocalStorage from "react-secure-storage";
-
+import { useNavigate } from "react-router-dom";
 const Home = () => {
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
@@ -16,9 +16,11 @@ const Home = () => {
   const [image, setImage] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loggedInUser, setLoggedInUser] = useState(null);
-
+  const navigate = useNavigate();
+  const loggedInUserEmail = localStorage.getItem("loggedInUserEmail");
   useEffect(() => {
     const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
+
     setLoggedInUser(sessionUser);
   }, [loading]);
 
@@ -84,19 +86,41 @@ const Home = () => {
       setError("");
     }
   };
-
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to log out from all apps?")) {
+      localStorage.removeItem("loggedInUser");
+      localStorage.setItem("isLoggedOut", true);
+      navigate("/app7/home");
+    }
+  };
   return (
     <div className="container">
-      <div align="center" className="d-flex justify-content-between align-items-center">
-        <div>
-          <img src={recipeai} className="rounded" height="50" />
+      {loggedInUserEmail === "guest" && (
+        <div className="d-flex justify-content-between text-small">
+          <div className="text-dark">
+            <small>Welcome, {(loggedInUser && loggedInUser.name) || "Guest"}!</small>
+          </div>
+          <div className="mb-0">
+            <a className="btn btn-sm w-auto text-danger px-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
+              <small> Logout </small>
+              <span>
+                <i className="fas fa-sign-out-alt"></i>
+              </span>
+            </a>
+          </div>
         </div>
-        <div>
-          <h1 className="myapph1-title px-2 mb-0 text-nowrap">Recipe AI Assistance</h1>
+      )}
+      <div className="">
+        <div align="left">
+          <span className="">
+            <small>Dont know what to Cook?</small>
+          </span>
+          <p className=" fw-bold myapp-color-primary">Let's Curate your Recipe with your Cooking Assistant</p>
         </div>
       </div>
-      <hr className="my-3" />
-      <RecipeInputForm onFetchRecipe={handleFetchRecipe} />
+      <div className="p-1 rounded bg-light">
+        <RecipeInputForm onFetchRecipe={handleFetchRecipe} />
+      </div>
       {error && <p style={{ color: "red" }}>{error}</p>}
       {loading ? (
         <div align="center" className="p-3">

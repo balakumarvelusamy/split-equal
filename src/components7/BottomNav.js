@@ -15,7 +15,7 @@ const BottomNav = () => (
         <i className="fi fi-rr-list"></i>
       </span>
       <div>History</div>
-    </NavLink>{" "}
+    </NavLink>
     <NavLink to="/app7/caloriecheck" className={({ isActive }) => (isActive ? "active" : "")}>
       <span>
         <i class="fas fa-pizza-slice"></i>
@@ -26,7 +26,7 @@ const BottomNav = () => (
       <span>
         <i class="fas fa-chart-line"></i>
       </span>
-      <div>Uploaded</div>
+      <div>Uploads</div>
     </NavLink>{" "}
     {/* <NavLink to="/app7/blog" className={({ isActive }) => (isActive ? "active" : "")}>
       <span>

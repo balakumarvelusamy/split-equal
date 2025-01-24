@@ -419,7 +419,7 @@ const RecipeInputForm = ({ onFetchRecipe }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="mt-2">
+      <div className="mt-0">
         <label>Available Ingredients:</label>
         <div
           style={{
@@ -524,7 +524,7 @@ const RecipeInputForm = ({ onFetchRecipe }) => {
         <button type="submit" className="bg-myapp-recipe-ai-warning" disabled={remainingRecipes === 0}>
           Create New Recipe {remainingRecipes === 0 ? "Tomorrow" : ""}
         </button>
-        <small> Remaining Recipes: {remainingRecipes}</small>
+        <small className="px-1"> Remaining Recipes: {remainingRecipes}</small>
       </div>
     </form>
   );

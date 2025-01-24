@@ -41,6 +41,11 @@ const Dashboard = () => {
   return (
     <div className="container">
       <h2>Admin Dashboard</h2>
+      <div align="center">
+        <a href="/app7/home" className="btn btn-warning">
+          Home
+        </a>
+      </div>
       {loading ? (
         <p className="p-2 border rounded">
           <span className="px-1">

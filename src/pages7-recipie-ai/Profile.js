@@ -10,6 +10,8 @@ import close from "../images/delete.png";
 const Profile = () => {
   const [sessionInitialized, setSessionInitialized] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [isAdminVisible, setIsAdminVisible] = useState(true);
   const [loggedInUserName, setLoggedInUserName] = useState("");
   const [showDeleteSection, setShowDeleteSection] = useState(false);
   const [showSupportSection, setShowSupportSection] = useState(false);
@@ -66,6 +68,17 @@ const Profile = () => {
     }
     return false;
   }
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(
+      () => {
+        setAlertVisible(true);
+        setTimeout(() => setAlertVisible(false), 1000);
+      },
+      (err) => {
+        console.error("Failed to copy text:", err);
+      }
+    );
+  };
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out from all apps?")) {
       localStorage.removeItem("loggedInUser");
@@ -288,6 +301,55 @@ const Profile = () => {
             </Button>
           </Modal.Footer>
         </Modal>
+      </div>{" "}
+      {isAdminVisible && loggedInUser === "vbalakumar.cse@gmail.com" && (
+        <div align="center">
+          <div className="">
+            <a href="/admin/dashboard" className="text-decoration-none btn btn-sm btn-warning mx-1">
+              <p className="mb-0">Admin</p>
+            </a>
+            <button
+              className="btn btn-small border p-0 px-1"
+              onClick={() => setIsAdminVisible(false)} // Hide the icon on click
+              aria-label="Close"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="container d-none">
+        <span>
+          <button className="share-button" onClick={() => copyToClipboard(config.iosurl)}>
+            <i className="fa fa-apple"></i>
+          </button>
+        </span>
+        <span>
+          <button className="share-button" style={{ bottom: "145px" }} onClick={() => copyToClipboard(config.androidurl)}>
+            <i className="fa fa-android"></i>
+          </button>
+        </span>
+        <small className="share-text ">
+          <i className="fa fa-share text-secondary"></i>
+        </small>
+      </div>
+      <div className="d-flex justify-content-end align-items-center mb-0 m-1">
+        {alertVisible && (
+          <div className="d-flex justify-content-center text-dark w-100">
+            <div
+              className="bg-white border justify-content-center text-dark "
+              style={{
+                color: "white",
+                padding: "5px",
+                borderRadius: "5px",
+
+                zIndex: 1000,
+              }}
+            >
+              Link copied to clipboard for Sharing
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

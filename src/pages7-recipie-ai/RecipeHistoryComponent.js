@@ -70,7 +70,7 @@ const RecipeHistoryComponent = ({ showLatest = false }) => {
 
   return (
     <div>
-      <h6 align="left">{showLatest ? "Recent Recipes" : "AI Recipe History"}</h6>
+      <h6 align="left">{showLatest ? "Recent Recipes" : "Recipe AI History"}</h6>
       {showLatest ? (
         ""
       ) : (

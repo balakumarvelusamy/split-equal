@@ -6,8 +6,10 @@ import { Link } from "react-router-dom";
 import CryptoJS from "crypto-js";
 import { FiEye, FiEyeOff, FiX, FiChevronDown } from "react-icons/fi";
 import "./styles/LoginPage.css";
+import "./App.css";
 import config from "./config.json";
 import banner from "./images/banner.jpg";
+import logo from "./images/recipeailogo.jpg";
 import ForgotPassword from "./ForgotPassword";
 import close from "./images/delete.png";
 import { jwtDecode } from "jwt-decode";
@@ -232,9 +234,17 @@ const LoginPage = ({ onLogin }) => {
 
   return (
     <div className="">
-      <header className="header bg-myapp-recipe-ai">
-        <h1 className="titlename-recipe-ai  mb-0 px-3 p-3  w-75">{config.apptitle}</h1>
-        {process.env.REACT_APP_ENV === "QA" && <small className="px-2">NonProd</small>}
+      <header className="header bg-myapp-recipe-ai ">
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="flex-grow-1">
+            <h1 className="titlename-recipe-ai mb-0 text-nowrap w-100 px-3 p-3 ">{config.apptitle}</h1>{" "}
+          </div>
+          <div> {process.env.REACT_APP_ENV === "QA" && <small className="px-2">NP</small>}</div>
+
+          <div className="px-2">
+            <img src={logo} alt="Logo" className="rounded" width="40" />
+          </div>
+        </div>
       </header>
       <div className="login-container1 px-3">
         <div className="mt-4">

@@ -73,7 +73,7 @@ const AdminContactUs = () => {
               {/* <th>Category</th> */}
               {/* <th>Description</th> */}
               <th>Status</th>
-              <th>Date</th>
+              {/* <th>Date</th> */}
             </tr>
           </thead>
           <tbody>
@@ -108,7 +108,7 @@ const AdminContactUs = () => {
                 <td>{caseItem.name}</td>
                 {/* <td>{caseItem.description}</td> */}
                 <td>{caseItem.status}</td>
-                <td>{new Date(caseItem.createddate).toLocaleDateString()}</td>
+                {/* <td>{new Date(caseItem.createddate).toLocaleDateString()}</td> */}
               </tr>
             ))}
           </tbody>
