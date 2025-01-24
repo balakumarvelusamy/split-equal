@@ -8,7 +8,7 @@ const Header = ({ title }) => (
   <header className="header bg-myapp-recipe-ai ">
     <div className="d-flex justify-content-between align-items-center">
       <div className="flex-grow-1">
-        <h1 className="titlename-recipe-ai mb-0 text-nowrap w-100 px-3 p-3 ">{title}</h1>{" "}
+        <h1 className="titlename-recipe-ai mb-0 text-nowrap w-75 px-3 p-3 ">{title}</h1>{" "}
       </div>
       <div> {process.env.REACT_APP_ENV === "QA" && <small className="px-2">NP</small>}</div>
 
