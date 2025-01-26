@@ -106,6 +106,8 @@ const MainApp = () => {
       localStorage.removeItem("loggedInUser");
       localStorage.setItem("isLoggedOut", true);
       navigate("/app7/home");
+    } else {
+      navigate("/app7/home");
     }
   };
   const NotFoundPage = () => {

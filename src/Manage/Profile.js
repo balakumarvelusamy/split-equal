@@ -65,6 +65,8 @@ const Profile = () => {
       localStorage.removeItem("loggedInUser");
       localStorage.setItem("isLoggedOut", true);
       navigate("/app7/home");
+    } else {
+      navigate("/app7/home");
     }
   };
   const handleDeleteProfile = async () => {
