@@ -149,6 +149,9 @@ const MainApp = () => {
             <small align="center" className="app-description px-2 pb-0">
               {config.appdescription2}
             </small>
+            <small align="center" className="app-description fw-light px-2 pb-0 mt-1">
+              {config.appdescription3}
+            </small>
           </div>{" "}
         </div>
       );

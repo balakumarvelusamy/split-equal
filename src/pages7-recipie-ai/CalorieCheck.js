@@ -70,7 +70,7 @@ const ImageUpload = () => {
     };
   };
   const handleUpload = async () => {
-    if (file.length === 0) {
+    if (file?.length === 0) {
       alert("Please select a file to upload.");
       return;
     }
@@ -193,7 +193,7 @@ const ImageUpload = () => {
             onClick={() => document.getElementById("cameraInput").click()} // Trigger hidden camera input
             disabled={loading || uploaded || remainingUploads === 0}
           >
-            {uploaded || file ? <i className="fas fa-check"></i> : <i className="fas fa-camera"></i>}
+            {uploaded || file?.length !== 0 ? <i className="fas fa-check"></i> : <i className="myapp-color-primary fas fa-camera"></i>}
           </button>
           {/* Hidden Camera Input */}
           <input
@@ -218,12 +218,12 @@ const ImageUpload = () => {
         <button
           className="btn btn-lg btn-warning bg-myapp-recipe-ai-warning mt-3 px-5 w-100"
           onClick={handleUpload}
-          disabled={loading || file.length === 0 || remainingUploads === 0} // Disable if loading or no file selected
+          disabled={loading || file?.length === 0 || remainingUploads === 0} // Disable if loading or no file selected
         >
           {loading ? "Uploading..." : remainingUploads === 0 ? "Limit Reached Today" : "Upload"}
         </button>
       ) : (
-        <button className="btn btn-secondary mt-3" onClick={handleUploadAgain}>
+        <button className="btn btn-lg btn-secondary mt-3 w-100" onClick={handleUploadAgain}>
           Upload Again
         </button>
       )}

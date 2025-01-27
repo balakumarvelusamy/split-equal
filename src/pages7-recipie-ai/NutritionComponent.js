@@ -36,6 +36,7 @@ const NutritionComponent = ({ nutritionInfo }) => {
           </span>
         </div>
       </div>
+      <small className="text-muted badge fw-light">*This is Approximate Value</small>
     </div>
   );
 };
