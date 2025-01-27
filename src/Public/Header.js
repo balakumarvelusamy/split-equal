@@ -16,7 +16,7 @@ const Header = ({ title }) => (
         </a>
       </div>
       <div className="px-2">
-        <img src={logo} alt="Logo" className="rounded" width="40" />
+        <img src={logo} alt="Logo" className="rounded" width="45" />
       </div>
     </div>
   </header>

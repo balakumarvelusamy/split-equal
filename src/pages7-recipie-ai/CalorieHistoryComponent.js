@@ -20,7 +20,7 @@ const CalorieHistoryComponent = ({ showLatest = false }) => {
     const fetchRecipeHistory = async () => {
       try {
         const data = await getData_Any2Column("email", loggedInUserEmail, "type", "recipe-ai-food-calorie");
-
+        console.log("calorie history", data);
         // If `showLatest` is true, limit to the latest 6 recipes
         const sortedRecipes = data.sort((a, b) => new Date(b.date) - new Date(a.date));
         setRecipes(showLatest ? sortedRecipes.slice(0, 6) : sortedRecipes);

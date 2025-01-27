@@ -242,7 +242,7 @@ const LoginPage = ({ onLogin }) => {
           <div> {process.env.REACT_APP_ENV === "QA" && <small className="px-2">NP</small>}</div>
 
           <div className="px-2">
-            <img src={logo} alt="Logo" className="rounded" width="40" />
+            <img src={logo} alt="Logo" className="rounded" width="45" />
           </div>
         </div>
       </header>

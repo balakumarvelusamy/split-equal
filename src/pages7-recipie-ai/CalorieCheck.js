@@ -80,9 +80,9 @@ const ImageUpload = () => {
     setLoading(true);
     setError("");
     const imagename = `${uuid()}-uploaded-image.jpg`; // Unique file name
-
+    var url;
     try {
-      const url = await uploadFileToS3(imagename, file);
+      url = await uploadFileToS3(imagename, file);
       setImageUrl(url); // Set the S3 URL to display the image
       const generatedCaption = await GetImageCaption(url);
       const nutritionData = extractNutritionInfo(generatedCaption);
@@ -106,10 +106,11 @@ const ImageUpload = () => {
       console.error(err);
       setLoading(false);
       setFile(null);
-      setImageUrl("");
       setCaption("");
+      setNutritionInfo({ title: "Image", calories: "", carbs: "", protein: "", fat: "" });
       setUploaded(false);
-      setError("Failed to upload the image. Please try again.");
+      setError("Failed to get the image information. Please try again.");
+      await saveDataToDB(nutritionInfo, url, error);
     } finally {
       setLoading(false);
     }
