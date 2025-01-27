@@ -517,6 +517,7 @@ export const generateImage_usingBedrock = async (prompt) => {
         height: 512,
         width: 512,
         numberOfImages: 1,
+        env: process.env.REACT_APP_ENV,
       }),
     });
 
