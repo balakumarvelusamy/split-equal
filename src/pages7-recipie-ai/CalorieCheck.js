@@ -8,6 +8,7 @@ import Loading from "./Loading";
 import img5 from "../images/pot.gif";
 import logo from "../images/recipeailogo.jpg";
 import config from "../config.json";
+import Resizer from "react-image-file-resizer";
 const ImageUpload = () => {
   const [file, setFile] = useState([]); // Stores the uploaded file
   const [imageUrl, setImageUrl] = useState(""); // Stores the S3 URL
@@ -35,17 +36,42 @@ const ImageUpload = () => {
     // Set remaining uploads based on user type
     setRemainingUploads(isGuest ? Math.max(0, guestCount - dailyUploads) : Math.max(0, userCount - dailyUploads));
   }, [isGuest]);
-  const handleFileChange = (e) => {
+
+  const resizeImage = (file) =>
+    new Promise((resolve) => {
+      Resizer.imageFileResizer(
+        file,
+        800, // max width
+        800, // max height
+        "JPG", // output format
+        100, // quality
+        0, // rotation
+        (uri) => resolve(uri), // callback with resized image as URI
+        "file" // output type
+      );
+    });
+  const handleFileChange = async (e) => {
     handleUploadAgain();
     const uploadedFile = e.target.files[0];
     if (uploadedFile?.size > 5000000) {
       alert("Please upload a file smaller than 5MB.");
       return;
     }
-
-    setFile(uploadedFile);
-    setError("");
+    try {
+      console.log("image size before");
+      console.log(uploadedFile?.size);
+      const resizedImage = await resizeImage(uploadedFile);
+      console.log("image size after");
+      console.log(resizedImage?.size);
+      setFile(resizedImage);
+      setError("");
+      return;
+    } catch (err) {
+      console.error("Error resizing image:", err);
+      setError("Failed to process the image. Please try again.");
+    }
   };
+
   const extractNutritionInfo = (caption) => {
     const sanitizeValue = (value) => {
       return value
