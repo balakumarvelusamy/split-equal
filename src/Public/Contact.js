@@ -1,7 +1,7 @@
 // Admin/Contact.js
 import React, { useState, useEffect } from "react";
 import { sendEmail } from "../service/APIService"; // Import your existing email service function
-
+import secureLocalStorage from "react-secure-storage";
 const Contact = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -12,7 +12,7 @@ const Contact = () => {
 
   // Fetch logged-in user info from localStorage
   useEffect(() => {
-    const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
     if (sessionUser) {
       setName(sessionUser.name || ""); // Default to empty if undefined
       setEmail(sessionUser.email || "");

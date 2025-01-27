@@ -5,6 +5,7 @@ import logo from "../images/pot.gif";
 import { Modal, Button } from "react-bootstrap";
 import close from "../images/delete.png";
 import NutritionComponent from "./NutritionComponent";
+import secureLocalStorage from "react-secure-storage";
 const CalorieHistoryComponent = ({ showLatest = false }) => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +15,7 @@ const CalorieHistoryComponent = ({ showLatest = false }) => {
   const [visibleRecipes, setVisibleRecipes] = useState(10); // Number of records to display initially
   const [searchQuery, setSearchQuery] = useState("");
   // Retrieve the logged-in user's email from localStorage
-  const loggedInUserEmail = JSON.parse(localStorage.getItem("loggedInUser"))?.email || "guest";
+  const loggedInUserEmail = JSON.parse(secureLocalStorage.getItem("loggedInUser"))?.email || "guest";
 
   useEffect(() => {
     const fetchRecipeHistory = async () => {

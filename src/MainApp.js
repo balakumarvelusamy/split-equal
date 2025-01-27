@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import ErrorBoundary from "./ErrorBoundary";
+import secureLocalStorage from "react-secure-storage";
 //private
 import Home from "./pages7-recipie-ai/Home"; // Recipe AI
 import History from "./pages7-recipie-ai/History";
@@ -31,19 +32,19 @@ import AdminHeader from "./adminComponents/Header";
 import AdminBottomNav from "./adminComponents/BottomNav";
 import AdminDashboard from "./adminPages/Dashboard";
 import AdminContactus from "./adminPages/ContactUs";
-const useremail = localStorage.getItem("loggedInUserEmail");
+const useremail = secureLocalStorage.getItem("loggedInUserEmail");
 const MainApp = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoggedOut, setIsLoggedOut] = useState(JSON.parse(localStorage.getItem("isLoggedOut")));
+  const [isLoggedOut, setIsLoggedOut] = useState(JSON.parse(secureLocalStorage.getItem("isLoggedOut")));
   const [error, setError] = useState(false);
-  const loggedInUserEmail = localStorage.getItem("loggedInUserEmail");
+  const loggedInUserEmail = secureLocalStorage.getItem("loggedInUserEmail");
   const navigate = useNavigate();
 
   useEffect(() => {
     try {
-      const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
-      const guestUser = JSON.parse(localStorage.getItem("guestUser"));
+      const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+      const guestUser = JSON.parse(secureLocalStorage.getItem("guestUser"));
       if (sessionUser) {
         setError(false);
         setIsLoggedIn(true);
@@ -62,13 +63,13 @@ const MainApp = () => {
   const handleLogin = (userData) => {
     try {
       if (userData.email === "guest") {
-        localStorage.setItem("guestUser", JSON.stringify(userData));
-        localStorage.setItem("isLoggedOut", false);
-        localStorage.setItem("loggedInUserEmail", "guest");
+        secureLocalStorage.setItem("guestUser", JSON.stringify(userData));
+        secureLocalStorage.setItem("isLoggedOut", false);
+        secureLocalStorage.setItem("loggedInUserEmail", "guest");
       } else {
-        localStorage.setItem("loggedInUser", JSON.stringify(userData));
-        localStorage.setItem("loggedInUserEmail", userData.email);
-        localStorage.setItem("isLoggedOut", false);
+        secureLocalStorage.setItem("loggedInUser", JSON.stringify(userData));
+        secureLocalStorage.setItem("loggedInUserEmail", userData.email);
+        secureLocalStorage.setItem("isLoggedOut", false);
       }
       setIsLoggedOut(false);
       setIsLoggedIn(userData);
@@ -82,8 +83,8 @@ const MainApp = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("loggedInUser");
-    localStorage.removeItem("guestUser");
+    secureLocalStorage.removeItem("loggedInUser");
+    secureLocalStorage.removeItem("guestUser");
     setIsLoggedOut(true);
     setIsLoggedIn(false);
     setIsAdmin(false);

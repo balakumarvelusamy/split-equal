@@ -4,6 +4,7 @@ import config from "./config.json";
 import { UpdateUser, sendEmail, fetchUsers } from "./service/APIService"; // Helper function to send requests
 import "./styles/ForgotPassword.css"; // Add styles for this page
 import CryptoJS from "crypto-js"; // Import crypto-js for encryption/decryption
+import secureLocalStorage from "react-secure-storage";
 const ForgotPassword = ({ useremail, showChangePassword, setShowChangePassword }) => {
   const [email, setEmail] = useState(useremail);
   const [currentUser, setCurrentUser] = useState({});

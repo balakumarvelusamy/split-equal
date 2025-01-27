@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchUsers, deleteUser, sendEmail, UpdateUser, getCountryCurrency } from "../service/APIService"; // Assume sendOtp sends an OTP to the email
 import { Modal, Button } from "react-bootstrap";
 import close from "../images/delete.png";
-
+import secureLocalStorage from "react-secure-storage";
 const Profile = () => {
   const [sessionInitialized, setSessionInitialized] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -27,7 +27,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); // Initialize navigate
   const [deleteSuccess, setDeleteSuccess] = useState(false);
-  const loggedInUserEmail = localStorage.getItem("loggedInUserEmail");
+  const loggedInUserEmail = secureLocalStorage.getItem("loggedInUserEmail");
   const [showModal, setShowModal] = useState(false);
   useEffect(() => {
     const initializeUserSession = async () => {
@@ -37,10 +37,10 @@ const Profile = () => {
       }
       const countryList = getCountryCurrency().map((item) => item.country);
       setCountries(countryList);
-      const isBiometricEnabled = localStorage.getItem("biometricEnabled") === "true";
+      const isBiometricEnabled = secureLocalStorage.getItem("biometricEnabled") === "true";
       setBiometricEnabled(isBiometricEnabled);
-      const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
-      const guestUser = JSON.parse(localStorage.getItem("guestUser"));
+      const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+      const guestUser = JSON.parse(secureLocalStorage.getItem("guestUser"));
       if (sessionUser && loggedInUserEmail != "guest") {
         setLoggedInUser(sessionUser.email);
         setLoggedInUserName(sessionUser.name);
@@ -81,9 +81,9 @@ const Profile = () => {
   };
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out from all apps?")) {
-      localStorage.removeItem("loggedInUser");
-      localStorage.removeItem("guestUser");
-      localStorage.setItem("isLoggedOut", true);
+      secureLocalStorage.removeItem("loggedInUser");
+      secureLocalStorage.removeItem("guestUser");
+      secureLocalStorage.setItem("isLoggedOut", true);
       navigate("/");
     }
   };
@@ -99,8 +99,8 @@ const Profile = () => {
           const deleteResponse = await deleteUser(users.id);
           setLoggedInUser("");
           setLoggedInUserName("");
-          localStorage.removeItem("loggedInUser");
-          localStorage.setItem("isLoggedOut", true);
+          secureLocalStorage.removeItem("loggedInUser");
+          secureLocalStorage.setItem("isLoggedOut", true);
           alert("Profile deleted successfully.");
           setDeleteSuccess(true);
         } else {
@@ -120,9 +120,9 @@ const Profile = () => {
 
     if (loggedInUserEmail === "guest") {
       // Handle guest user update in localStorage
-      const guestUser = JSON.parse(localStorage.getItem("guestUser"));
+      const guestUser = JSON.parse(secureLocalStorage.getItem("guestUser"));
       guestUser.country = selectedCountry;
-      localStorage.setItem("guestUser", JSON.stringify(guestUser));
+      secureLocalStorage.setItem("guestUser", JSON.stringify(guestUser));
       alert("Country updated for guest user.");
     } else {
       // Handle logged-in user update via server
@@ -132,9 +132,9 @@ const Profile = () => {
         const updatedUser = { ...user, country: selectedCountry };
         console.log(updatedUser);
         await UpdateUser(updatedUser); // Update user on the server
-        const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+        const loggedInUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
         loggedInUser.country = selectedCountry;
-        localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+        secureLocalStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
         alert("Country updated successfully.");
       } catch (error) {
         console.error("Failed to update country:", error);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import secureLocalStorage from "react-secure-storage";
+import config from "../config.json";
 const RecipeInputForm = ({ onFetchRecipe }) => {
   const [ingredients, setIngredients] = useState([]);
   const [cuisine, setCuisine] = useState("");
@@ -8,11 +9,11 @@ const RecipeInputForm = ({ onFetchRecipe }) => {
   const [createdRecipes, setCreatedRecipes] = useState(0);
   const [remainingRecipes, setRemainingRecipes] = useState(0);
   const [isGuest, setIsGuest] = useState(false);
-  const [guestCount, setguestCount] = useState(2);
-  const [userCount, setUserCount] = useState(5);
+  const [guestCount, setguestCount] = useState(config.guestCount);
+  const [userCount, setUserCount] = useState(config.userCount);
   const [ingredientsCount, setIngredientsCount] = useState(10);
-
   const groceries = [
+    "Avacado",
     "Prawn",
     "Gongura",
     "Spinach",
@@ -353,7 +354,7 @@ const RecipeInputForm = ({ onFetchRecipe }) => {
     "Mead",
   ];
   useEffect(() => {
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    const loggedInUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
     setIsGuest(!loggedInUser); // If no user is logged in, it's a guest
 
     const today = new Date().toISOString().split("T")[0]; // Current date
@@ -398,7 +399,7 @@ const RecipeInputForm = ({ onFetchRecipe }) => {
         recipeData[today] = {};
       }
 
-      const email = JSON.parse(localStorage.getItem("loggedInUser"))?.email || "guest";
+      const email = JSON.parse(secureLocalStorage.getItem("loggedInUser"))?.email || "guest";
       recipeData[today][email] = (recipeData[today][email] || 0) + 1;
 
       secureLocalStorage.setItem("recipeData", JSON.stringify(recipeData));
@@ -420,7 +421,7 @@ const RecipeInputForm = ({ onFetchRecipe }) => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="mt-0">
-        <label>Available Ingredients:</label>
+        <label>Available Ingredients:(🧅🍅🧄🍤🍖🌶️🥦🫛🥑🥥)</label>
         <div
           style={{
             border: "0px solid #ccc",

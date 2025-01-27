@@ -17,9 +17,9 @@ const Home = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loggedInUser, setLoggedInUser] = useState(null);
   const navigate = useNavigate();
-  const loggedInUserEmail = localStorage.getItem("loggedInUserEmail");
+  const loggedInUserEmail = secureLocalStorage.getItem("loggedInUserEmail");
   useEffect(() => {
-    const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
 
     setLoggedInUser(sessionUser);
   }, [loading]);
@@ -88,9 +88,9 @@ const Home = () => {
   };
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out from all apps?")) {
-      localStorage.removeItem("loggedInUser");
-      localStorage.removeItem("guestUser");
-      localStorage.setItem("isLoggedOut", true);
+      secureLocalStorage.removeItem("loggedInUser");
+      secureLocalStorage.removeItem("guestUser");
+      secureLocalStorage.setItem("isLoggedOut", true);
       navigate("/");
     }
   };
@@ -112,11 +112,11 @@ const Home = () => {
         </div>
       )}
       <div className="">
-        <div align="left">
+        <div align="center">
           <span className="">
             <small>Dont know what to Cook?</small>
           </span>
-          <p className=" fw-bold myapp-color-primary">Let's Curate your Recipe with your Cooking Assistant</p>
+          <p className="fw-bold myapp-color-primary">Let's Curate your Recipe with your Cooking Assistant</p>
         </div>
       </div>
       <div className="p-1 rounded bg-light">

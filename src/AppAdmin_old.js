@@ -11,7 +11,7 @@ import Profile from "./adminPages/Profile";
 const App1 = () => {
   const [email, setEmail] = useState("");
   useEffect(() => {
-    const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
     if (sessionUser) {
       setEmail(sessionUser.email);
     }

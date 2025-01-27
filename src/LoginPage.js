@@ -5,6 +5,7 @@ import { Col, Image, Row, Modal, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import CryptoJS from "crypto-js";
 import { FiEye, FiEyeOff, FiX, FiChevronDown } from "react-icons/fi";
+import secureLocalStorage from "react-secure-storage";
 import "./styles/LoginPage.css";
 import "./App.css";
 import config from "./config.json";
@@ -42,8 +43,8 @@ const LoginPage = ({ onLogin }) => {
   const CLIENT_ID = process.env.REACT_APP_CLIENTID_GOOGLE;
   const googleButtonRef = useRef(null);
   useEffect(() => {
-    const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    const useremail = localStorage.getItem("loggedInUserEmail");
+    const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+    const useremail = secureLocalStorage.getItem("loggedInUserEmail");
     const countryList = getCountryCurrency().map((item) => item.country);
     setCountries(countryList);
     if (sessionUser) {

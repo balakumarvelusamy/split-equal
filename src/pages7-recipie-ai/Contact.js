@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { sendEmail, addData, getData, deleteData } from "../service/APIService";
 import uuid from "react-uuid";
 import { Modal, Button } from "react-bootstrap";
+import secureLocalStorage from "react-secure-storage";
 const Contact = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -30,8 +31,8 @@ const Contact = () => {
     setShowModal(false); // Hide the modal
   };
   useEffect(() => {
-    const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    const guestUser = JSON.parse(localStorage.getItem("guestUser"));
+    const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+    const guestUser = JSON.parse(secureLocalStorage.getItem("guestUser"));
     if (sessionUser) {
       setName(sessionUser.name || "guest");
       setEmail(sessionUser.email || "");

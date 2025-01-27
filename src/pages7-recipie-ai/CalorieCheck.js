@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { uploadFileToS3, imagetoCaption, addData, formatRecipe } from "../service/APIService";
 import { v4 as uuid } from "uuid";
-import secureLocalStorage from "react-secure-storage";
 import CalorieHistoryComponent from "./CalorieHistoryComponent";
 import NutritionComponent from "./NutritionComponent";
-
+import secureLocalStorage from "react-secure-storage";
 import Loading from "./Loading";
 import img5 from "../images/pot.gif";
 import logo from "../images/recipeailogo.jpg";
+import config from "../config.json";
 const ImageUpload = () => {
   const [file, setFile] = useState(null); // Stores the uploaded file
   const [imageUrl, setImageUrl] = useState(""); // Stores the S3 URL
@@ -18,10 +18,10 @@ const ImageUpload = () => {
   const [nutritionInfo, setNutritionInfo] = useState({ title: "", calories: "", carbs: "", protein: "", fat: "" });
   const [remainingUploads, setRemainingUploads] = useState(0);
   const [isGuest, setIsGuest] = useState(false);
-  const [guestCount, setguestCount] = useState(2);
-  const [userCount, setUserCount] = useState(5);
+  const [guestCount, setguestCount] = useState(config.guestCount);
+  const [userCount, setUserCount] = useState(config.userCount);
 
-  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  const loggedInUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
   const userKey = loggedInUser?.email || "guest";
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
@@ -92,7 +92,7 @@ const ImageUpload = () => {
       // Update daily uploads in local storage
       const today = new Date().toISOString().split("T")[0];
       const recipeData = JSON.parse(secureLocalStorage.getItem("UploadrecipeData")) || {};
-      const userKey = JSON.parse(localStorage.getItem("loggedInUser"))?.email || "guest";
+      const userKey = JSON.parse(secureLocalStorage.getItem("loggedInUser"))?.email || "guest";
 
       if (!recipeData[today]) {
         recipeData[today] = {};
