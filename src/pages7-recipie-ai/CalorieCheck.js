@@ -189,7 +189,7 @@ const ImageUpload = () => {
           {/* Camera Button */}
           <button
             type="button"
-            className="btn btn-warning bg-myapp-recipe-ai-warning px-4"
+            className="bt bg-myapp-recipe-ai-warning px-4"
             onClick={() => document.getElementById("cameraInput").click()} // Trigger hidden camera input
             disabled={loading || uploaded || remainingUploads === 0}
           >
@@ -216,7 +216,7 @@ const ImageUpload = () => {
       </p>
       {!uploaded ? (
         <button
-          className="btn btn-warning bg-myapp-recipe-ai-warning mt-3 px-5"
+          className="btn btn-lg btn-warning bg-myapp-recipe-ai-warning mt-3 px-5 w-100"
           onClick={handleUpload}
           disabled={loading || file.length === 0 || remainingUploads === 0} // Disable if loading or no file selected
         >
@@ -229,42 +229,44 @@ const ImageUpload = () => {
       )}
 
       {error && <p className="text-danger mt-3">{error}</p>}
-      {loading ? (
-        <div align="center">
-          <Loading />
-          <p>
-            Calculating Calorie...
-            <span className="px-1">
-              <i className="fas fa-spinner fa-spin text-success"></i>
-            </span>
-          </p>
-        </div>
-      ) : (
-        <>
-          {imageUrl ? (
-            <div className="mt-4">
-              <div className="mt-2" align="center">
-                <img src={imageUrl} alt="Uploaded" className="rounded" style={{ maxWidth: "100%", maxHeight: "300px" }} />
-                <NutritionComponent nutritionInfo={nutritionInfo} />
+      <div className="bg-light p-2 mt-2 rounded">
+        {loading ? (
+          <div align="center">
+            <Loading />
+            <p>
+              Calculating Calorie...
+              <span className="px-1">
+                <i className="fas fa-spinner fa-spin text-success"></i>
+              </span>
+            </p>
+          </div>
+        ) : (
+          <>
+            {imageUrl ? (
+              <div className="mt-4">
+                <div className="mt-2" align="center">
+                  <img src={imageUrl} alt="Uploaded" className="rounded" style={{ maxWidth: "100%", maxHeight: "300px" }} />
+                  <NutritionComponent nutritionInfo={nutritionInfo} />
+                </div>
               </div>
-            </div>
-          ) : (
-            //sample before uploading image
-            <div className="mt-4">
-              <div className="mt-2" align="center">
-                <img src={logo} alt="Uploaded" className="rounded" style={{ maxWidth: "100%", maxHeight: "300px" }} />
-                <NutritionComponent nutritionInfo={[]} />
+            ) : (
+              //sample before uploading image
+              <div className="mt-4">
+                <div className="mt-2" align="center">
+                  <img src={logo} alt="Uploaded" className="rounded" style={{ maxWidth: "100%", maxHeight: "300px" }} />
+                  <NutritionComponent nutritionInfo={[]} />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {caption && (
-            <div className="mt-4">
-              <p>{formatRecipe(caption)}</p>
-            </div>
-          )}
-        </>
-      )}
+            {caption && (
+              <div className="mt-4">
+                <p>{formatRecipe(caption)}</p>
+              </div>
+            )}
+          </>
+        )}
+      </div>
       <div className="mt-3">
         <CalorieHistoryComponent showLatest={true} />
       </div>
