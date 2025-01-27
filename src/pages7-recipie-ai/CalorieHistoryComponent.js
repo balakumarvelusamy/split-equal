@@ -124,7 +124,7 @@ const CalorieHistoryComponent = ({ showLatest = false }) => {
                             </div>
                           </div>
                           <small className="">
-                            <p className="badge text-dark text-muted px-0 mb-0">{recipe.date}</p>
+                            {recipe.ainame} <p className="badge text-dark text-muted px-0 mb-0">{recipe.date}</p>
                           </small>
                         </div>
                       </span>

@@ -50,18 +50,16 @@ const ImageUpload = () => {
     const sanitizeValue = (value) => {
       return value
         .replace(/Approximately/gi, "")
-        .replace(/approximately/gi, "")
         .replace(/calories/gi, "")
-        .replace(/Calories/gi, "")
-        .replace(/\bgrams?\b/gi, "g")
+        .replace(/grams?\b/gi, "g")
         .trim();
     };
 
-    const titleMatch = caption.match(/\*\*Food Name:\*\* (.*?)\n/);
-    const caloriesMatch = caption.match(/\*\*Calories:\*\* (.*?)\n/);
-    const carbsMatch = caption.match(/\*\*Carbohydrates:\*\* (.*?)\n/);
-    const proteinMatch = caption.match(/\*\*Protein:\*\* (.*?)\n/);
-    const fatMatch = caption.match(/\*\*Fat:\*\* (.*?)\n/);
+    const titleMatch = caption.match(/\*\*Food Name:\*\* (.*?)(?:\n|$)/);
+    const caloriesMatch = caption.match(/\*\*Calories:\*\* (.*?)(?:\n|$)/);
+    const carbsMatch = caption.match(/\*\*Carbohydrates:\*\* (.*?)(?:\n|$)/);
+    const proteinMatch = caption.match(/\*\*Protein:\*\* (.*?)(?:\n|$)/);
+    const fatMatch = caption.match(/\*\*Fat:\*\* (.*?)(?:\n|$)/);
 
     return {
       title: titleMatch ? sanitizeValue(titleMatch[1]) : "Unknown",
@@ -153,6 +151,7 @@ const ImageUpload = () => {
       image: imageUrl,
       type: "recipe-ai-food-calorie",
       email: userKey,
+      ainame: config.image_caption_ai_service,
       date: new Date().toISOString().replace("T", " ").split(".")[0], // Current timestamp
     };
 

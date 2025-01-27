@@ -30,7 +30,7 @@ const NutritionComponent = ({ nutritionInfo }) => {
           </span>
           <span className="p-1 mb-0 mx-1 alert alert-danger w-50">
             <small className="mb-0">
-              <i class="fas fa-cheese px-1"></i>Fats
+              <i class="fas fa-cheese px-1"></i>Fat
               <p className="mb-0">{nutritionInfo.fat}</p>
             </small>
           </span>
