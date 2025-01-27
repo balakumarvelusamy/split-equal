@@ -89,10 +89,9 @@ const Home = () => {
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out from all apps?")) {
       localStorage.removeItem("loggedInUser");
+      localStorage.removeItem("guestUser");
       localStorage.setItem("isLoggedOut", true);
-      navigate("/app7/home");
-    } else {
-      navigate("/app7/home");
+      navigate("/");
     }
   };
   return (
@@ -103,7 +102,7 @@ const Home = () => {
             <small>Welcome, {(loggedInUser && loggedInUser.name) || "Guest"}!</small>
           </div>
           <div className="mb-0">
-            <a className="btn btn-sm w-auto text-danger px-2 mb-0 text-decoration-none " href="/app7/home" onClick={handleLogout}>
+            <a className="btn btn-sm w-auto text-danger px-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
               <small> Logout </small>
               <span>
                 <i className="fas fa-sign-out-alt"></i>

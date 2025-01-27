@@ -10,7 +10,11 @@ const Header = ({ title }) => (
         <h1 className="titlename-recipe-ai mb-0 text-nowrap w-75 px-3 p-3 ">{title}</h1>{" "}
       </div>
       <div> {process.env.REACT_APP_ENV === "QA" && <small className="px-2">NP</small>}</div>
-
+      <div className="px-2">
+        <a href="/">
+          <img src={home} alt="Logo" className="rounded" width="30" />
+        </a>
+      </div>
       <div className="px-2">
         <img src={logo} alt="Logo" className="rounded" width="40" />
       </div>

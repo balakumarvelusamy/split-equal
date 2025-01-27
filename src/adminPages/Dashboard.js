@@ -42,7 +42,7 @@ const Dashboard = () => {
     <div className="container">
       <h2>Admin Dashboard</h2>
       <div align="center">
-        <a href="/app7/home" className="btn btn-warning">
+        <a href="/" className="btn btn-warning">
           Home
         </a>
       </div>

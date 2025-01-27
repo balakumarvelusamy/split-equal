@@ -18,8 +18,8 @@ const ImageUpload = () => {
   const [nutritionInfo, setNutritionInfo] = useState({ title: "", calories: "", carbs: "", protein: "", fat: "" });
   const [remainingUploads, setRemainingUploads] = useState(0);
   const [isGuest, setIsGuest] = useState(false);
-  const [guestCount, setguestCount] = useState(1);
-  const [userCount, setUserCount] = useState(3);
+  const [guestCount, setguestCount] = useState(2);
+  const [userCount, setUserCount] = useState(5);
 
   const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
   const userKey = loggedInUser?.email || "guest";

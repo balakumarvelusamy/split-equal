@@ -12,7 +12,7 @@ const apps = [
   {
     name: "Recipe AI",
     shortname: "RecipeAI",
-    href: "/app7/home",
+    href: "/",
     image: recipeai,
     favotire: false,
     display: true,

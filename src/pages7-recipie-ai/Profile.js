@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import logout from "../images/logout.png";
-import Support from "../Manage/Contact";
+import Support from "./Contact";
 import config from "../config.json";
 import { useNavigate } from "react-router-dom";
 import { fetchUsers, deleteUser, sendEmail, UpdateUser, getCountryCurrency } from "../service/APIService"; // Assume sendOtp sends an OTP to the email
@@ -32,7 +32,7 @@ const Profile = () => {
   useEffect(() => {
     const initializeUserSession = async () => {
       if (deleteSuccess) {
-        navigate("/app7/home");
+        navigate("/");
         return;
       }
       const countryList = getCountryCurrency().map((item) => item.country);
@@ -82,10 +82,9 @@ const Profile = () => {
   const handleLogout = () => {
     if (window.confirm("Are you sure you want to log out from all apps?")) {
       localStorage.removeItem("loggedInUser");
+      localStorage.removeItem("guestUser");
       localStorage.setItem("isLoggedOut", true);
-      navigate("/app7/home");
-    } else {
-      navigate("/app7/home");
+      navigate("/");
     }
   };
   const handleDeleteProfile = async () => {
@@ -190,7 +189,7 @@ const Profile = () => {
             <p>Welcome, {loggedInUserName}!</p>
           </div>
           <div className="mb-0">
-            <a className="btn btn-sm w-auto text-dark bg-myapp-recipe-ai-warning px-2 mb-0 text-decoration-none " href="/app7/home" onClick={handleLogout}>
+            <a className="btn btn-sm w-auto text-dark bg-myapp-recipe-ai-warning px-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
               Logout{" "}
               <span>
                 <i className="fas fa-sign-out-alt"></i>
@@ -226,7 +225,7 @@ const Profile = () => {
 
         {loggedInUserEmail === "guest" && (
           <div align="center" className="p-3">
-            <a className="btn btn-sm w-auto text-dark bg-myapp-recipe-ai-warning p-2 mb-0 text-decoration-none " href="/app7/home" onClick={handleLogout}>
+            <a className="btn btn-sm w-auto text-dark bg-myapp-recipe-ai-warning p-2 mb-0 text-decoration-none " href="/" onClick={handleLogout}>
               Login to access all features
             </a>
           </div>

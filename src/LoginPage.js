@@ -515,12 +515,12 @@ const LoginPage = ({ onLogin }) => {
       </Modal>
       <footer className="bottom-nav bottom-nav-recipe-bottom-radius rounded-top bg-myapp-recipe-ai py-3">
         <small className="text-light px-2">
-          <small href="#">{config.footertext}</small>
+          <small>{config.footertext}</small>
           <div className="d-flex justify-content-center">
-            <a href="/public/privacypolicy" className=" px-2 text-decoration-underline ">
+            <a href="/privacypolicy" className=" px-2 text-decoration-underline ">
               Privacy Policy
             </a>
-            <a href="/public/contact" className=" px-2 text-decoration-underline ">
+            <a href="/contact" className=" px-2 text-decoration-underline ">
               Contact us
             </a>
           </div>

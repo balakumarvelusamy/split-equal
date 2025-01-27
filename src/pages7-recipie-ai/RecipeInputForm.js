@@ -8,8 +8,8 @@ const RecipeInputForm = ({ onFetchRecipe }) => {
   const [createdRecipes, setCreatedRecipes] = useState(0);
   const [remainingRecipes, setRemainingRecipes] = useState(0);
   const [isGuest, setIsGuest] = useState(false);
-  const [guestCount, setguestCount] = useState(1);
-  const [userCount, setUserCount] = useState(3);
+  const [guestCount, setguestCount] = useState(2);
+  const [userCount, setUserCount] = useState(5);
   const [ingredientsCount, setIngredientsCount] = useState(10);
 
   const groceries = [

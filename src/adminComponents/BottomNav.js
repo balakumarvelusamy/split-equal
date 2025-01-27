@@ -16,12 +16,12 @@ const BottomNav = () => (
       </span>
       <div>Support</div>
     </NavLink>
-    <NavLink to="/admin/shared" className={({ isActive }) => (isActive ? "active" : "")}>
+    {/* <NavLink to="/admin/shared" className={({ isActive }) => (isActive ? "active" : "")}>
       <span>
         <i className="fi fi-rr-lock"></i>
       </span>
       <div>Approvals</div>
-    </NavLink>
+    </NavLink> */}
   </nav>
 );
 

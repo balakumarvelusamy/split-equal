@@ -21,7 +21,7 @@ class ErrorBoundary extends React.Component {
         <div className="container p-4" align="center">
           <h2>Something went wrong. </h2>
           <br />
-          <a href="/app7/home" className="text-decoration-none text-dark p-1 px-3 rounded border bg-warning">
+          <a href="/" className="text-decoration-none text-dark p-1 px-3 rounded border bg-warning">
             Reload App
           </a>
         </div>
