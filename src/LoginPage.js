@@ -59,7 +59,7 @@ const LoginPage = ({ onLogin }) => {
   const decryptPassword = (encryptedPassword) => CryptoJS.AES.decrypt(encryptedPassword, SECRET_KEY).toString(CryptoJS.enc.Utf8);
   const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
   const handleSendOtp = async (e) => {
-    if (email === "" || name === "" || password === "" || country == "") {
+    if (email === "" || name === "" || password === "") {
       setError("Please fill all fields");
       setLoading(false);
       return;
@@ -110,7 +110,7 @@ const LoginPage = ({ onLogin }) => {
       setLoading(false);
       return;
     }
-    if (email === "" || name === "" || password === "" || country == "") {
+    if (email === "" || name === "" || password === "") {
       setError("Please fill all fields");
       setLoading(false);
       return;
@@ -450,33 +450,35 @@ const LoginPage = ({ onLogin }) => {
                     {showPassword ? <FiEyeOff /> : <FiEye />}
                   </button>
                 </div>
-                <div align="left">Country</div>
-                <div className="password-container" style={{ position: "relative", width: "100%" }}>
-                  <select value={country} onChange={(e) => setCountry(e.target.value)} required className="form-control">
-                    <option value="">Select a Country</option>
-                    {countries.map((countryName, index) => (
-                      <option key={index} value={countryName.toLowerCase()}>
-                        {countryName}
-                      </option>
-                    ))}
-                  </select>{" "}
-                  <button
-                    type="button"
-                    className="btn-eye text-danger"
-                    style={{
-                      position: "absolute",
-                      right: "10px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      background: "none",
-                      border: "none",
-                      color: "black",
-                      cursor: "pointer",
-                      padding: "0",
-                    }}
-                  >
-                    {<FiChevronDown />}
-                  </button>
+                <div className="d-none">
+                  <div align="left">Country</div>
+                  <div className="password-container" style={{ position: "relative", width: "100%" }}>
+                    <select value={country} onChange={(e) => setCountry(e.target.value)} required className="form-control">
+                      <option value="">Select a Country</option>
+                      {countries.map((countryName, index) => (
+                        <option key={index} value={countryName.toLowerCase()}>
+                          {countryName}
+                        </option>
+                      ))}
+                    </select>{" "}
+                    <button
+                      type="button"
+                      className="btn-eye text-danger"
+                      style={{
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        background: "none",
+                        border: "none",
+                        color: "black",
+                        cursor: "pointer",
+                        padding: "0",
+                      }}
+                    >
+                      {<FiChevronDown />}
+                    </button>
+                  </div>
                 </div>
               </>
             }
