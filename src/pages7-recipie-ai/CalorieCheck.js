@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { uploadFileToS3, imagetoCaption, addData, formatRecipe } from "../service/APIService";
+import { uploadFileToS3, imagetoCaption, imagetoCaptionUsingOpenAI, addData, formatRecipe } from "../service/APIService";
 import { v4 as uuid } from "uuid";
 import CalorieHistoryComponent from "./CalorieHistoryComponent";
 import NutritionComponent from "./NutritionComponent";
@@ -9,7 +9,7 @@ import img5 from "../images/pot.gif";
 import logo from "../images/recipeailogo.jpg";
 import config from "../config.json";
 const ImageUpload = () => {
-  const [file, setFile] = useState(null); // Stores the uploaded file
+  const [file, setFile] = useState([]); // Stores the uploaded file
   const [imageUrl, setImageUrl] = useState(""); // Stores the S3 URL
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -72,7 +72,7 @@ const ImageUpload = () => {
     };
   };
   const handleUpload = async () => {
-    if (!file) {
+    if (file.length === 0) {
       alert("Please select a file to upload.");
       return;
     }
@@ -85,6 +85,7 @@ const ImageUpload = () => {
       url = await uploadFileToS3(imagename, file);
       setImageUrl(url); // Set the S3 URL to display the image
       const generatedCaption = await GetImageCaption(url);
+
       const nutritionData = extractNutritionInfo(generatedCaption);
       setNutritionInfo(nutritionData);
       await saveDataToDB(nutritionData, url, generatedCaption);
@@ -105,7 +106,7 @@ const ImageUpload = () => {
     } catch (err) {
       console.error(err);
       setLoading(false);
-      setFile(null);
+      setFile([]);
       setCaption("");
       setNutritionInfo({ title: "Image", calories: "", carbs: "", protein: "", fat: "" });
       setUploaded(false);
@@ -117,7 +118,13 @@ const ImageUpload = () => {
   };
   const GetImageCaption = async (imageUrl) => {
     try {
-      const generatedCaption = await imagetoCaption(imageUrl); // Call the caption service
+      var generatedCaption;
+      if (config.image_caption_ai_service.toLowerCase() === "openai") {
+        generatedCaption = await imagetoCaptionUsingOpenAI(imageUrl);
+      } else {
+        generatedCaption = await imagetoCaption(imageUrl);
+      }
+
       setCaption(generatedCaption); // Update the caption state
       return generatedCaption;
     } catch (err) {
@@ -126,7 +133,7 @@ const ImageUpload = () => {
     }
   };
   const handleUploadAgain = () => {
-    setFile(null);
+    setFile([]);
     setImageUrl("");
     setCaption("");
     setError("");
@@ -163,13 +170,14 @@ const ImageUpload = () => {
       <h5 className="" align="center">
         <span className="p-1 px-2 ">Capture the Calories!</span>
       </h5>
-
+      <p className="mb-0"> Select or Captue Food Image and Upload</p>
       <div className="form-group d-flex align-items-center">
         <label htmlFor="fileUpload" className="mr-2 d-none">
           Select Image:
         </label>
         <div className="border border-warning p-1 rounded" style={{ display: "flex", gap: "10px" }}>
           {/* File Input */}
+
           <input
             type="file"
             id="fileUpload"
@@ -179,7 +187,6 @@ const ImageUpload = () => {
             accept="image/*" // Allow only image files
             style={{ flex: 1 }} // Adjust width to align with the camera button
           />
-
           {/* Camera Button */}
           <button
             type="button"
@@ -189,7 +196,6 @@ const ImageUpload = () => {
           >
             {uploaded || file ? <i className="fas fa-check"></i> : <i className="fas fa-camera"></i>}
           </button>
-
           {/* Hidden Camera Input */}
           <input
             type="file"
@@ -213,9 +219,9 @@ const ImageUpload = () => {
         <button
           className="btn btn-warning bg-myapp-recipe-ai-warning mt-3 px-5"
           onClick={handleUpload}
-          disabled={loading || !file || remainingUploads === 0} // Disable if loading or no file selected
+          disabled={loading || file.length === 0 || remainingUploads === 0} // Disable if loading or no file selected
         >
-          {loading ? "Uploading..." : "Upload"}
+          {loading ? "Uploading..." : remainingUploads === 0 ? "Limit Reached Today" : "Upload"}
         </button>
       ) : (
         <button className="btn btn-secondary mt-3" onClick={handleUploadAgain}>

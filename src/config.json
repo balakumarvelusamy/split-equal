@@ -6,6 +6,8 @@
   "iosurl": "",
   "androidurl": "",
   "welcometext": "",
-  "guestCount": 2,
-  "userCount": 5
+  "guestCount": 1,
+  "userCount": 3,
+  "image_caption_ai_service": "openai",
+  "image_ai_all": "openai,gemini"
 }
