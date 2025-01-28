@@ -74,8 +74,7 @@ const Contact = () => {
           <select value={category} onChange={(e) => setCategory(e.target.value)} className="form-control">
             <option value="general issue">General Issue</option>
             <option value="feedback">Feedback</option>
-            <option value="app-suggestion">New App Suggestion for Daily Use</option>
-            <option value="apps">Apps</option>
+            <option value="app-suggestion">App Issue</option>
             <option value="Others">Others</option>
           </select>
         </div>
