@@ -21,7 +21,7 @@
 .container
 {
   margin-top: 70px;
-  margin-bottom: 90px;
+  margin-bottom: 70px;
 }
 .bottomspace{
   margin-bottom: 140px !important;
@@ -114,4 +114,16 @@ width: 20px !important;
 }
 .myapp-color-primary {
   color:#4386aa !important;
+}
+.bg-color-login {
+  background: linear-gradient(to bottom,
+      rgba(237, 191, 89, 0.1),
+      /* Yellow with 0.1 opacity */
+      rgba(255, 255, 255, 0.2),
+      /* White with 0.2 opacity */
+      rgba(67, 134, 170, 0.1)
+      /* Blue with 0.1 opacity */
+    );
+  color: #ffffff !important;
+  /* Default text color */
 }

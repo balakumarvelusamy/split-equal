@@ -147,34 +147,36 @@ const MainApp = () => {
               </div>
             </div>
           </header>
-          <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "80vh", display: "flex", flexDirection: "column" }}>
-            <div
-              style={{
-                maxWidth: "80vh",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                overflow: "none",
-              }}
-            >
-              <div className="mb-0 text-center">
-                <h5 className="fw-bold myapp-color-primary">Welcome to {config.apptitle}</h5>
-                <p className="app-description">{config.appdescription}</p>
-              </div>
+          <div className="container">
+            <div className="bg-color-login rounded d-flex justify-content-center align-items-center" style={{ maxHeight: "auto", display: "flex", flexDirection: "column" }}>
+              <div
+                style={{
+                  maxWidth: "80vh",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  overflow: "none",
+                }}
+              >
+                <div className="mb-0 text-center">
+                  <h5 className="fw-bold myapp-color-primary mt-2">Welcome to {config.apptitle}</h5>
+                  <p className="app-description">{config.appdescription}</p>
+                </div>
 
-              <AppCarousel />
+                <AppCarousel />
 
-              <div className="mt-3">
-                <img src={banner} className="rounded" height="200" alt="Login Banner" />
-              </div>
+                <div className="mt-3">
+                  <img src={banner} className="rounded" height="200" alt="Login Banner" />
+                </div>
 
-              <LoginPage onLogin={handleLogin} />
+                <LoginPage onLogin={handleLogin} />
 
-              <div className="container mt-4 text-center">
-                <p>
-                  <small className="app-description px-2 pb-0">{config.appdescription2}</small>
-                </p>
-                <small className="app-description fw-light px-2 pb-0 mt-1">{config.appdescription3}</small>
+                <div className="container mt-4 text-center">
+                  {/* <p>
+                    <small className="app-description px-2 pb-0">{config.appdescription2}</small>
+                  </p> */}
+                  <small className="app-description fw-light px-2 pb-0 mt-1">{config.appdescription3}</small>
+                </div>
               </div>
             </div>
           </div>
