@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import ErrorBoundary from "./ErrorBoundary";
 import secureLocalStorage from "react-secure-storage";
+import logo from "./images/recipeailogo.jpg";
 //private
 import Home from "./pages7-recipie-ai/Home"; // Recipe AI
 import History from "./pages7-recipie-ai/History";
@@ -133,27 +134,64 @@ const MainApp = () => {
     } else {
       // Redirect to Login Page
       return (
-        <div>
-          <div className="container mb-0 d-flex flex-column align-items-center">
-            <p className="mb-0">Welcome to {config.apptitle}</p>
-            <p align="center" className="app-description">
-              {config.appdescription}
-            </p>
+        <>
+          <header className="header bg-myapp-recipe-ai ">
+            <div className="d-flex justify-content-between align-items-center">
+              <div className="flex-grow-1">
+                <h1 className="titlename-recipe-ai mb-0 text-nowrap w-75 px-3 p-3 ">{config.apptitle}</h1>{" "}
+              </div>
+              <div> {process.env.REACT_APP_ENV === "QA" && <small className="px-2">NP</small>}</div>
+
+              <div className="px-2">
+                <img src={logo} alt="Logo" className="rounded" width="45" />
+              </div>
+            </div>
+          </header>
+          <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "80vh", display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                maxWidth: "80vh",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                overflow: "none",
+              }}
+            >
+              <div className="mb-0 text-center">
+                <h5 className="fw-bold myapp-color-primary">Welcome to {config.apptitle}</h5>
+                <p className="app-description">{config.appdescription}</p>
+              </div>
+
+              <AppCarousel />
+
+              <div className="mt-3">
+                <img src={banner} className="rounded" height="200" alt="Login Banner" />
+              </div>
+
+              <LoginPage onLogin={handleLogin} />
+
+              <div className="container mt-4 text-center">
+                <p>
+                  <small className="app-description px-2 pb-0">{config.appdescription2}</small>
+                </p>
+                <small className="app-description fw-light px-2 pb-0 mt-1">{config.appdescription3}</small>
+              </div>
+            </div>
           </div>
-          <AppCarousel />
-          <div className="mt-0 d-flex flex-column align-items-center">
-            <img src={banner} className="rounded" height="200" alt="Login Banner" />
-          </div>
-          <LoginPage onLogin={handleLogin} />{" "}
-          <div className="container mt-4 d-flex flex-column align-items-center">
-            <small align="center" className="app-description px-2 pb-0">
-              {config.appdescription2}
+          <footer className="bottom-nav bottom-nav-recipe-bottom-radius rounded-top bg-myapp-recipe-ai py-3">
+            <small className="text-light px-2">
+              <small>{config.footertext}</small>
+              <div className="d-flex justify-content-center">
+                <a href="/privacypolicy" className=" px-2 text-decoration-underline ">
+                  Privacy Policy
+                </a>
+                <a href="/contact" className=" px-2 text-decoration-underline ">
+                  Contact us
+                </a>
+              </div>
             </small>
-            <small align="center" className="app-description fw-light px-2 pb-0 mt-1">
-              {config.appdescription3}
-            </small>
-          </div>{" "}
-        </div>
+          </footer>
+        </>
       );
     }
   };
