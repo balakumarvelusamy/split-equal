@@ -215,7 +215,7 @@ const ImageUpload = () => {
           {/* Camera Button */}
           <button
             type="button"
-            className="bt bg-myapp-recipe-ai-warning px-4"
+            className="btn bg-myapp-recipe-ai-warning px-4"
             onClick={() => document.getElementById("cameraInput").click()} // Trigger hidden camera input
             disabled={loading || uploaded || remainingUploads === 0}
           >
