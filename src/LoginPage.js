@@ -369,7 +369,7 @@ const LoginPage = ({ onLogin }) => {
                   <small>Login with Email</small>
                 </button>
               </div>
-              <div id="googlebutton" className="" align="center">
+              <div id="googlebutton" className="d-none" align="center">
                 {loading ? (
                   <p className="p-1 mb-0 border w-auto rounded mt-2 loginbtn" align="center">
                     <span className="px-1">

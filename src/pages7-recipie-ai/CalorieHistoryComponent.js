@@ -88,61 +88,65 @@ const CalorieHistoryComponent = ({ showLatest = false }) => {
         <p>No recipes found.</p>
       ) : (
         <div className="recipe-history-list">
-          {filteredRecipes.slice(0, visibleRecipes).map((recipe) => (
-            <div key={recipe.id} className="recipe-card border p-1 rounded mt-1">
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="d-flex justify-content-start align-items-center">
-                  <div>{recipe.image ? <img src={recipe.image} alt={recipe.title} className="rounded" style={{ width: "80px", height: "80px", objectFit: "cover" }} /> : <img src={logo} alt={recipe.title} className="rounded" style={{ width: "80px", height: "80px", objectFit: "cover" }} />}</div>
-                  <div className="px-2">
-                    <h6 className="mb-0 text-success" style={{ cursor: "pointer" }} onClick={() => handleShowModal(recipe)}>
-                      {recipe.title && recipe.title.replace(/"/g, "").trim()}
-                    </h6>{" "}
-                    <small className="d-none">
-                      <p className="badge text-dark text-muted px-0 mb-0">{recipe.date}</p>
-                    </small>
-                    <small>
-                      <span>
-                        <div className="mt-2" style={{ maxWidth: "100%", maxHeight: "70px", overflow: "hidden" }}>
-                          <div>
-                            <span className="badge bg-warning text-dark mx-1">
-                              {" "}
-                              <i class="fas fa-fire px-1"></i> {recipe.calories}
-                            </span>
-                            <span className="badge bg-secondary mx-1">
-                              <i class="fas fa-seedling px-1"></i>
-                              {recipe.carbs}
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-between">
-                            <div>
-                              <span className="badge bg-success mx-1">
-                                <i class="fas fa-drumstick-bite"></i> {recipe.protein}
-                              </span>
-                              <span className="badge bg-danger mx-1">
-                                <i class="fas fa-cheese px-1"></i> {recipe.fat}
-                              </span>
+          <div className="row">
+            {filteredRecipes.slice(0, visibleRecipes).map((recipe) => (
+              <div key={recipe.id} className="col-12 col-md-6 mb-1">
+                <div className="recipe-card border p-1 rounded">
+                  <div className="d-flex justify-content-between align-items-center ">
+                    <div className="d-flex justify-content-start align-items-center">
+                      <div>{recipe.image ? <img src={recipe.image} alt={recipe.title} className="rounded" style={{ width: "80px", height: "80px", objectFit: "cover" }} /> : <img src={logo} alt={recipe.title} className="rounded" style={{ width: "80px", height: "80px", objectFit: "cover" }} />}</div>
+                      <div className="px-2">
+                        <h6 className="mb-0 text-success" style={{ cursor: "pointer" }} onClick={() => handleShowModal(recipe)}>
+                          {recipe.title && recipe.title.replace(/"/g, "").trim()}
+                        </h6>{" "}
+                        <small className="d-none">
+                          <p className="badge text-dark text-muted px-0 mb-0">{recipe.date}</p>
+                        </small>
+                        <small>
+                          <span>
+                            <div className="mt-2" style={{ maxWidth: "100%", maxHeight: "70px", overflow: "hidden" }}>
+                              <div>
+                                <span className="badge bg-warning text-dark mx-1">
+                                  {" "}
+                                  <i class="fas fa-fire px-1"></i> {recipe.calories}
+                                </span>
+                                <span className="badge bg-secondary mx-1">
+                                  <i class="fas fa-seedling px-1"></i>
+                                  {recipe.carbs}
+                                </span>
+                              </div>
+                              <div className="d-flex justify-content-between">
+                                <div>
+                                  <span className="badge bg-success mx-1">
+                                    <i class="fas fa-drumstick-bite"></i> {recipe.protein}
+                                  </span>
+                                  <span className="badge bg-danger mx-1">
+                                    <i class="fas fa-cheese px-1"></i> {recipe.fat}
+                                  </span>
+                                </div>
+                              </div>
+                              <small className="">
+                                <span className="d-none">{recipe.ainame}</span> <p className="badge text-dark text-muted px-0 mb-0">{recipe.date}</p>
+                              </small>
                             </div>
-                          </div>
-                          <small className="">
-                            <span className="d-none">{recipe.ainame}</span> <p className="badge text-dark text-muted px-0 mb-0">{recipe.date}</p>
-                          </small>
-                        </div>
-                      </span>
-                    </small>
-                  </div>{" "}
-                </div>
-                <div className="">
-                  {showLatest ? (
-                    ""
-                  ) : (
-                    <button className="btn btn-light text-danger btn-sm " onClick={() => handleDeleteRecipe(recipe.id)}>
-                      <i className="fi fi-rr-trash"></i>
-                    </button>
-                  )}
+                          </span>
+                        </small>
+                      </div>{" "}
+                    </div>
+                    <div className="">
+                      {showLatest ? (
+                        ""
+                      ) : (
+                        <button className="btn btn-light text-danger btn-sm " onClick={() => handleDeleteRecipe(recipe.id)}>
+                          <i className="fi fi-rr-trash"></i>
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
           {visibleRecipes < filteredRecipes.length && (
             <div align="center" className="mt-3">
               <button className="btn btn-warning p-1" onClick={handleLoadMore}>

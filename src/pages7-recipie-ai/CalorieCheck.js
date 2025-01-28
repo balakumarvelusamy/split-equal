@@ -200,7 +200,7 @@ const ImageUpload = () => {
         <label htmlFor="fileUpload" className="mr-2 d-none">
           Select Image:
         </label>
-        <div className="border border-warning p-1 rounded" style={{ display: "flex", gap: "10px" }}>
+        <div className="border border-warning p-1 rounded w-100" style={{ display: "flex", gap: "10px" }}>
           {/* File Input */}
 
           <input

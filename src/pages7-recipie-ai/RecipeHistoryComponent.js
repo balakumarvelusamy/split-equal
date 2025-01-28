@@ -89,34 +89,40 @@ const RecipeHistoryComponent = ({ showLatest = false }) => {
         <p>No recipes found.</p>
       ) : (
         <div className="recipe-history-list">
-          {filteredRecipes.slice(0, visibleRecipes).map((recipe) => (
-            <div key={recipe.id} className="recipe-card border p-1 rounded mt-1">
-              <div className="d-flex justify-content-start align-items-center">
-                <div>{recipe.image ? <img src={recipe.image} alt={recipe.title} className="rounded" style={{ width: "80px", height: "80px", objectFit: "cover" }} /> : <img src={logo} alt={recipe.title} className="rounded" style={{ width: "80px", height: "80px", objectFit: "cover" }} />}</div>
-                <div className="px-2">
-                  <h6 className="mb-0 text-success" style={{ cursor: "pointer" }} onClick={() => handleShowDetails(recipe)}>
-                    {recipe.title && recipe.title.replace(/"/g, "").trim()}
-                  </h6>
-                  <small>
-                    <span>
-                      <strong>Cuisine:</strong> {recipe.cuisine}
-                    </span>{" "}
-                    <span>
-                      <strong>Ingredients:</strong> {recipe.ingredients}
-                    </span>{" "}
-                    <p className="badge text-dark text-muted px-0 mb-0">{recipe.date}</p>
-                  </small>
+          <div className="row">
+            {filteredRecipes.slice(0, visibleRecipes).map((recipe) => (
+              <div key={recipe.id} className="col-12 col-md-6 mb-1">
+                <div className="recipe-card border p-1 rounded">
+                  <div className="d-flex justify-content-between align-items-center ">
+                    <div className="d-flex justify-content-start align-items-center">
+                      <div>{recipe.image ? <img src={recipe.image} alt={recipe.title} className="rounded" style={{ width: "80px", height: "80px", objectFit: "cover" }} /> : <img src={logo} alt={recipe.title} className="rounded" style={{ width: "80px", height: "80px", objectFit: "cover" }} />}</div>
+                      <div className="px-2">
+                        <h6 className="mb-0 text-success" style={{ cursor: "pointer" }} onClick={() => handleShowDetails(recipe)}>
+                          {recipe.title && recipe.title.replace(/"/g, "").trim()}
+                        </h6>
+                        <small>
+                          <span>
+                            <strong>Cuisine:</strong> {recipe.cuisine}
+                          </span>{" "}
+                          <span>
+                            <strong>Ingredients:</strong> {recipe.ingredients}
+                          </span>{" "}
+                          <p className="badge text-dark text-muted px-0 mb-0">{recipe.date}</p>
+                        </small>
+                      </div>
+                      {showLatest ? (
+                        ""
+                      ) : (
+                        <button className="btn  btn-light text-danger btn-sm " onClick={() => handleDeleteRecipe(recipe.id)}>
+                          <i className="fi fi-rr-trash"></i>
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                {showLatest ? (
-                  ""
-                ) : (
-                  <button className="btn  btn-light text-danger btn-sm " onClick={() => handleDeleteRecipe(recipe.id)}>
-                    <i className="fi fi-rr-trash"></i>
-                  </button>
-                )}
               </div>
-            </div>
-          ))}{" "}
+            ))}{" "}
+          </div>
           {visibleRecipes < filteredRecipes.length && (
             <div align="center" className="mt-3">
               <button className="btn btn-warning p-1" onClick={handleLoadMore}>
