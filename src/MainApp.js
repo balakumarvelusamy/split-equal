@@ -180,7 +180,7 @@ const MainApp = () => {
               </div>
             </div>
           </div>
-          <footer className="bottom-nav bottom-nav-recipe-bottom-radius rounded-top bg-myapp-recipe-ai py-3">
+          <footer className="bottom-nav bottom-nav-recipe-bottom-radius bg-myapp-recipe-ai py-3">
             <small className="text-light px-2">
               <small>{config.footertext}</small>
               <div className="d-flex justify-content-center">
