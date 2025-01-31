@@ -19,6 +19,7 @@ const Profile = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [otpInput, setOtpInput] = useState("");
   const [serverOtp, setServerOtp] = useState("");
+  const [role, setRole] = useState("");
   const [country, setCountry] = useState("");
   const [countries, setCountries] = useState([]);
   const [finalConfirm, setFinalConfirm] = useState(false);
@@ -45,11 +46,13 @@ const Profile = () => {
         setLoggedInUser(sessionUser.email);
         setLoggedInUserName(sessionUser.name);
         setCountry(sessionUser.country || "");
+        setRole(sessionUser.role);
         setSessionInitialized(true); // Set session as initialized after setting user
       } else {
         setLoggedInUser(guestUser.email);
         setLoggedInUserName(guestUser.name);
         setCountry(guestUser.country || "");
+        setRole("");
         setSessionInitialized(true); // Set session as initialized after setting user
       }
     };
@@ -303,7 +306,7 @@ const Profile = () => {
           </Modal.Footer>
         </Modal>
       </div>{" "}
-      {isAdminVisible && loggedInUser === "vbalakumar.cse@gmail.com" && (
+      {isAdminVisible && role === "admin" && (
         <div align="center">
           <div className="">
             <a href="/admin/dashboard" className="text-decoration-none btn btn-sm btn-warning mx-1">

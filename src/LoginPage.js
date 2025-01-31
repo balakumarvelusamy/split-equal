@@ -157,7 +157,7 @@ const LoginPage = ({ onLogin }) => {
       console.log("decryptedPassword", decryptedPassword);
       if (decryptedPassword === password) {
         setLoading(false);
-        onLogin({ email: storedUser.email, name: storedUser.name, country: storedUser.country || "" });
+        onLogin({ email: storedUser.email, name: storedUser.name, country: storedUser.country || "", role: storedUser.role });
         setError("");
         console.log(window.webkit, "window.webki");
       } else {
