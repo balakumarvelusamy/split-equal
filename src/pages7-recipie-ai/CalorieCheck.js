@@ -194,6 +194,21 @@ const ImageUpload = () => {
       setError("Failed to save data to the database.");
     }
   };
+  function openCamera() {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: "environment" } }) // Rear Camera
+        .then((stream) => {
+          console.log("Camera opened", stream);
+        })
+        .catch((error) => {
+          console.error("Error opening camera:", error);
+          alert("Camera access is not allowed or not supported.");
+        });
+    } else {
+      alert("Camera not supported on this browser.");
+    }
+  }
 
   return (
     <div className="container">
@@ -217,30 +232,47 @@ const ImageUpload = () => {
             accept="image/*" // Allow only image files
             style={{ flex: 1 }} // Adjust width to align with the camera button
           />
-          <>
-            {/* Camera Button */}
-            <button
-              type="button"
-              className="btn bg-myapp-recipe-ai-warning px-4"
-              onClick={() => document.getElementById("cameraInput").click()} // Trigger hidden camera input
-              disabled={loading || uploaded || remainingUploads === 0}
-            >
-              {uploaded || file?.length !== 0 ? <i className="fas fa-check"></i> : <i className="myapp-color-primary fas fa-camera"></i>}
-            </button>
-            {/* Hidden Camera Input */}
-            {!isAndroidWebView ? (
+          {!isAndroidWebView ? (
+            <>
+              {/* ios Camera Button */}
+              <button
+                type="button"
+                className="btn bg-myapp-recipe-ai-warning px-4"
+                onClick={() => document.getElementById("cameraInput").click()} // Trigger hidden camera input
+                disabled={loading || uploaded || remainingUploads === 0}
+              >
+                {uploaded || file?.length !== 0 ? <i className="fas fa-check"></i> : <i className="myapp-color-primary fas fa-camera"></i>}
+              </button>
+
+              <input type="file" id="cameraInput" className="d-none" onChange={handleFileChange} accept="image/*" capture="environment" />
+            </>
+          ) : (
+            <>
+              {/* this is for android */}
+              <button
+                type="button"
+                className="btn bg-myapp-recipe-ai px-4"
+                onClick={() => document.getElementById("cameraInput").click()} // Trigger hidden camera input
+                disabled={loading || uploaded || remainingUploads === 0}
+              >
+                {uploaded || file?.length !== 0 ? <i className="fas fa-check"></i> : <i className="myapp-color-warning fas fa-camera"></i>}
+              </button>
               <input
                 type="file"
                 id="cameraInput"
                 className="d-none"
-                onChange={handleFileChange}
                 accept="image/*"
-                capture="environment" // Opens the camera for image capture
+                capture="environment"
+                onClick={(e) => {
+                  if (/android/i.test(navigator.userAgent)) {
+                    e.preventDefault(); // Prevent default behavior on Android
+                    openCamera(); // Trigger camera manually
+                  }
+                }}
+                onChange={handleFileChange}
               />
-            ) : (
-              <input type="file" id="cameraInput" className="d-none" onChange={handleFileChange} accept="image/*" capture="camera" />
-            )}
-          </>
+            </>
+          )}
         </div>
       </div>
       <p className="mb-0">
