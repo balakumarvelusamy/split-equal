@@ -24,6 +24,11 @@ const ImageUpload = () => {
 
   const loggedInUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
   const userKey = loggedInUser?.email || "guest";
+
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  const isAndroidWebView = /Android.*(wv|Version\/[\d.]+).*Chrome/.test(userAgent);
+
+  console.log(isAndroidWebView ? "Running in Android WebView" : "Not in WebView");
   useEffect(() => {
     const today = new Date().toISOString().split("T")[0];
     const recipeData = JSON.parse(secureLocalStorage.getItem("UploadrecipeData")) || {};
@@ -212,24 +217,30 @@ const ImageUpload = () => {
             accept="image/*" // Allow only image files
             style={{ flex: 1 }} // Adjust width to align with the camera button
           />
-          {/* Camera Button */}
-          <button
-            type="button"
-            className="btn bg-myapp-recipe-ai-warning px-4"
-            onClick={() => document.getElementById("cameraInput").click()} // Trigger hidden camera input
-            disabled={loading || uploaded || remainingUploads === 0}
-          >
-            {uploaded || file?.length !== 0 ? <i className="fas fa-check"></i> : <i className="myapp-color-primary fas fa-camera"></i>}
-          </button>
-          {/* Hidden Camera Input */}
-          <input
-            type="file"
-            id="cameraInput"
-            className="d-none"
-            onChange={handleFileChange}
-            accept="image/*"
-            capture="environment" // Opens the camera for image capture
-          />
+          <>
+            {/* Camera Button */}
+            <button
+              type="button"
+              className="btn bg-myapp-recipe-ai-warning px-4"
+              onClick={() => document.getElementById("cameraInput").click()} // Trigger hidden camera input
+              disabled={loading || uploaded || remainingUploads === 0}
+            >
+              {uploaded || file?.length !== 0 ? <i className="fas fa-check"></i> : <i className="myapp-color-primary fas fa-camera"></i>}
+            </button>
+            {/* Hidden Camera Input */}
+            {!isAndroidWebView ? (
+              <input
+                type="file"
+                id="cameraInput"
+                className="d-none"
+                onChange={handleFileChange}
+                accept="image/*"
+                capture="environment" // Opens the camera for image capture
+              />
+            ) : (
+              <input type="file" id="cameraInput" className="d-none" onChange={handleFileChange} accept="image/*" capture="camera" />
+            )}
+          </>
         </div>
       </div>
       <p className="mb-0">
