@@ -257,20 +257,7 @@ const ImageUpload = () => {
               >
                 {uploaded || file?.length !== 0 ? <i className="fas fa-check"></i> : <i className="myapp-color-warning fas fa-camera"></i>}
               </button>
-              <input
-                type="file"
-                id="cameraInput"
-                className="d-none"
-                accept="image/*"
-                capture="environment"
-                onClick={(e) => {
-                  if (/android/i.test(navigator.userAgent)) {
-                    e.preventDefault(); // Prevent default behavior on Android
-                    openCamera(); // Trigger camera manually
-                  }
-                }}
-                onChange={handleFileChange}
-              />
+              <input type="file" id="cameraInput" className="d-none" accept="image/*" onChange={handleFileChange} />
             </>
           )}
         </div>
