@@ -147,8 +147,8 @@ const MainApp = () => {
               </div>
             </div>
           </header>
-          <div className="container">
-            <div className="bg-color-login rounded d-flex justify-content-center align-items-center" style={{ maxHeight: "auto", display: "flex", flexDirection: "column" }}>
+          <div className="container ">
+            <div className="bg-color-login1 rounded d-flex justify-content-center align-items-center" style={{ maxHeight: "auto", display: "flex", flexDirection: "column" }}>
               <div
                 style={{
                   maxWidth: "80vh",
