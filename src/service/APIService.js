@@ -25,17 +25,26 @@ export const saveUser = async (user) => {
 
 export const sendEmail = async (data) => {
   console.log("from service call start", data);
-  const response = await fetch(process.env.REACT_APP_EAMIL_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-    mode: "no-cors",
-    body: JSON.stringify(data),
-  })
-    .then((response) => response)
-    .catch((err) => err.response);
-  const result = await response;
-  console.log("email sent", result);
-  return result;
+
+  try {
+    const response = await fetch(process.env.REACT_APP_EAMIL_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    // Check if response is okay
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const result = await response; // Parse JSON response
+    console.log("Email sent successfully", result);
+    return result;
+  } catch (err) {
+    console.error("Error sending email", err);
+    return { error: err.message || "Unknown error occurred" };
+  }
 };
 
 // Save new expense to the server

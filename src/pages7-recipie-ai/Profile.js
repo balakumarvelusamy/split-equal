@@ -152,7 +152,7 @@ const Profile = () => {
     if (enteredEmail === loggedInUser) {
       const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Generate a 6-digit OTP
       const requestDateTime = new Date().toLocaleString();
-      const htmlContent = `<p>Your OTP code is: ${otp}</p><p>Requested on: ${requestDateTime}</p>`;
+      const htmlContent = `<p>Your OTP code is: <h2>${otp}</h2></p><p>Requested on: ${requestDateTime}</p>`;
 
       const emailData = {
         sender: process.env.REACT_APP_SENDEREMAIL,

@@ -27,7 +27,7 @@ const ForgotPassword = ({ useremail, showChangePassword, setShowChangePassword }
     const otp = generateOtp();
     setGeneratedOtp(otp);
     const requestDateTime = new Date().toLocaleString();
-    const htmlContent = `<p>Your OTP code is: {####}</p><p>Requested on: {REQUEST_TIME}</p>`;
+    const htmlContent = `<p>Your OTP code is: <h2>{####}</h2></p><p>Requested on: {REQUEST_TIME}</p>`;
     const bodytext = otp;
 
     let emailData = {
