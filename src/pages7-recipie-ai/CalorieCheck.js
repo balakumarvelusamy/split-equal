@@ -287,7 +287,7 @@ const ImageUpload = () => {
       {error && <p className="text-danger mt-3">{error}</p>}
       <div className="bg-light p-2 mt-2 rounded">
         {loading ? (
-          <div align="center">
+          <div align="center" className="bg-white rounded">
             <Loading />
             <p>
               Calculating Calorie...
