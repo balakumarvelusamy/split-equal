@@ -75,8 +75,11 @@ const ForgotPassword = ({ useremail, showChangePassword, setShowChangePassword }
     try {
       setLoading(true);
       const encryptedPassword = encryptPassword(newPassword);
-      // Assuming `updateUser` requires `id`, `email`, `name`, and `password`
-      await UpdateUser({ id: currentUser["id"], name: currentUser["name"], email, password: encryptedPassword });
+      const updatedUser = {
+        ...currentUser, // Keep existing properties
+        password: encryptedPassword, // Update password
+      };
+      await UpdateUser(updatedUser);
       alert("Password updated successfully.");
       setStep(1);
       setEmail("");
