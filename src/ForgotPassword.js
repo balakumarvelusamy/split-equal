@@ -1,5 +1,5 @@
 // src/ForgotPassword.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import config from "./config.json";
 import { UpdateUser, sendEmail, fetchUsers } from "./service/APIService"; // Helper function to send requests
 import "./styles/ForgotPassword.css"; // Add styles for this page
@@ -15,6 +15,7 @@ const ForgotPassword = ({ useremail, showChangePassword, setShowChangePassword }
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [sendingOtp, setsendingOtp] = useState(false);
+  const [countdown, setCountdown] = useState(0);
   const SECRET_KEY = process.env.REACT_APP_KEY;
   // Function to generate a random 6-digit OTP
   const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
@@ -47,6 +48,7 @@ const ForgotPassword = ({ useremail, showChangePassword, setShowChangePassword }
         const response = await sendEmail(emailData);
         alert("OTP sent to your email address." + emailData.recipient);
         setStep(2); // Move to the OTP verification step
+        setCountdown(30);
         setsendingOtp(false);
         setOtp("");
         setError("");
@@ -63,7 +65,12 @@ const ForgotPassword = ({ useremail, showChangePassword, setShowChangePassword }
       setOtp("");
     }
   };
-
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
   // Validate OTP and update password
   const handleResetPassword = async (e) => {
     e.preventDefault();
@@ -112,9 +119,13 @@ const ForgotPassword = ({ useremail, showChangePassword, setShowChangePassword }
         <form onSubmit={handleResetPassword}>
           <label>OTP:</label>
           <input type="number" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} required className="form-control" step="any" min="0" inputMode="decimal" />
-          <a className="toggle-link my-link my-2" align="right" onClick={handleSendOtp}>
-            {sendingOtp ? "Sending..." : "Re-Send OTP"}
-          </a>
+          {countdown > 0 ? (
+            <p className="text-muted">Re-send OTP in {countdown} sec...</p>
+          ) : (
+            <a className="toggle-link my-link my-2" align="right" onClick={handleSendOtp}>
+              {sendingOtp ? "Sending..." : "Re-Send OTP"}
+            </a>
+          )}
           <p className="mb-0">New Password:</p>
           <input type="password" placeholder="Enter new password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required className="form-control" />
           <button type="submit" className="btn btn-warning mt-2">
