@@ -104,16 +104,20 @@ width: 20px !important;
 }
 .bg-myapp-recipe-ai
 {
- background-color:  #4386aa !important;
+ background-color:  #16325B !important;
 }
 .bg-myapp-recipe-ai-warning {
-  background-color: #edbf59 !important;
+  background-color: #78B7D0 !important;
 }
 .myapp-color-warning {
- color: #edbf59 !important;
+ color: #FFDC7F !important;
 }
 .myapp-color-primary {
-  color:#4386aa !important;
+  color:#16325B !important;
+}
+.btn-warning
+{
+ background-color: #FFDC7F !important
 }
 .bg-color-login {
   background: linear-gradient(to bottom,

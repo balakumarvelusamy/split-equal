@@ -2,23 +2,29 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import ErrorBoundary from "./ErrorBoundary";
 import secureLocalStorage from "react-secure-storage";
-import logo from "./images/recipeailogo.jpg";
+import logo from "./images/splitequal.png";
 //private
-import Home from "./pages7-recipie-ai/Home"; // Recipe AI
+//import Home from "./pages7-recipie-ai/Home"; // Recipe AI
 import History from "./pages7-recipie-ai/History";
 import CalHistory from "./pages7-recipie-ai/CalHistory";
 import Blog from "./pages7-recipie-ai/Blog";
 import CalorieCheck from "./pages7-recipie-ai/CalorieCheck";
-import Profile from "./pages7-recipie-ai/Profile";
-import BottomNav from "./components7/BottomNav";
+//import Profile from "./pages7-recipie-ai/Profile";
 
-import Header from "./components7/Header";
+import Header from "./components2/Header";
+import BottomNav from "./components2/BottomNav";
+import Home from "./pages2/Home";
+import Profile from "./pages2/Profile";
+import ExpenseHistory from "./pages2/ExpenseHistory";
+import FriendDetail from "./pages2/FriendDetail";
+import Support from "./pages2/Support";
+
 import AppCarousel from "./AppCarousel";
 import LoginPage from "./LoginPage";
 //assets
 import "./MainApp.css";
 import "./styles/expensetracker.css";
-import banner from "./images/recipeailogo.jpg";
+import banner from "./images/splitequal.png";
 import config from "./config.json";
 import "./styles/BottomNav.css";
 import "./styles/Header.css";
@@ -105,7 +111,7 @@ const MainApp = () => {
   // Public Pages: No Login Required
   const PublicRoutes = () => (
     <>
-      <PublicHeader title="Recipe AI" />
+      <PublicHeader title={config.apptitle} />
       <Routes>
         <Route path="/contact" element={<Contact />} />
         <Route path="/privacypolicy" element={<PrivacyPolicy />} />
@@ -119,14 +125,14 @@ const MainApp = () => {
     if (isLoggedIn) {
       return (
         <>
-          <Header title="Recipe AI" />
+          <Header title={config.apptitle} />
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/caloriecheck" element={<CalorieCheck />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/calhistory" element={<CalHistory />} />
+            <Route path="home" element={<Home />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="friendslists" element={<ExpenseHistory />} />
+            <Route path="history" element={<ExpenseHistory />} />
+            <Route path="friend" element={<FriendDetail />} />
+            <Route path="support" element={<Support />} />
           </Routes>
           <BottomNav />
         </>

@@ -5,7 +5,7 @@ import todoList from "../images/todolist.jpg";
 import qrGenerator from "../images/qr.jpg";
 import bmiTracker from "../images/bmi.jpg";
 import money from "../images/money.jpg";
-import recipeai from "../images/recipeailogo.jpg";
+import recipeai from "../images/splitequal.png";
 import commingsoon from "../images/commingsoon.jpg";
 import config from "../config.json";
 const apps = [

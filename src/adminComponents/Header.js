@@ -1,7 +1,7 @@
 // src/components1/Header.js
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../images/recipeailogo.jpg";
+import logo from "../images/splitequal.png";
 const Header = ({ title }) => (
   <header className="header bg-myapp-recipe-ai ">
     <div className="d-flex justify-content-between align-items-center">

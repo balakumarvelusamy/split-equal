@@ -10,7 +10,7 @@ import "./styles/LoginPage.css";
 import "./App.css";
 import config from "./config.json";
 import banner from "./images/banner.jpg";
-import logo from "./images/recipeailogo.jpg";
+import logo from "./images/splitequal.png";
 import ForgotPassword from "./ForgotPassword";
 import close from "./images/delete.png";
 import { jwtDecode } from "jwt-decode";

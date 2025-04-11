@@ -6,7 +6,7 @@ import Loading from "./Loading";
 import RecipeHistoryComponent from "./RecipeHistoryComponent";
 import { getData, fetchRecipe, generateImage_usingBedrock, addData } from "../service/APIService";
 import { v4 as uuid } from "uuid";
-import recipeai from "../images/recipeailogo.jpg";
+import recipeai from "../images/splitequal.png";
 import secureLocalStorage from "react-secure-storage";
 import { useNavigate } from "react-router-dom";
 const Home = () => {
