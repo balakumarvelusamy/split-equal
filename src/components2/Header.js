@@ -6,7 +6,7 @@ const Header = ({ title }) => (
   <header className="header bg-myapp">
     <h1 className="titlename bg2-myapp mb-0 px-3 p-3  w-75">{title}</h1>
     {process.env.REACT_APP_ENV === "QA" && <small className="px-1">NonProd</small>}
-    <Link to="/home" className="home-link px-3 d-none">
+    <Link to="/" className="home-link px-3 d-none">
       <a className="navbar-brand text-white" href="/">
         <img src={home} alt="Logo" className="" width="30" />
       </a>

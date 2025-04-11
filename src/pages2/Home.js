@@ -5,6 +5,7 @@ import AddExpense from "./AddExpense";
 import BalanceSummary from "./BalanceSummary";
 import { getData, onAddFriendService, UpdateData, addData, deleteData } from "../service/APIService";
 import { v4 as uuid } from "uuid"; // Import UUID for unique IDs
+import secureLocalStorage from "react-secure-storage";
 import add from "../images/plus.png";
 import settle from "../images/accept.png";
 import bin from "../images/bin.png";
@@ -35,8 +36,8 @@ const Home = () => {
   const [settleUpAmounts, setSettleUpAmounts] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const loggedInUserEmail = localStorage.getItem("loggedInUserEmail");
-  const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  const loggedInUserEmail = secureLocalStorage.getItem("loggedInUserEmail");
+  const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
   const [refreshPosition, setRefreshPosition] = useState({ left: "50%", marginBottom: "75px" });
   const [isDragging, setIsDragging] = useState(false);
   // Fetch friends and expenses on mount
@@ -45,6 +46,7 @@ const Home = () => {
       if (!loggedInUserEmail) return;
       console.log("location.state?.refresh", location.state?.refresh || 0);
       console.log("refreshBalance_", refreshBalance_);
+      console.log("loggedInUserEmail", loggedInUserEmail);
       setLoading(true);
       try {
         const userFriends = await getData(loggedInUserEmail, "splitequal-friends");

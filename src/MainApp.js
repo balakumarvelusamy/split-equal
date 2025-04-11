@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "r
 import ErrorBoundary from "./ErrorBoundary";
 import secureLocalStorage from "react-secure-storage";
 import logo from "./images/splitequal.png";
+import { Link } from "react-router-dom";
 //private
 //import Home from "./pages7-recipie-ai/Home"; // Recipe AI
 import History from "./pages7-recipie-ai/History";
@@ -127,7 +128,7 @@ const MainApp = () => {
         <>
           <Header title={config.apptitle} />
           <Routes>
-            <Route path="home" element={<Home />} />
+            <Route path="" element={<Home />} />
             <Route path="profile" element={<Profile />} />
             <Route path="friendslists" element={<ExpenseHistory />} />
             <Route path="history" element={<ExpenseHistory />} />
@@ -141,18 +142,16 @@ const MainApp = () => {
       // Redirect to Login Page
       return (
         <>
-          <header className="header bg-myapp-recipe-ai ">
-            <div className="d-flex justify-content-between align-items-center">
-              <div className="flex-grow-1">
-                <h1 className="titlename-recipe-ai mb-0 text-nowrap w-75 px-3 p-3 ">{config.apptitle}</h1>{" "}
-              </div>
-              <div> {process.env.REACT_APP_ENV === "QA" && <small className="px-2">NP</small>}</div>
-
-              <div className="px-2">
-                <img src={logo} alt="Logo" className="rounded" width="45" />
-              </div>
+          <header className="header bg-myapp">
+            <h1 className="titlename bg2-myapp mb-0 px-3 p-3  w-75">{config.apptitle}</h1>
+            {process.env.REACT_APP_ENV === "QA" && <small className="px-1">NonProd</small>}
+            <div className="home-link px-3">
+              <a className="navbar-brand text-white" href="/">
+                <img src={logo} alt="Logo" className="" width="30" />
+              </a>
             </div>
           </header>
+
           <div className="container ">
             <div className="bg-color-login1 rounded d-flex justify-content-center align-items-center" style={{ maxHeight: "auto", display: "flex", flexDirection: "column" }}>
               <div
@@ -166,17 +165,18 @@ const MainApp = () => {
               >
                 <div className="mb-0 text-center">
                   <h5 className="fw-bold myapp-color-primary mt-2">Welcome to {config.apptitle}</h5>
-                  <p className="app-description">{config.appdescription}</p>
                 </div>
 
                 <AppCarousel />
 
                 <div className="mt-3">
-                  <img src={banner} className="rounded" height="200" alt="Login Banner" />
+                  <img src={banner} className="rounded" height="120" alt="Login Banner" />
                 </div>
 
                 <LoginPage onLogin={handleLogin} />
-
+                <p className="app-description mt-3" align="center">
+                  {config.appdescription}
+                </p>
                 <div className="container mt-4 text-center">
                   {/* <p>
                     <small className="app-description px-2 pb-0">{config.appdescription2}</small>

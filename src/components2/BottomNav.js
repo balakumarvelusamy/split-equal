@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 
 const BottomNav = () => (
   <nav className="bottom-nav bg-myapp">
-    <NavLink to="/home" className={({ isActive }) => (isActive ? "active" : "")}>
+    <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>
       <span>
         <i className="fi fi-rr-users"></i>
       </span>
@@ -24,9 +24,9 @@ const BottomNav = () => (
     </NavLink>
     <NavLink to="/support" className={({ isActive }) => (isActive ? "active" : "")}>
       <span>
-        <i className="fi fi-rr-headset"></i>
+        <i className="fi fi-rr-user"></i>
       </span>
-      <div>Support</div>
+      <div>Profile</div>
     </NavLink>
   </nav>
 );

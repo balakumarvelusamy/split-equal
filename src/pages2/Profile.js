@@ -3,11 +3,11 @@ import { getData, deleteData, UpdateData } from "../service/APIService";
 import { Link } from "react-router-dom";
 import { FaArrowRight, FaRegEdit } from "react-icons/fa";
 import { Button, Modal } from "react-bootstrap";
-
+import secureLocalStorage from "react-secure-storage";
 const Profile = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [loggedInUserName, setLoggedInUserName] = useState("");
-  const loggedInUserEmail = localStorage.getItem("loggedInUserEmail");
+  const loggedInUserEmail = secureLocalStorage.getItem("loggedInUserEmail");
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editFriend, setEditFriend] = useState(null); // For editing
@@ -17,8 +17,8 @@ const Profile = () => {
 
   useEffect(() => {
     const initializeUserSession = async () => {
-      const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
-      const guestUser = JSON.parse(localStorage.getItem("guestUser"));
+      const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+      const guestUser = JSON.parse(secureLocalStorage.getItem("guestUser"));
 
       if (sessionUser && loggedInUserEmail !== "guest") {
         setLoading(true);

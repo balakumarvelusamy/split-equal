@@ -7,6 +7,7 @@ import { Modal, Button } from "react-bootstrap";
 import { FaArrowLeft, FaSync } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import ExpenseComponent from "./ExpenseComponent";
+import secureLocalStorage from "react-secure-storage";
 const ExpenseList = () => {
   const navigate = useNavigate();
   const [expenses, setExpenses] = useState([]);
@@ -15,7 +16,7 @@ const ExpenseList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [visibleCount, setVisibleCount] = useState(10);
   const [refreshBalance_, setrefreshBalance_] = useState(0);
-  const loggedInUserEmail = localStorage.getItem("loggedInUserEmail");
+  const loggedInUserEmail = secureLocalStorage.getItem("loggedInUserEmail");
   const [loggedInUser, setLoggedInUser] = useState(null);
   const { friendemail } = useParams();
   const useQuery = () => {
@@ -27,7 +28,7 @@ const ExpenseList = () => {
     const friendemail = query.get("friendemail");
     console.log("friendemail", friendemail);
     const fetchExpenses = async () => {
-      const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
+      const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
       setLoggedInUser(sessionUser);
       setLoading(true);
       try {
