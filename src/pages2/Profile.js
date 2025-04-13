@@ -154,7 +154,7 @@ const Profile = () => {
                                 </span>
                               )}
                             </small>
-                            <p className="px-1 mb-0 fw-lighter">
+                            <p className="px-1 mb-0 color-myapp2">
                               <small>{friend.friendemail}</small>
                             </p>
                           </div>

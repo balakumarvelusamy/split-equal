@@ -18,8 +18,19 @@ code {
 .bg-myapp {
   background-color: #16325B !important;
 }
+.color-myapp .text-success {
+  color: #16325B !important;
+}
 
-.bg2-myapp {
+.text-success
+{
+  color: #16325B !important;
+}
+.color-myapp2 {
+  color: #78B7D0 !important;
+}
+
+.bg2-myapp, .accordion-button:not(.collapsed) {
   background-color: #78B7D0 !important;
 }
 
@@ -56,4 +67,7 @@ code {
       width: 100% !important;
       z-index: 1000;
 }
-
+.bg-warning .btn-warning
+{
+  background-color: #FFDC7F !important;
+}
