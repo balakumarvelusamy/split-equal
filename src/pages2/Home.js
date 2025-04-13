@@ -6,7 +6,7 @@ import BalanceSummary from "./BalanceSummary";
 import { getData, onAddFriendService, UpdateData, addData, deleteData } from "../service/APIService";
 import { v4 as uuid } from "uuid"; // Import UUID for unique IDs
 import secureLocalStorage from "react-secure-storage";
-import add from "../images/plus.png";
+import add from "../images/plus2.png";
 import settle from "../images/accept.png";
 import bin from "../images/bin.png";
 import close from "../images/delete.png";
@@ -264,7 +264,7 @@ const Home = () => {
                         </div>
 
                         <div className="text-nowrap">
-                          <a className="mx-1 p-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/app2/friend?id=${friend.id}&friendemail=${friend.friendemail}`}>
+                          <a className="mx-1 p-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/friend?id=${friend.id}&friendemail=${friend.friendemail}`}>
                             View <FaArrowRight className="me-1 text-success" />
                           </a>
                           <img
@@ -285,7 +285,7 @@ const Home = () => {
                             src={settle}
                             alt="Settle Up"
                             width="40"
-                            className="px-2 border rounded p-1 mx-1 d-none"
+                            className="px-2 border rounded p-1 mx-1 "
                             onClick={() => {
                               setrefreshBalance_(refreshBalance_ + 1);
                               setSelectedFriend(friend.friendname);
@@ -294,8 +294,8 @@ const Home = () => {
                               setShowSettleUp(true);
                               setFriendToSettle(friend);
                             }}
-                          /> 
-                          <SettleUp friend={friendToSettle} balance={settleUpAmounts} loggedInUser={loggedInUser} showSettleUp={showSettleUp} setShowSettleUp={setShowSettleUp} refreshBalance={refreshBalance} />*/}
+                          />
+                          <SettleUp friend={friendToSettle} balance={settleUpAmounts} loggedInUser={loggedInUser} showSettleUp={showSettleUp} setShowSettleUp={setShowSettleUp} refreshBalance={refreshBalance} /> */}
                         </div>
                       </div>
                     ))}
@@ -329,7 +329,7 @@ const Home = () => {
                                 setFriendToSettle(friend);
                               }}
                             />
-                            <a className="ms-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/app2/friend?id=${friend.id}&friendemail=${friend.friendemail}`}>
+                            <a className="ms-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/friend?id=${friend.id}&friendemail=${friend.friendemail}`}>
                               <FaArrowRight className="m-1 text-success" />
                             </a>
                           </span>

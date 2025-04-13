@@ -59,7 +59,7 @@ const AddFriend = ({ onAddFriend, country }) => {
         ))}
       </select>
 
-      <button type="submit" className="mt-3">
+      <button type="submit" className="bg-warning" className="mt-3">
         Add Friend
       </button>
     </form>

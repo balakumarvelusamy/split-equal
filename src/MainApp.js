@@ -5,12 +5,6 @@ import secureLocalStorage from "react-secure-storage";
 import logo from "./images/splitequal.png";
 import { Link } from "react-router-dom";
 //private
-//import Home from "./pages7-recipie-ai/Home"; // Recipe AI
-import History from "./pages7-recipie-ai/History";
-import CalHistory from "./pages7-recipie-ai/CalHistory";
-import Blog from "./pages7-recipie-ai/Blog";
-import CalorieCheck from "./pages7-recipie-ai/CalorieCheck";
-//import Profile from "./pages7-recipie-ai/Profile";
 
 import Header from "./components2/Header";
 import BottomNav from "./components2/BottomNav";
