@@ -90,7 +90,7 @@ export const addData = async (data) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    console.log("category saved");
+    console.log("Item saved");
   } catch (err) {
     console.log("Error saving category: ", err);
     throw err;
@@ -526,7 +526,6 @@ export const generateImage_usingBedrock = async (prompt) => {
         height: 512,
         width: 512,
         numberOfImages: 1,
-        env: process.env.REACT_APP_ENV,
       }),
     });
 
@@ -600,30 +599,6 @@ export const imagetoCaption = async (imageUrl) => {
     return data.caption; // Assuming the response contains a "caption" field
   } catch (error) {
     console.error("Error fetching caption:", error.message);
-    throw error;
-  }
-};
-export const imagetoCaptionUsingOpenAI = async (imageUrl) => {
-  try {
-    const response = await fetch(process.env.REACT_APP_AI_SERVICE_URL + "image-to-caption-open-ai", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        image_url: imageUrl,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const caption = data.choices?.[0]?.message?.content;
-    return caption;
-  } catch (error) {
-    console.log("Error fetching caption:", error.message);
     throw error;
   }
 };
