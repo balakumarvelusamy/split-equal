@@ -154,7 +154,7 @@ const Profile = () => {
                                 </span>
                               )}
                             </small>
-                            <p className="px-1 mb-0 fw-lighter">
+                            <p className="px-1 mb-0 color-myapp2">
                               <small>{friend.friendemail}</small>
                             </p>
                           </div>
@@ -167,10 +167,10 @@ const Profile = () => {
                                 </small>
                               </a>
                             )}
-                            <a className="px-1 border-end text-decoration-none   text-success d-none" href={`/app2/friend?id=${friend.id}&friendemail=${friend.friendemail}`} aria-label="View Friend">
+                            <a className="px-1 text-decoration-none  text-success" href={`/friend?id=${friend.id}&friendemail=${friend.friendemail}`} aria-label="View Friend">
                               {/* <FaArrowRight className="me-1 text-success" /> */} View
                             </a>
-                            <a className="px-1 text-decoration-none   text-success" onClick={() => handleEditClick(friend)} style={{ cursor: "pointer" }} aria-label="Edit Friend">
+                            <a className="px-1 text-decoration-none   text-success d-none" onClick={() => handleEditClick(friend)} style={{ cursor: "pointer" }} aria-label="Edit Friend">
                               {/* <FaRegEdit className="me-1 text-success" /> */} Edit
                             </a>
                           </div>
