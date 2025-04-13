@@ -161,13 +161,13 @@ const Profile = () => {
 
                           <div className="d-flex border rounded align-items-center gap-2 p-1 form-group">
                             {friend.balance === 0 && (
-                              <a className="text-danger border-end1 px-1 " onClick={() => removeFriend(friend.id)} style={{ cursor: "pointer" }} aria-label="Remove Friend">
+                              <a className="text-danger border-end px-1 " onClick={() => removeFriend(friend.id)} style={{ cursor: "pointer" }} aria-label="Remove Friend">
                                 <small>
                                   <i className="fas fa-trash-alt px-1"></i>
                                 </small>
                               </a>
                             )}
-                            <a className="px-1 border-end text-decoration-none   text-success d-none" href={`/app2/friend?id=${friend.id}&friendemail=${friend.friendemail}`} aria-label="View Friend">
+                            <a className="px-1 text-decoration-none  text-success" href={`/friend?id=${friend.id}&friendemail=${friend.friendemail}`} aria-label="View Friend">
                               {/* <FaArrowRight className="me-1 text-success" /> */} View
                             </a>
                             <a className="px-1 text-decoration-none   text-success d-none" onClick={() => handleEditClick(friend)} style={{ cursor: "pointer" }} aria-label="Edit Friend">
