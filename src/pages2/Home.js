@@ -206,7 +206,7 @@ const Home = () => {
           </div>
           <div>
             {loggedInUserEmail === "guest" ? (
-              <a href="/manage/profile" className="btn btn-sm btn-warning">
+              <a href="/" className="btn btn-sm btn-warning">
                 Please Log in
               </a>
             ) : (
