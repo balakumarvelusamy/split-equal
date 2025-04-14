@@ -47,7 +47,7 @@ const Dashboard = () => {
         </a>
       </div>
       {loading ? (
-        <p className="p-2 border rounded">
+        <p className="p-2 mt-2 border rounded">
           <span className="px-1">
             <i className="fas fa-spinner fa-spin text-success"></i>
           </span>
