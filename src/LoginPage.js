@@ -185,7 +185,7 @@ const LoginPage = ({ onLogin }) => {
         user = { email, name, country: country || "Unknown" };
       }
       // Log the user in
-      onLogin({ email: user.email, name: user.name, country: user.country });
+      onLogin({ email: user.email, name: user.name, country: user.country, role: user.role });
       setLoading(false);
       alert("Logged in successfully with Google!");
     } catch (error) {
@@ -367,7 +367,7 @@ const LoginPage = ({ onLogin }) => {
                     <small>Login with Email</small>
                   </button>
                 </div>
-                <div id="googlebutton" className="d-none" align="center">
+                <div id="googlebutton" align="center">
                   {loading ? (
                     <p className="p-1 mb-0 border w-auto rounded mt-2 loginbtn" align="center">
                       <span className="px-1">
