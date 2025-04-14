@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useNavigate } from "react";
 import { Modal, Button } from "react-bootstrap";
 import AddFriend from "./AddFriend";
 import AddExpense from "./AddExpense";
@@ -20,6 +20,7 @@ import { FaSync } from "react-icons/fa";
 import SettleUp from "./SettleUp";
 const Home = () => {
   const location = useLocation();
+  //const navigate = useNavigate(); // Initialize navigate
   const [friends, setFriends] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -190,6 +191,13 @@ const Home = () => {
       setLoading(false);
     }, 2000);
   };
+  const handleLogout = () => {
+    secureLocalStorage.removeItem("loggedInUser");
+    secureLocalStorage.removeItem("guestUser");
+    //navigate("/");
+    window.location.reload();
+  };
+
   return (
     <>
       <div className="container">
@@ -206,7 +214,7 @@ const Home = () => {
           </div>
           <div>
             {loggedInUserEmail === "guest" ? (
-              <a href="/" className="btn btn-sm btn-warning">
+              <a className="btn btn-sm btn-warning" onClick={(e) => handleLogout()}>
                 Please Log in
               </a>
             ) : (
