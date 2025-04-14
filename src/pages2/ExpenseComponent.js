@@ -202,49 +202,53 @@ const ExpenseHistory = ({ displayedExpenses, refreshBalance_ }) => {
                 </div>
 
                 {/* Expense Details */}
-                <div className="flex-grow-1 px-1">
+                <div className="flex-grow-1 px-1 ">
                   <div>
                     <span className={expense.isdeleted === 1 ? "text-decoration-line-through" : ""}>
-                      <small className="fw-bold">{expense.description}</small>
-                      <small className="px-1">{expense.expenseTypeText}</small>
+                      <small className="fw-bold">
+                        {expense.description}
+                        <small className="text-danger text-decoration-none px-1 fw-light d-none">{expense.isdeleted === 1 && "Deleted"}</small>
+                        <small className="text-success text-decoration-none px-1 fw-light">{expense.isupdated === 1 && "Updated"}</small>
+                      </small>
+                      <div>
+                        <small className="px-0 py-0 fw-light">{expense.expenseTypeText}</small>
+                      </div>
                     </span>
-                    <>
-                      {expense.isdeleted !== 1 && !historyPage ? (
-                        <span className="bg-light rounded border px-1">
-                          <a
-                            href="#"
-                            className={`fw-bold text-nowrap text-decoration-none ${expense.amount < 0 ? "text-danger" : "text-success"}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              openModal(expense); // Open modal when amount is clicked
-                            }}
-                          >
-                            <small>
-                              {expense.currency}{" "}
-                              {Math.abs(expense.amount)
-                                .toFixed(2)
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                              {/* add comma after 3 digit */}
-                              <FaRegEdit className="m-1 pb-1  text-dark" />
-                            </small>
-                          </a>
-                        </span>
-                      ) : (
-                        <span className="bg-light border rounded px-1">
-                          <span className={`fw-bold text-nowrap text-decoration-none ${expense.amount < 0 ? "text-danger" : "text-success"}`}>
-                            <small className={expense.isdeleted === 1 ? "text-decoration-line-through" : ""}>
-                              {expense.currency}{" "}
-                              {Math.abs(expense.amount)
-                                .toFixed(2)
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                            </small>
-                          </span>
-                        </span>
-                      )}
-                    </>{" "}
-                    <small className="text-danger text-decoration-none px-1">{expense.isdeleted === 1 && "Deleted"}</small>
-                    <small className="text-success text-decoration-none px-1">{expense.isupdated === 1 && "Updated"}</small>
                   </div>
+                </div>
+                <div>
+                  {expense.isdeleted !== 1 && !historyPage ? (
+                    <span className="bg-light rounded border px-1">
+                      <a
+                        href="#"
+                        className={`fw-bold text-nowrap text-decoration-none ${expense.amount < 0 ? "text-danger" : "text-success"}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          openModal(expense); // Open modal when amount is clicked
+                        }}
+                      >
+                        <small>
+                          {expense.currency}{" "}
+                          {Math.abs(expense.amount)
+                            .toFixed(2)
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          {/* add comma after 3 digit */}
+                          <FaRegEdit className="m-1 pb-1  text-dark" />
+                        </small>
+                      </a>
+                    </span>
+                  ) : (
+                    <span className="bg-light border rounded px-1">
+                      <span className={`fw-bold text-nowrap text-decoration-none ${expense.amount < 0 ? "text-danger" : "text-success"}`}>
+                        <small className={expense.isdeleted === 1 ? "text-decoration-line-through" : ""}>
+                          {expense.currency}{" "}
+                          {Math.abs(expense.amount)
+                            .toFixed(2)
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                        </small>
+                      </span>
+                    </span>
+                  )}
                 </div>
               </div>
             </li>

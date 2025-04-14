@@ -47,6 +47,7 @@ const Profile = () => {
         setLoggedInUserName(sessionUser.name);
         setCountry(sessionUser.country || "");
         setRole(sessionUser.role);
+        console.log("user", sessionUser);
         setSessionInitialized(true); // Set session as initialized after setting user
       } else {
         setLoggedInUser(guestUser.email);
@@ -306,7 +307,7 @@ const Profile = () => {
           </Modal.Footer>
         </Modal>
       </div>{" "}
-      {isAdminVisible && role === "admin" && (
+      {isAdminVisible && role.includes("admin") && (
         <div align="center">
           <div className="">
             <a href="/admin/dashboard" className="text-decoration-none btn btn-sm btn-warning mx-1">
