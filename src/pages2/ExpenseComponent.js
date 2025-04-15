@@ -198,7 +198,7 @@ const ExpenseHistory = ({ displayedExpenses, refreshBalance_ }) => {
                   <div className="text-nowrap">
                     <small>{formattedDayMonth}</small>
                   </div>
-                  <small>{formattedYear}</small>
+                  <small className="d-none1">{formattedYear}</small>
                 </div>
 
                 {/* Expense Details */}
@@ -208,9 +208,10 @@ const ExpenseHistory = ({ displayedExpenses, refreshBalance_ }) => {
                       <small className="fw-bold">
                         {expense.description}
                         <small className="text-danger text-decoration-none px-1 fw-light d-none">{expense.isdeleted === 1 && "Deleted"}</small>
+                        <small className="px-1 py-0 fw-light">{expense.expenseTypeText}</small>
                         <small className="text-success text-decoration-none px-1 fw-light">{expense.isupdated === 1 && "Updated"}</small>
                       </small>
-                      <div>
+                      <div className="d-none">
                         <small className="px-0 py-0 fw-light">{expense.expenseTypeText}</small>
                       </div>
                     </span>
