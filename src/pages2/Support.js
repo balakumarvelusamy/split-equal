@@ -3,7 +3,7 @@ import logout from "../images/logout.png";
 import Support from "./Contact";
 import config from "../config.json";
 import { useNavigate } from "react-router-dom";
-import { fetchUsers, deleteUser, sendEmail, UpdateUser, getCountryCurrency } from "../service/APIService"; // Assume sendOtp sends an OTP to the email
+import { fetchUsers, deleteUser, sendEmail, UpdateUser, getCountryCurrency, maskEmail } from "../service/APIService"; // Assume sendOtp sends an OTP to the email
 import { Modal, Button } from "react-bootstrap";
 import close from "../images/delete.png";
 import secureLocalStorage from "react-secure-storage";
@@ -206,7 +206,7 @@ const Profile = () => {
             <strong>Name:</strong> {loggedInUserName}
           </div>
           <div className="p-2">
-            <strong>Email:</strong> {loggedInUser}
+            <strong>Email:</strong> {maskEmail(loggedInUser)}
           </div>
           <div className="d-flex align-items-center p-2 d-none">
             <strong>Country:</strong>{" "}

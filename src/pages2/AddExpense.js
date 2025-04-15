@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getData, addData, UpdateData, getItemsbyid, getCurrency, getCountryCurrency, getCurrencyName } from "../service/APIService";
+import { getData, addData, UpdateData, getItemsbyid, getCurrency, getCountryCurrency, getCurrencyName, maskEmail } from "../service/APIService";
 import { v4 as uuid } from "uuid";
 import Select from "react-select";
 import secureLocalStorage from "react-secure-storage";
@@ -247,7 +247,7 @@ const AddExpense = ({ onAddExpense, selectedFriend, selectedFriendEmail, loading
 
   return (
     <form onSubmit={handleSubmit} className="p-2">
-      <h6>{friendname + " - " + friendemail}</h6>
+      <h6>{friendname + " - " + maskEmail(friendemail)}</h6>
       <input type="text" className="form-control mb-2" placeholder="Description" maxLength={50} value={description} onChange={(e) => setDescription(e.target.value)} required />
 
       <div className="input-group mb-2">
