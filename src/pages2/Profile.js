@@ -127,7 +127,12 @@ const Profile = () => {
                     <li key={friendEmail} className="px-1 list-group-item">
                       {/* Friend Name */}
                       <div>
-                        <p className="mb-0 fw-bold">{friendGroup[0].friendname.toUpperCase()}</p>
+                        <p className="mb-0 fw-bold">
+                          {friendGroup[0].friendname.toUpperCase()}
+                          <span className="px-1 mb-0 color-myapp2 fw-normal">
+                            <small>{friendGroup[0].friendemail}</small>
+                          </span>
+                        </p>
                       </div>
 
                       {friendGroup.map((friend) => (
@@ -154,7 +159,7 @@ const Profile = () => {
                                 </span>
                               )}
                             </small>
-                            <p className="px-1 mb-0 color-myapp2">
+                            <p className="px-1 mb-0 color-myapp2 d-none">
                               <small>{friend.friendemail}</small>
                             </p>
                           </div>

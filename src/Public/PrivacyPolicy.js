@@ -99,17 +99,11 @@ const PrivacyPolicy = () => (
         <li>
           By email: <a href="mailto:Contactssnapps@gmail.com">contactssnapps@gmail.com</a>
         </li>
-        <li>
-          By visiting this page on our website:{" "}
-          <a href="https://splitequal.theuniquecreations.com/public/privacypolicy" target="_blank">
-            here
-          </a>
-        </li>
       </ul>
     </section>
 
     <div>
-      <small>&copy; 2024 {config.apptitle}</small>
+      <small>&copy; 2025 {config.apptitle}</small>
     </div>
     <div className="container mb-4"></div>
   </div>

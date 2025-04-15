@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { v4 as uuid } from "uuid";
-import { addData, UpdateData, getData } from "../service/APIService";
+import { addData, UpdateData, getData, maskEmail } from "../service/APIService";
 import close from "../images/delete.png";
 
 const SettleUp = ({ friend, balance, loggedInUser, showSettleUp, setShowSettleUp, refreshBalance }) => {
@@ -104,7 +104,7 @@ const SettleUp = ({ friend, balance, loggedInUser, showSettleUp, setShowSettleUp
       <Modal.Body>
         <div className="grid p-1">
           <div>
-            <div>{friend.balance > 0 ? `You Received from ${friend?.friendname}` : `You Paid ${friend?.friendname}`}</div> <small>{friend.friendemail}</small>
+            <div>{friend.balance > 0 ? `You Received from ${friend?.friendname}` : `You Paid ${friend?.friendname}`}</div> <small>{maskEmail(friend?.friendemail)}</small>
           </div>
           <div className="input-group">
             <span className="form-control w-10" align="center">
