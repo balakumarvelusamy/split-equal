@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getData, addData, UpdateData, getItemsbyid, getData_Any2Column } from "../service/APIService";
+import { getData, addData, UpdateData, getItemsbyid, getData_Any2Column, maskEmail } from "../service/APIService";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import AddExpense from "./AddExpense";
 import SettleUp from "./SettleUp";
@@ -125,7 +125,7 @@ const FriendDetail = () => {
                 ) : (
                   <>
                     <h4 className="mb-0">{friend.friendname}</h4>
-                    <small>{friend.friendemail}</small>
+                    <small>{maskEmail(friend.friendemail)}</small>
                   </>
                 )}
               </div>
