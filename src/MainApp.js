@@ -20,6 +20,7 @@ import LoginPage from "./LoginPage";
 import "./MainApp.css";
 import "./styles/expensetracker.css";
 import banner from "./images/splitequal.png";
+import homepic from "./images/homepic.png";
 import config from "./config.json";
 import "./styles/BottomNav.css";
 import "./styles/Header.css";
@@ -171,10 +172,13 @@ const MainApp = () => {
                 <p className="app-description mt-3" align="center">
                   {config.appdescription}
                 </p>
+                <div className="mt-3">
+                  <img src={homepic} className="rounded" height="220" alt="Login Banner" />
+                </div>
                 <div className="container mt-4 text-center">
-                  {/* <p>
+                  <p>
                     <small className="app-description px-2 pb-0">{config.appdescription2}</small>
-                  </p> */}
+                  </p>
                   <small className="app-description fw-light px-2 pb-0 mt-1">{config.appdescription3}</small>
                 </div>
               </div>
