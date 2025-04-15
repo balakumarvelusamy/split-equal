@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getData, addData, UpdateData, getItemsbyid, getCurrency, getCountryCurrency, getCurrencyName } from "../service/APIService";
 import { v4 as uuid } from "uuid";
 import Select from "react-select";
+import secureLocalStorage from "react-secure-storage";
 
 const AddExpense = ({ onAddExpense, selectedFriend, selectedFriendEmail, loading, loggedInUserName, selectedCurrency, friend }) => {
   const [friendname, setFriend] = useState(selectedFriend);
@@ -18,7 +19,7 @@ const AddExpense = ({ onAddExpense, selectedFriend, selectedFriendEmail, loading
 
   const getTodayDate = () => new Date().toISOString().split("T")[0];
   const getTodayDateTime = () => new Date().toISOString().replace("T", " ").split(".")[0];
-  const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
   useEffect(() => {
     setLoggedInUser(sessionUser);
     setDate(getTodayDate());
@@ -87,7 +88,7 @@ const AddExpense = ({ onAddExpense, selectedFriend, selectedFriendEmail, loading
 
     if (!friendname || !friendemail || !amount || !description || !date || !expenseType) return;
     if (friendemail == loggedInUser.email) {
-      alert("You cannot add Exspense for yourself here.");
+      alert("You cannot add Expense for yourself here.");
       return;
     }
     setIsLoading(true); // Disable button

@@ -9,7 +9,7 @@ import { v4 as uuid } from "uuid";
 import close from "../images/delete.png";
 import ExpenseComponent from "./ExpenseComponent";
 import { FaSync } from "react-icons/fa";
-
+import secureLocalStorage from "react-secure-storage";
 const FriendDetail = () => {
   const { friendemail } = useParams();
   const navigate = useNavigate();
@@ -24,14 +24,14 @@ const FriendDetail = () => {
   const [showSettleUp, setShowSettleUp] = useState(false);
   const [settleAmount, setSettleAmount] = useState(0);
   const [id, setId] = useState("");
-  const loggedInUserEmail = localStorage.getItem("loggedInUserEmail");
+  const loggedInUserEmail = secureLocalStorage.getItem("loggedInUserEmail");
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [settleUpAmounts, setSettleUpAmounts] = useState("");
   const useQuery = () => {
     return new URLSearchParams(useLocation().search);
   };
   const query = new URLSearchParams(useLocation().search);
-  const sessionUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
   useEffect(() => {
     setLoading(true);
     setLoggedInUser(sessionUser);
