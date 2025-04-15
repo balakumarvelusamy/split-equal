@@ -633,9 +633,14 @@ export const formatRecipe = (text) => {
 };
 
 export const maskEmail = (email) => {
+  if (!email) return "";
   const [name, domain] = email.split("@");
+  if (!name || !domain) return email;
   if (name.length <= 2) {
     return `${name[0]}*****@${domain}`;
   }
-  return `${name[0]}*****${name[name.length - 1]}@${domain}`;
+  const first = name[0];
+  const last = name[name.length - 1]; // Make last uppercase, as requested
+  const masked = "*".repeat(name.length - 2);
+  return `${first}${masked}${last}@${domain}`;
 };
