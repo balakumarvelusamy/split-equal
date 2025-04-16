@@ -377,7 +377,7 @@ const LoginPage = ({ onLogin }) => {
                     </p>
                   ) : (
                     <>
-                      <div className="mt-2" align="center">
+                      <div className="mt-2 d-none" align="center">
                         {CLIENT_ID && (
                           <GoogleOAuthProvider clientId={CLIENT_ID}>
                             <GoogleLogin className="google-login-button" onSuccess={handleLoginSuccess} onError={handleLoginError} shape="rectangular" width={"250px"} type="standard" theme="filled_black" />
