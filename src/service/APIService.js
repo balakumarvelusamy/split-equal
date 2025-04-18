@@ -38,7 +38,7 @@ export const sendEmail = async (data) => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const result = await response; // Parse JSON response
+    const result = await response.json(); // Parse JSON response
     console.log("Email sent successfully", result);
     return result;
   } catch (err) {
@@ -580,13 +580,13 @@ export const uploadFileToS3 = async (imagename, file) => {
 
 export const imagetoCaption = async (imageUrl) => {
   try {
-    const response = await fetch(process.env.REACT_APP_AI_SERVICE_URL + "image-to-caption", {
+    const response = await fetch(process.env.REACT_APP_AI_SERVICE_URL + "image-to-bill-split", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        imageUrl: imageUrl,
+        image_url: imageUrl,
       }),
     });
 
@@ -596,7 +596,7 @@ export const imagetoCaption = async (imageUrl) => {
     }
 
     const data = await response.json();
-    return data.caption; // Assuming the response contains a "caption" field
+    return data; // Assuming the response contains a "caption" field
   } catch (error) {
     console.error("Error fetching caption:", error.message);
     throw error;

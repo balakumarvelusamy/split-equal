@@ -16,6 +16,12 @@ const BottomNav = () => (
       </span>
       <div>History</div>
     </NavLink>{" "}
+    <NavLink to="/scan" className={({ isActive }) => (isActive ? "active d-none" : "d-none")}>
+      <span>
+        <i class="fas fa-camera"></i>
+      </span>
+      <div>Scan</div>
+    </NavLink>
     <NavLink to="/profile" className={({ isActive }) => (isActive ? "active" : "")}>
       <span>
         <i className="fi fi-rr-settings"></i>

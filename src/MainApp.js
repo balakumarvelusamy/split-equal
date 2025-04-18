@@ -13,6 +13,7 @@ import Profile from "./pages2/Profile";
 import ExpenseHistory from "./pages2/ExpenseHistory";
 import FriendDetail from "./pages2/FriendDetail";
 import Support from "./pages2/Support";
+import Scan from "./pages2/Scan";
 
 import AppCarousel from "./AppCarousel";
 import LoginPage from "./LoginPage";
@@ -129,6 +130,7 @@ const MainApp = () => {
             <Route path="history" element={<ExpenseHistory />} />
             <Route path="friend" element={<FriendDetail />} />
             <Route path="support" element={<Support />} />
+            <Route path="scan" element={<Scan />} />
           </Routes>
           <BottomNav />
         </>

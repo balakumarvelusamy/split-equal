@@ -90,11 +90,12 @@ const LoginPage = ({ onLogin }) => {
 
     try {
       await sendEmail(emailData);
+      console.log("email sent Sucessfully");
       setIsOtpSent(true);
       setError("");
       setOtp("");
     } catch (error) {
-      console.error("Failed to send OTP email", error);
+      console.log("Failed to send OTP email");
       setError("Failed to send OTP. Please try again.");
       setsendingOtp(false);
       setOtp("");
