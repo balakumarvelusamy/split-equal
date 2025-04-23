@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, ListGroup, Badge, Alert } from "react-bootstrap";
-import { getData, addData, UpdateData, getItemsbyid, getCurrencyName, getCountryCurrency } from "../service/APIService";
+import { getData, addData, UpdateData, getItemsbyid, getCurrencyName, getCountryCurrency, getItemsbyType } from "../service/APIService";
 import { v4 as uuid } from "uuid";
 import secureLocalStorage from "react-secure-storage";
 import { FaTimes, FaPlus, FaUserFriends, FaExclamationTriangle } from "react-icons/fa";
@@ -44,10 +44,17 @@ const GroupExpense = () => {
         const userFriends = await getData(sessionUser.email, "splitequal-friends");
         setFriends(userFriends);
 
-        // Load groups
-        const userGroups = await getData(sessionUser.email, "splitequal-groups");
+        // Load all groups where user is either creator or member
+        const allGroups = await getItemsbyType("splitequal-groups"); // Get all groups
+
+        // Filter groups where user is creator or member
+        const userGroups = allGroups.filter(
+          (group) =>
+            group.email === sessionUser.email || // User is creator
+            group.members?.some((member) => member.email === sessionUser.email) // User is member
+        );
+
         setGroups(userGroups);
-        console.log("userGroups", userGroups);
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {
@@ -348,6 +355,7 @@ const GroupExpense = () => {
         amount: parseFloat(settleAmount).toFixed(2),
         currency: currentGroup.currency,
         settledBy: settlerEmail,
+        email: settlerEmail,
         settledTo: recipientEmail,
         type: "splitequal-group-settle",
         date: new Date().toISOString(),
@@ -368,6 +376,11 @@ const GroupExpense = () => {
   };
   return (
     <div className="container">
+      <div align="right">
+        <p className="mb-0">
+          <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
+        </p>
+      </div>
       {loading ? (
         <div className="text-center py-4">
           <div className="spinner-border text-primary" role="status">
@@ -394,7 +407,7 @@ const GroupExpense = () => {
               {groups.map((group) => {
                 const userBalance = group.balances?.[loggedInUser?.email] || 0;
                 return (
-                  <ListGroup.Item key={group.id} className="mb-2">
+                  <ListGroup.Item key={group.id} className="mb-0">
                     <div className="d-flex justify-content-between align-items-center">
                       <div>
                         <h6 className="mb-0">{group.name}</h6>
