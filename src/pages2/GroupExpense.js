@@ -3,9 +3,12 @@ import { Modal, Button, Form, ListGroup, Badge, Alert } from "react-bootstrap";
 import { getData, addData, UpdateData, getItemsbyid, getCurrencyName, getCountryCurrency, getItemsbyType } from "../service/APIService";
 import { v4 as uuid } from "uuid";
 import secureLocalStorage from "react-secure-storage";
-import { FaTimes, FaPlus, FaUserFriends, FaExclamationTriangle } from "react-icons/fa";
+import { FaTimes, FaPlus, FaUserFriends, FaArrowRight, FaExclamationTriangle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import add from "../images/plus2.png";
 
 const GroupExpense = () => {
+  const navigate = useNavigate();
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [selectedFriends, setSelectedFriends] = useState([]);
@@ -167,11 +170,11 @@ const GroupExpense = () => {
         }
 
         if (memberEmail === loggedInUser.email) {
-          // The payer's balance decreases (they paid for others)
-          updatedGroup.balances[memberEmail] -= shareAmount * (currentGroup.members.length - 1);
+          // The payer's balance increases (they should receive money from others)
+          updatedGroup.balances[memberEmail] += shareAmount * (currentGroup.members.length - 1);
         } else {
-          // Other members' balances increase (they owe money)
-          updatedGroup.balances[memberEmail] += shareAmount;
+          // Other members' balances decrease (they owe money to payer)
+          updatedGroup.balances[memberEmail] -= shareAmount;
         }
 
         // Round to 2 decimal places
@@ -208,15 +211,6 @@ const GroupExpense = () => {
     }));
   };
 
-  const calculateGroupBalances = (group) => {
-    // This would ideally come from the database
-    // For now, we'll just return a summary
-    return {
-      totalSpent: 0, // Would calculate from expenses
-      youOwe: 0, // Would calculate from expenses
-      owedToYou: 0, // Would calculate from expenses
-    };
-  };
   const calculateShares = () => {
     const totalAmount = parseFloat(amount) || 0;
     const members = currentGroup?.members || [];
@@ -320,60 +314,6 @@ const GroupExpense = () => {
     );
   };
 
-  const handleSettleUp = async (settlerEmail, recipientEmail, settleAmount) => {
-    if (!currentGroup || !settleAmount || settleAmount <= 0) return;
-
-    setLoading(true);
-
-    try {
-      const updatedGroup = { ...currentGroup };
-      if (!updatedGroup.balances) {
-        updatedGroup.balances = {};
-      }
-
-      // Ensure balances exist for both parties
-      if (!updatedGroup.balances[settlerEmail]) {
-        updatedGroup.balances[settlerEmail] = 0;
-      }
-      if (!updatedGroup.balances[recipientEmail]) {
-        updatedGroup.balances[recipientEmail] = 0;
-      }
-
-      // Update balances
-      updatedGroup.balances[settlerEmail] += parseFloat(settleAmount);
-      updatedGroup.balances[recipientEmail] -= parseFloat(settleAmount);
-
-      // Round to 2 decimal places
-      updatedGroup.balances[settlerEmail] = parseFloat(updatedGroup.balances[settlerEmail].toFixed(2));
-      updatedGroup.balances[recipientEmail] = parseFloat(updatedGroup.balances[recipientEmail].toFixed(2));
-
-      // Create a settle-up transaction record
-      const settleUpRecord = {
-        id: uuid(),
-        groupId: currentGroup.id,
-        description: `Settle up: ${settlerEmail} → ${recipientEmail}`,
-        amount: parseFloat(settleAmount).toFixed(2),
-        currency: currentGroup.currency,
-        settledBy: settlerEmail,
-        email: settlerEmail,
-        settledTo: recipientEmail,
-        type: "splitequal-group-settle",
-        date: new Date().toISOString(),
-      };
-
-      // Save both updates
-      await UpdateData(updatedGroup);
-      await addData(settleUpRecord);
-
-      // Update local state
-      setGroups(groups.map((g) => (g.id === updatedGroup.id ? updatedGroup : g)));
-      setCurrentGroup(updatedGroup);
-    } catch (error) {
-      console.error("Error settling up:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
   return (
     <div className="container">
       <div align="right">
@@ -410,47 +350,30 @@ const GroupExpense = () => {
                   <ListGroup.Item key={group.id} className="mb-0">
                     <div className="d-flex justify-content-between align-items-center">
                       <div>
-                        <h6 className="mb-0">{group.name}</h6>
-                        <small className="text-muted">
+                        <h6 className="mb-2" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
+                          {group.name} <FaArrowRight className="me-1 text-success" />
+                        </h6>
+                        <small className="text-muted mb-0">
                           {group.members.length} members • {group.currency}
                         </small>
-                        {group.balances && (
-                          <div className="mt-1">
-                            <small className={userBalance > 0 ? "text-success" : userBalance < 0 ? "text-danger" : "text-muted"}>
-                              You {userBalance > 0 ? "get back " : userBalance < 0 ? "owe " : "are settled "}
-                              {group.currency}
-                              {Math.abs(userBalance).toFixed(2)}
-                            </small>
-                          </div>
-                        )}
                       </div>
                       <div>
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          className="mx-1"
+                        <a className="mx-1 p-2 px-2 text-decoration-none border rounded badge text-success viewbutton" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
+                          View <FaArrowRight className="me-1 text-success" />
+                        </a>
+
+                        <img
+                          src={add}
+                          alt="Add Expense"
+                          width="40"
+                          className="px-2 border  rounded p-1 mx-2 addexpense"
                           onClick={() => {
                             setCurrentGroup(group);
                             setShowAddExpense(true);
                             setSplitError("");
                             setCurrency(group.currency);
                           }}
-                        >
-                          Add
-                        </Button>
-                        <Button
-                          variant={userBalance === 0 ? "outline-secondary" : "outline-success"}
-                          size="sm"
-                          disabled={userBalance === 0}
-                          onClick={() => {
-                            setCurrentGroup(group);
-                            setShowSettleModal(true);
-                            setSelectedRecipient(null);
-                            setSettleAmount("");
-                          }}
-                        >
-                          Settle
-                        </Button>
+                        />
                       </div>
                     </div>
                   </ListGroup.Item>
@@ -568,57 +491,6 @@ const GroupExpense = () => {
           </Button>
           <Button variant="primary" onClick={(e) => addGroupExpense(currency)} disabled={loading}>
             {loading ? "Saving..." : "Add Expense"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={showSettleModal} onHide={() => setShowSettleModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Settle Up in {currentGroup?.name}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group className="mb-3">
-            <Form.Label>Recipient</Form.Label>
-            <Form.Select
-              value={selectedRecipient?.email || ""}
-              onChange={(e) => {
-                const recipient = currentGroup?.members.find((m) => m.email !== loggedInUser.email && (currentGroup.balances?.[m.email] || 0) > 0);
-                setSelectedRecipient(recipient);
-              }}
-              required
-            >
-              <option value="">Select who to pay</option>
-              {currentGroup?.members
-                .filter((member) => member.email !== loggedInUser.email && (currentGroup.balances?.[member.email] || 0) > 0)
-                .map((member) => (
-                  <option key={member.email} value={member.email}>
-                    {member.name} (Receives {currentGroup.currency}
-                    {currentGroup.balances[member.email].toFixed(2)})
-                  </option>
-                ))}
-            </Form.Select>
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Amount to Settle</Form.Label>
-            <Form.Control type="number" value={settleAmount} onChange={(e) => setSettleAmount(e.target.value)} placeholder={`Max: ${currentGroup?.balances ? Math.min(Math.abs(currentGroup.balances[loggedInUser.email] || 0), currentGroup.balances[selectedRecipient?.email] || 0).toFixed(2) : "0.00"}`} min="0.01" step="0.01" max={currentGroup?.balances ? Math.min(Math.abs(currentGroup.balances[loggedInUser.email] || 0), currentGroup.balances[selectedRecipient?.email] || 0) : undefined} required />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowSettleModal(false)}>
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              if (selectedRecipient && settleAmount) {
-                handleSettleUp(loggedInUser.email, selectedRecipient.email, parseFloat(settleAmount));
-                setShowSettleModal(false);
-              }
-            }}
-            disabled={!selectedRecipient || !settleAmount}
-          >
-            Confirm Settlement
           </Button>
         </Modal.Footer>
       </Modal>

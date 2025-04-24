@@ -15,6 +15,7 @@ import FriendDetail from "./pages2/FriendDetail";
 import Support from "./pages2/Support";
 import Scan from "./pages2/Scan";
 import GroupExpense from "./pages2/GroupExpense";
+import GroupDetail from "./pages2/GroupDetail";
 
 import AppCarousel from "./AppCarousel";
 import LoginPage from "./LoginPage";
@@ -130,7 +131,7 @@ const MainApp = () => {
             <Route path="friendslists" element={<ExpenseHistory />} />
             <Route path="history" element={<ExpenseHistory />} />
             <Route path="friend" element={<FriendDetail />} />
-            {/* <Route path="/groups" element={<GroupExpense friends={friends} loggedInUser={loggedInUser} />} /> */}
+            <Route path="/group/:groupId" element={<GroupDetail />} />
             <Route path="/groups" element={<GroupExpense friends={[]} loggedInUser={[]} />} />
             <Route path="support" element={<Support />} />
             <Route path="scan" element={<Scan />} />
