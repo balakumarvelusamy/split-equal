@@ -18,14 +18,11 @@ code {
 .bg-myapp {
   background-color: #16325B !important;
 }
-.color-myapp .text-success {
+.color-myapp  {
   color: #16325B !important;
 }
 
-.text-success
-{
-  color: #16325B !important;
-}
+
 .color-myapp2 {
   color: #78B7D0 !important;
 }

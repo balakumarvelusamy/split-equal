@@ -146,6 +146,7 @@ const GroupExpense = () => {
         splitType,
         shares,
         paidBy: loggedInUser.email,
+        paidByName: loggedInUser.name,
         email: loggedInUser.email,
         type: "splitequal-group-expenses",
         date: new Date().toISOString(),

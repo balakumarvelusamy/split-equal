@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { getData_Any2Column, addData } from "../service/APIService";
 import { Modal, Button, Form, ListGroup, Badge, Alert } from "react-bootstrap";
@@ -18,21 +18,41 @@ const GroupDetail = () => {
   const [selectedRecipient, setSelectedRecipient] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [memberBalances, setMemberBalances] = useState({});
-  var netBalance;
+  const [netBalance, setNetBalance] = useState(0);
+  const calculateBalancesFromExpenses = useCallback(
+    (expenses) => {
+      if (!loggedInUser?.email) return;
+
+      let totalOwedByUser = 0;
+      let totalOwedToUser = 0;
+
+      expenses.forEach((expense) => {
+        const paidBy = expense.paidBy;
+        const shares = expense.shares || {};
+        const userShare = shares[loggedInUser.email] || 0;
+
+        if (paidBy === loggedInUser.email) {
+          totalOwedToUser += parseFloat(expense.amount) - parseFloat(userShare);
+        } else if (userShare > 0) {
+          totalOwedByUser += parseFloat(userShare);
+        }
+      });
+
+      setNetBalance(totalOwedToUser - totalOwedByUser);
+    },
+    [loggedInUser]
+  );
   useEffect(() => {
     const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
     setLoggedInUser(sessionUser);
+
     const loadGroupData = async () => {
       setLoading(true);
       try {
-        // Load group expenses
         const groupExpenses = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
         setExpenses(groupExpenses);
-
-        // Calculate balances from expenses
         calculateBalancesFromExpenses(groupExpenses);
 
-        // Load group info if not passed in state
         if (!group) {
           const groupData = await getData_Any2Column("id", groupId, "type", "splitequal-groups");
           setGroup(groupData[0]);
@@ -44,40 +64,8 @@ const GroupDetail = () => {
       }
     };
 
-    const calculateBalancesFromExpenses = (expenses) => {
-      const balances = {};
-      const loggedInUserEmail = loggedInUser?.email;
-
-      // Initialize balances - we only care about the logged-in user's position
-      let totalOwedByUser = 0; // What user owes to others (negative)
-      let totalOwedToUser = 0; // What others owe to user (positive)
-
-      // Process each expense
-      expenses.forEach((expense) => {
-        const paidBy = expense.paidBy;
-        const shares = expense.shares || {};
-        const userShare = shares[loggedInUserEmail] || 0;
-
-        if (paidBy === loggedInUserEmail) {
-          // User paid - others owe them
-          totalOwedToUser += parseFloat(expense.amount) - parseFloat(userShare);
-        } else if (userShare > 0) {
-          // Someone else paid - user owes them
-          totalOwedByUser += parseFloat(userShare);
-        }
-      });
-
-      // Calculate net balance (negative means user owes, positive means user is owed)
-      netBalance = totalOwedToUser - totalOwedByUser;
-
-      setMemberBalances({
-        ...memberBalances,
-        [loggedInUserEmail]: netBalance,
-      });
-    };
-
     loadGroupData();
-  }, [groupId, group]);
+  }, [groupId]);
 
   // Calculate your balance (logged in user)
   const yourBalance = memberBalances[group?.email] || 0;
@@ -89,43 +77,50 @@ const GroupDetail = () => {
     }
 
     try {
-      // Validate amount is a positive number
       if (typeof amount !== "number" || amount <= 0) {
         throw new Error("Amount must be a positive number");
       }
 
-      // Create settlement record similar to group expense structure
+      const amountOwed = calculateAmountOwedToMember(recipientEmail);
+      if (amount > amountOwed) {
+        throw new Error(`Amount cannot exceed ${amountOwed.toFixed(2)}`);
+      }
+      const payerName = group.members.find((m) => m.email === payerEmail)?.name || payerEmail;
+      const recipientName = group.members.find((m) => m.email === recipientEmail)?.name || recipientEmail;
       const settlement = {
         id: uuid(),
         groupId: group.id,
-        description: `Settlement between ${payerEmail} and ${recipientEmail}`,
+        description: `Settlement between ${payerName} and ${recipientName}`,
         amount: parseFloat(amount).toFixed(2),
         currency: group.currency,
         currencyName: group.currencyName,
-        splitType: "settleup-group", // Using your specified splitType
+        splitType: "settleup-group",
         paidBy: payerEmail,
-        email: loggedInUser.email, // Assuming you want to track who initiated
+        email: loggedInUser.email,
         type: "splitequal-group-expenses",
         date: new Date().toISOString(),
         settlementData: {
-          // Additional settlement-specific data
           payerEmail,
+          payerName,
           recipientEmail,
+          recipientName,
           isSettlement: true,
         },
       };
 
-      // Add the settlement to the database
       await addData(settlement);
 
-      // Update local state to include the new settlement
-      setExpenses((prev) => [settlement, ...prev]);
+      // Update state in a single operation to avoid multiple re-renders
+      const updatedExpenses = [settlement, ...expenses];
+      setExpenses(updatedExpenses);
+      calculateBalancesFromExpenses(updatedExpenses);
 
-      console.log("Settlement recorded:", settlement);
-      return settlement;
+      setShowSettleModal(false);
+      setSettleAmount("");
+      setSelectedRecipient(null);
     } catch (error) {
       console.error("Settlement failed:", error.message || error);
-      throw error; // Re-throw if you want calling code to handle the error
+      alert(`Settlement failed: ${error.message}`);
     }
   };
   const calculateMaxSettlement = (payerEmail, recipientEmail) => {
@@ -156,6 +151,25 @@ const GroupDetail = () => {
 
     // The maximum you can settle is the minimum between what you owe and what they're owed
     return Math.min(payerDebt, recipientCredit).toFixed(2);
+  };
+  const calculateAmountOwedToMember = (memberEmail) => {
+    let amountOwed = 0;
+
+    expenses.forEach((expense) => {
+      const paidBy = expense.paidBy;
+      const userShare = expense.shares?.[loggedInUser?.email] || 0;
+      const memberShare = expense.shares?.[memberEmail] || 0;
+
+      if (paidBy === memberEmail && userShare > 0) {
+        // You owe this member
+        amountOwed += parseFloat(userShare);
+      } else if (paidBy === loggedInUser?.email && memberShare > 0) {
+        // They owe you (reduces your debt)
+        amountOwed -= parseFloat(memberShare);
+      }
+    });
+
+    return amountOwed;
   };
 
   if (loading) {
@@ -204,53 +218,32 @@ const GroupDetail = () => {
                 {group?.members
                   ?.filter((member) => member.email !== loggedInUser?.email)
                   .map((member) => {
-                    // For each member, calculate what you owe them or they owe you
-                    let amount = 0;
-                    let message = "";
-
-                    expenses.forEach((expense) => {
-                      const paidBy = expense.paidBy;
-                      const userShare = expense.shares?.[loggedInUser?.email] || 0;
-                      const memberShare = expense.shares?.[member.email] || 0;
-
-                      if (paidBy === loggedInUser?.email && memberShare > 0) {
-                        // You paid - member owes you
-                        amount += parseFloat(memberShare);
-                        message = `${member.name} owes you`;
-                      } else if (paidBy === member.email && userShare > 0) {
-                        // Member paid - you owe them
-                        amount += parseFloat(userShare);
-                        message = `You owe ${member.name}`;
-                      }
-                    });
-
-                    if (amount > 0) {
+                    const amountOwed = calculateAmountOwedToMember(member.email);
+                    if (Math.abs(amountOwed) > 0.01) {
+                      // Only show if amount is significant
+                      const message = amountOwed > 0 ? `You owe <b>${member.name}</b> (Pay)` : `<b>${member.name}</b> owes you (Receive)`;
                       return (
                         <div key={member.email} className="d-flex justify-content-between py-0">
-                          <small className="mb-0">{message}</small>
-                          <small className={`fw-bold ${message.startsWith("You owe") ? "text-danger" : "text-success"}`}>
+                          <small className="mb-0">
+                            <div contentEditable="false" dangerouslySetInnerHTML={{ __html: message }}></div>
+                          </small>
+                          <small className={`fw-bold ${amountOwed > 0 ? "text-danger" : "text-success"}`}>
                             {group?.currency}
-                            {amount.toFixed(2)}
+                            {Math.abs(amountOwed).toFixed(2)}
                           </small>
                         </div>
                       );
                     }
                     return null;
                   })
-                  .filter((item) => item !== null)}
-
-                {expenses.length === 0 && (
-                  <div className="text-center py-2">
-                    <small className="text-muted">No expenses yet</small>
-                  </div>
-                )}
+                  .filter(Boolean)}
               </div>
 
               <div className="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
-                <Button variant={netBalance === 0 ? "outline-secondary" : "primary"} size="sm">
+                <Button variant="primary" size="sm">
                   Add Expense
                 </Button>
-                <Button variant={netBalance === 0 ? "outline-secondary" : "warning"} size="sm" disabled={netBalance === 0} onClick={() => setShowSettleModal(true)}>
+                <Button variant={"warning"} size="sm" onClick={() => setShowSettleModal(true)}>
                   Settle Up
                 </Button>
               </div>
@@ -302,39 +295,11 @@ const GroupDetail = () => {
                   <option value="">Select who to pay</option>
                   {group?.members
                     ?.filter((member) => {
-                      // Calculate net balance from expenses
-                      let netBalance = 0;
-                      expenses.forEach((expense) => {
-                        const paidBy = expense.paidBy;
-                        const userShare = expense.shares?.[loggedInUser?.email] || 0;
-                        const memberShare = expense.shares?.[member.email] || 0;
-
-                        if (paidBy === member.email && userShare > 0) {
-                          // You owe this member
-                          netBalance += parseFloat(userShare);
-                        } else if (paidBy === loggedInUser?.email && memberShare > 0) {
-                          // They owe you (reduces your debt)
-                          netBalance -= parseFloat(memberShare);
-                        }
-                      });
-                      //return member.email !== loggedInUser?.email && netBalance > 0;
-                      return member.email !== loggedInUser?.email;
+                      const amountOwed = calculateAmountOwedToMember(member.email);
+                      return member.email !== loggedInUser?.email && amountOwed > 0.01;
                     })
                     .map((member) => {
-                      // Calculate the exact amount owed
-                      let amountOwed = 0;
-                      expenses.forEach((expense) => {
-                        const paidBy = expense.paidBy;
-                        const userShare = expense.shares?.[loggedInUser?.email] || 0;
-                        const memberShare = expense.shares?.[member.email] || 0;
-
-                        if (paidBy === member.email && userShare > 0) {
-                          amountOwed += parseFloat(userShare);
-                        } else if (paidBy === loggedInUser?.email && memberShare > 0) {
-                          amountOwed -= parseFloat(memberShare);
-                        }
-                      });
-
+                      const amountOwed = calculateAmountOwedToMember(member.email);
                       return (
                         <option key={member.email} value={member.email}>
                           {member.name} (Receives {group?.currency}
@@ -356,10 +321,10 @@ const GroupDetail = () => {
                       setSettleAmount(value);
                     }
                   }}
-                  placeholder={selectedRecipient ? `Max: ${calculateMaxSettlement(loggedInUser?.email, selectedRecipient.email)}` : "Select recipient first"}
+                  placeholder={selectedRecipient ? `Max: ${calculateAmountOwedToMember(selectedRecipient.email).toFixed(2)}` : "Select recipient first"}
                   min="0.01"
                   step="0.01"
-                  max={selectedRecipient ? calculateMaxSettlement(loggedInUser?.email, selectedRecipient.email) : undefined}
+                  max={selectedRecipient ? calculateAmountOwedToMember(selectedRecipient.email) : undefined}
                   disabled={!selectedRecipient}
                   required
                 />
@@ -374,7 +339,6 @@ const GroupDetail = () => {
                 onClick={() => {
                   if (selectedRecipient && settleAmount) {
                     handleSettleUp(loggedInUser?.email, selectedRecipient.email, parseFloat(settleAmount));
-                    setShowSettleModal(false);
                   }
                 }}
                 disabled={!selectedRecipient || !settleAmount}
