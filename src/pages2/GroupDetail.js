@@ -50,7 +50,8 @@ const GroupDetail = () => {
       setLoading(true);
       try {
         const groupExpenses = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
-        setExpenses(groupExpenses);
+        const sortedExpenses = groupExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setExpenses(sortedExpenses);
         calculateBalancesFromExpenses(groupExpenses);
 
         if (!group) {
@@ -90,12 +91,13 @@ const GroupDetail = () => {
       const settlement = {
         id: uuid(),
         groupId: group.id,
-        description: `Settlement between ${payerName} and ${recipientName}`,
+        description: `Settle Up b/w ${payerName} and ${recipientName}`,
         amount: parseFloat(amount).toFixed(2),
         currency: group.currency,
         currencyName: group.currencyName,
         splitType: "settleup-group",
         paidBy: payerEmail,
+        paidByName: payerName,
         email: loggedInUser.email,
         type: "splitequal-group-expenses",
         date: new Date().toISOString(),
@@ -261,7 +263,7 @@ const GroupDetail = () => {
                   <div className="d-flex justify-content-between p-0">
                     <div>
                       <h6 className="mb-0">{expense.description}</h6>
-                      <small className="text-muted">{new Date(expense.date).toLocaleDateString()}</small> | <small className="text-muted">Split: {expense?.splitType}</small> | <small className="text-muted">PaidBy: {expense?.paidBy}</small>
+                      <small className="text-muted">{new Date(expense.date).toLocaleDateString()}</small> | <small className="text-muted">Split: {expense?.splitType}</small> | <small className="text-muted">PaidBy: {expense?.paidByName}</small>
                     </div>
                     <div>
                       <span className="fw-bold">
