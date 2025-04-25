@@ -194,27 +194,47 @@ const GroupDetail = () => {
     return rawAmountOwed >= 0 ? finalAmountOwed : -finalAmountOwed;
   };
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="groupheader text-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading groups details..</p>
+      </div>
+    );
   }
 
   if (!group) {
-    return <div>Group not found</div>;
+    return (
+      <div className="groupheader text-center py-5">
+        <p>Group not found</p>
+      </div>
+    );
   }
 
   const userBalance = group.balances?.[group.email] || 0;
 
   return (
     <>
-      <header className=" groupheader bg-myapp p-3 text-white">
+      <header className="groupheader bg-myapp p-3 text-white">
         <div className="d-flex justify-content-between align-items-middle mb-1">
           {/* Back Button */}
           <span onClick={() => navigate(-1)} style={{ cursor: "pointer" }}>
-            <FaArrowLeft className="me-1 text-warning" /> Back
+            <small>
+              {" "}
+              <FaArrowLeft className="me-1 text-warning" /> Back
+            </small>{" "}
           </span>
           <small className="text-white">Group Details </small>
           {/* Welcome Text */}
           <p className="mb-0">
-            <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
+            <small>
+              {" "}
+              <span>
+                <i className="fi fi-rr-user"></i>
+              </span>{" "}
+              {loggedInUser?.name || "Guest"}!
+            </small>
           </p>
         </div>
 
