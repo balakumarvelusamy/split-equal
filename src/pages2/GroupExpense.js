@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, ListGroup, Badge, Alert } from "react-bootstrap";
-import { getData, addData, UpdateData, getItemsbyid, getCurrencyName, getCountryCurrency, getItemsbyType } from "../service/APIService";
+import { getData, addData, UpdateData, getItemsbyid, getCurrencyName, getCountryCurrency, getItemsbyType, calculateAmountOwedToMember } from "../service/APIService";
 import { v4 as uuid } from "uuid";
 import secureLocalStorage from "react-secure-storage";
 import { FaTimes, FaPlus, FaUserFriends, FaArrowRight, FaExclamationTriangle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import add from "../images/plus2.png";
 import GroupAddExpenseModal from "./GroupAddExpenseModal";
+import GroupSummary from "./GroupSummary";
 
 const GroupExpense = () => {
   const navigate = useNavigate();
@@ -358,6 +359,8 @@ const GroupExpense = () => {
                         <small className="text-muted mb-0">
                           {group.members.length} members • {group.currency}
                         </small>
+                        <div></div>
+                        {/* Summary here */}
                       </div>
                       <div>
                         <a className="mx-1 p-2 px-2 text-decoration-none border rounded badge text-success viewbutton" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>

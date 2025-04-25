@@ -6,6 +6,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { v4 as uuid } from "uuid";
 import secureLocalStorage from "react-secure-storage";
 import GroupAddExpenseModal from "./GroupAddExpenseModal";
+import GroupSummary from "./GroupSummary";
 
 const GroupDetail = () => {
   const { groupId } = useParams();
@@ -246,31 +247,7 @@ const GroupDetail = () => {
             <small className="text-white py-1">{group?.members?.length} members</small>
           </div>
 
-          <div className="mt-2">
-            {group?.members
-              ?.filter((member) => member.email !== loggedInUser?.email)
-              .map((member) => {
-                const amountOwed = calculateAmountOwedToMember(member.email);
-                if (Math.abs(amountOwed) > 0.01) {
-                  // Only show if amount is significant
-                  const message = amountOwed > 0 ? `You owe <b>${member.name}</b> (You Pay)` : `<b>${member.name}</b> owes you (You Receive)`;
-                  return (
-                    <div key={member.email} className="d-flex justify-content-between py-0">
-                      <small className="mb-0">
-                        <div contentEditable="false" dangerouslySetInnerHTML={{ __html: message }}></div>
-                      </small>
-                      <small className={`fw-bold ${amountOwed > 0 ? "myapp-text-danger" : "myapp-text-sucess"}`}>
-                        {group?.currency}
-                        {Math.abs(amountOwed).toFixed(2)}
-                      </small>
-                    </div>
-                  );
-                }
-                return null;
-              })
-              .filter(Boolean)}
-          </div>
-
+          <GroupSummary group={group} loggedInUser={loggedInUser} calculateAmountOwedToMember={calculateAmountOwedToMember} />
           <div className="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
             <Button variant="warning" size="sm" onClick={() => setShowAddExpenseModal(true)}>
               Add Expense
@@ -290,63 +267,6 @@ const GroupDetail = () => {
         </div>
       ) : (
         <div className="container mt-3">
-          <div className="d-none">
-            <div className="d-flex justify-content-between align-items-middle mb-1">
-              {/* Back Button */}
-              <span onClick={() => navigate(-1)} style={{ cursor: "pointer" }}>
-                <FaArrowLeft className="me-1 text-success" /> Back
-              </span>
-
-              {/* Welcome Text */}
-              <p className="mb-0">
-                <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
-              </p>
-            </div>
-            {/* Group Balance Summary */}
-            <div className="card mb-3">
-              <div className="card-body p-2">
-                <div className="d-flex justify-content-between">
-                  <h4 className="mb-1">{group?.name}</h4>
-                  <small className="text-muted">{group?.members?.length} members</small>
-                </div>
-
-                <div className="mt-2">
-                  {group?.members
-                    ?.filter((member) => member.email !== loggedInUser?.email)
-                    .map((member) => {
-                      const amountOwed = calculateAmountOwedToMember(member.email);
-                      if (Math.abs(amountOwed) > 0.01) {
-                        // Only show if amount is significant
-                        const message = amountOwed > 0 ? `You owe <b>${member.name}</b> (Pay)` : `<b>${member.name}</b> owes you (Receive)`;
-                        return (
-                          <div key={member.email} className="d-flex justify-content-between py-0">
-                            <small className="mb-0">
-                              <div contentEditable="false" dangerouslySetInnerHTML={{ __html: message }}></div>
-                            </small>
-                            <small className={`fw-bold ${amountOwed > 0 ? "text-danger" : "text-success"}`}>
-                              {group?.currency}
-                              {Math.abs(amountOwed).toFixed(2)}
-                            </small>
-                          </div>
-                        );
-                      }
-                      return null;
-                    })
-                    .filter(Boolean)}
-                </div>
-
-                <div className="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
-                  <Button variant="primary" size="sm">
-                    Add Expense
-                  </Button>
-                  <Button variant={"warning"} size="sm" onClick={() => setShowSettleModal(true)}>
-                    Settle Up
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Expense History */}
           <h5>Expense History</h5>
           {expenses.length === 0 ? (
