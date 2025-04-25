@@ -6,6 +6,7 @@ import secureLocalStorage from "react-secure-storage";
 import { FaTimes, FaPlus, FaUserFriends, FaArrowRight, FaExclamationTriangle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import add from "../images/plus2.png";
+import GroupAddExpenseModal from "./GroupAddExpenseModal";
 
 const GroupExpense = () => {
   const navigate = useNavigate();
@@ -119,7 +120,7 @@ const GroupExpense = () => {
     }
   };
 
-  const addGroupExpense = async (currency) => {
+  const addGroupExpense_old = async (currency) => {
     if (!description || !amount || !currentGroup) {
       setSplitError("Please fill all fields.");
       return;
@@ -130,7 +131,7 @@ const GroupExpense = () => {
     }
 
     setLoading(true);
-    const shares = calculateShares();
+    const shares = calculateShares_old();
     const expenseId = uuid();
     const currencyName = await getCurrencyName(currency);
 
@@ -212,7 +213,7 @@ const GroupExpense = () => {
     }));
   };
 
-  const calculateShares = () => {
+  const calculateShares_old = () => {
     const totalAmount = parseFloat(amount) || 0;
     const members = currentGroup?.members || [];
 
@@ -425,76 +426,17 @@ const GroupExpense = () => {
         </Modal.Footer>
       </Modal>
       {/* Add Group Expense Modal */}
-      <Modal show={showAddExpense} onHide={() => setShowAddExpense(false)} size="lg">
-        <Modal.Header closeButton>
-          <b>Add Group Expense - {currentGroup?.name}</b>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group className="mb-1">
-            <b>Description*</b>
-            <Form.Control type="text" value={description} required onChange={(e) => setDescription(e.target.value)} placeholder="What was this expense for?" />
-          </Form.Group>
 
-          <div className="row mb-1">
-            <div className="col-md-6">
-              <b>Amount*</b>
-              <Form.Control type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" step="0.01" />
-            </div>
-            <div className="col-md-6">
-              <b>Currency*</b>
-
-              <Form.Control as="select" value={currency} disabled onChange={(e) => setCurrency(e.target.value)} required>
-                {currencyOptions.map((option) => (
-                  <option key={option.currency} value={option.currency}>
-                    {option.currencyName} ({option.currency})
-                  </option>
-                ))}
-              </Form.Control>
-            </div>
-          </div>
-
-          <Form.Group className="mb-1">
-            <b>Split Type*</b>
-            <div>
-              <Form.Check type="radio" label="Equal" name="splitType" checked={splitType === "equal"} onChange={() => setSplitType("equal")} inline />
-              <Form.Check type="radio" label="Percentage" name="splitType" checked={splitType === "percentage"} onChange={() => setSplitType("percentage")} inline />
-              <Form.Check type="radio" label="Custom" name="splitType" checked={splitType === "custom"} onChange={() => setSplitType("custom")} inline />
-            </div>
-          </Form.Group>
-
-          {splitType !== "equal" && renderSharesInput()}
-
-          {splitError && (
-            <Alert variant="danger" className="mt-1 p-1">
-              <FaExclamationTriangle className="me-2" />
-              {splitError}
-            </Alert>
-          )}
-
-          <div className="alert alert-info mt-3 p-1">
-            <strong>Summary:</strong>
-            <ul className="mt-1 mb-0">
-              {currentGroup?.members.map((member) => {
-                const share = calculateShares()[member.email] || 0;
-                return (
-                  <li key={member.email}>
-                    {member.name}: {currency} {share.toFixed(2)}
-                    {splitType === "percentage" && ` (${(customShares[member.email] || 0).toFixed(2)}%)`}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowAddExpense(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={(e) => addGroupExpense(currency)} disabled={loading}>
-            {loading ? "Saving..." : "Add Expense"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <GroupAddExpenseModal
+        show={showAddExpense}
+        onHide={() => setShowAddExpense(false)}
+        currentGroup={currentGroup}
+        loggedInUser={loggedInUser}
+        onExpenseAdded={(updatedGroup) => {
+          setGroups(groups.map((g) => (g.id === updatedGroup.id ? updatedGroup : g)));
+          setCurrentGroup(updatedGroup);
+        }}
+      />
     </div>
   );
 };
