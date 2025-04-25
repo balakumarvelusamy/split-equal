@@ -205,68 +205,122 @@ const GroupDetail = () => {
 
   return (
     <>
+      <header className=" groupheader bg-myapp p-3 text-white">
+        <div className="d-flex justify-content-between align-items-middle mb-1">
+          {/* Back Button */}
+          <span onClick={() => navigate(-1)} style={{ cursor: "pointer" }}>
+            <FaArrowLeft className="me-1 text-warning" /> Back
+          </span>
+          <small className="text-white">Group Details </small>
+          {/* Welcome Text */}
+          <p className="mb-0">
+            <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
+          </p>
+        </div>
+
+        <div className="p-2">
+          <div className="d-flex justify-content-between">
+            <h4 className="py-1 bg-myapp w-75 myapp-text-warning  mb-1">{group?.name}</h4>
+            <small className="text-white py-1">{group?.members?.length} members</small>
+          </div>
+
+          <div className="mt-2">
+            {group?.members
+              ?.filter((member) => member.email !== loggedInUser?.email)
+              .map((member) => {
+                const amountOwed = calculateAmountOwedToMember(member.email);
+                if (Math.abs(amountOwed) > 0.01) {
+                  // Only show if amount is significant
+                  const message = amountOwed > 0 ? `You owe <b>${member.name}</b> (Pay)` : `<b>${member.name}</b> owes you (Receive)`;
+                  return (
+                    <div key={member.email} className="d-flex justify-content-between py-0">
+                      <small className="mb-0">
+                        <div contentEditable="false" dangerouslySetInnerHTML={{ __html: message }}></div>
+                      </small>
+                      <small className={`fw-bold ${amountOwed > 0 ? "myapp-text-danger" : "myapp-text-sucess"}`}>
+                        {group?.currency}
+                        {Math.abs(amountOwed).toFixed(2)}
+                      </small>
+                    </div>
+                  );
+                }
+                return null;
+              })
+              .filter(Boolean)}
+          </div>
+
+          <div className="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+            <Button variant="warning" size="sm">
+              Add Expense
+            </Button>
+            <Button variant={"warning"} size="sm" onClick={() => setShowSettleModal(true)}>
+              Settle Up
+            </Button>
+          </div>
+        </div>
+      </header>
       {loading ? (
         <div className="text-center py-4">
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
-          <p>Loading groups and friends...</p>
+          <p>Loading groups details..</p>
         </div>
       ) : (
-        <div className="container">
-          <div className="d-flex justify-content-between align-items-middle mb-1">
-            {/* Back Button */}
-            <span onClick={() => navigate(-1)} style={{ cursor: "pointer" }}>
-              <FaArrowLeft className="me-1 text-success" /> Back
-            </span>
+        <div className="container mt-3">
+          <div className="d-none">
+            <div className="d-flex justify-content-between align-items-middle mb-1">
+              {/* Back Button */}
+              <span onClick={() => navigate(-1)} style={{ cursor: "pointer" }}>
+                <FaArrowLeft className="me-1 text-success" /> Back
+              </span>
 
-            {/* Welcome Text */}
-            <p className="mb-0">
-              <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
-            </p>
-          </div>
+              {/* Welcome Text */}
+              <p className="mb-0">
+                <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
+              </p>
+            </div>
+            {/* Group Balance Summary */}
+            <div className="card mb-3">
+              <div className="card-body p-2">
+                <div className="d-flex justify-content-between">
+                  <h4 className="mb-1">{group?.name}</h4>
+                  <small className="text-muted">{group?.members?.length} members</small>
+                </div>
 
-          {/* Group Balance Summary */}
+                <div className="mt-2">
+                  {group?.members
+                    ?.filter((member) => member.email !== loggedInUser?.email)
+                    .map((member) => {
+                      const amountOwed = calculateAmountOwedToMember(member.email);
+                      if (Math.abs(amountOwed) > 0.01) {
+                        // Only show if amount is significant
+                        const message = amountOwed > 0 ? `You owe <b>${member.name}</b> (Pay)` : `<b>${member.name}</b> owes you (Receive)`;
+                        return (
+                          <div key={member.email} className="d-flex justify-content-between py-0">
+                            <small className="mb-0">
+                              <div contentEditable="false" dangerouslySetInnerHTML={{ __html: message }}></div>
+                            </small>
+                            <small className={`fw-bold ${amountOwed > 0 ? "text-danger" : "text-success"}`}>
+                              {group?.currency}
+                              {Math.abs(amountOwed).toFixed(2)}
+                            </small>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })
+                    .filter(Boolean)}
+                </div>
 
-          <div className="card mb-3">
-            <div className="card-body p-2">
-              <div className="d-flex justify-content-between">
-                <h4 className="mb-1">{group?.name}</h4>
-                <small className="text-muted">{group?.members?.length} members</small>
-              </div>
-
-              <div className="mt-2">
-                {group?.members
-                  ?.filter((member) => member.email !== loggedInUser?.email)
-                  .map((member) => {
-                    const amountOwed = calculateAmountOwedToMember(member.email);
-                    if (Math.abs(amountOwed) > 0.01) {
-                      // Only show if amount is significant
-                      const message = amountOwed > 0 ? `You owe <b>${member.name}</b> (Pay)` : `<b>${member.name}</b> owes you (Receive)`;
-                      return (
-                        <div key={member.email} className="d-flex justify-content-between py-0">
-                          <small className="mb-0">
-                            <div contentEditable="false" dangerouslySetInnerHTML={{ __html: message }}></div>
-                          </small>
-                          <small className={`fw-bold ${amountOwed > 0 ? "text-danger" : "text-success"}`}>
-                            {group?.currency}
-                            {Math.abs(amountOwed).toFixed(2)}
-                          </small>
-                        </div>
-                      );
-                    }
-                    return null;
-                  })
-                  .filter(Boolean)}
-              </div>
-
-              <div className="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
-                <Button variant="primary" size="sm">
-                  Add Expense
-                </Button>
-                <Button variant={"warning"} size="sm" onClick={() => setShowSettleModal(true)}>
-                  Settle Up
-                </Button>
+                <div className="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                  <Button variant="primary" size="sm">
+                    Add Expense
+                  </Button>
+                  <Button variant={"warning"} size="sm" onClick={() => setShowSettleModal(true)}>
+                    Settle Up
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

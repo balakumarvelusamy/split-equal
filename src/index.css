@@ -26,7 +26,16 @@ code {
 .color-myapp2 {
   color: #78B7D0 !important;
 }
-
+.myapp-text-warning
+{
+  color: #FFDC7F !important;
+}
+.myapp-text-sucess {
+  color: #b3face !important;
+}
+.myapp-text-danger {
+  color: #fdd9d9 !important;
+}
 .bg2-myapp, .accordion-button:not(.collapsed) {
   background-color: #78B7D0 !important;
 }
@@ -88,7 +97,7 @@ code {
 
 .btn-primary {
   --bs-btn-color: #fff;
-  --bs-btn-bg: #16325B;
+  --bs-btn-bg: #16325B !important;
   --bs-btn-border-color: #16325B;
   --bs-btn-hover-color: #fff;
   --bs-btn-hover-bg: #16325B;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLocation } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import ErrorBoundary from "./ErrorBoundary";
 import secureLocalStorage from "react-secure-storage";
@@ -124,7 +124,7 @@ const MainApp = () => {
     if (isLoggedIn) {
       return (
         <>
-          <Header title={config.apptitle} />
+          {!window.location.pathname.includes("/group/") && <Header title={config.apptitle} />}
           <Routes>
             <Route path="" element={<Home />} />
             <Route path="profile" element={<Profile />} />
