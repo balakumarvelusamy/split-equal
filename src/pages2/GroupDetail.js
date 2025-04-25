@@ -253,7 +253,7 @@ const GroupDetail = () => {
                 const amountOwed = calculateAmountOwedToMember(member.email);
                 if (Math.abs(amountOwed) > 0.01) {
                   // Only show if amount is significant
-                  const message = amountOwed > 0 ? `You owe <b>${member.name}</b> (Pay)` : `<b>${member.name}</b> owes you (Receive)`;
+                  const message = amountOwed > 0 ? `You owe <b>${member.name}</b> (You Pay)` : `<b>${member.name}</b> owes you (You Receive)`;
                   return (
                     <div key={member.email} className="d-flex justify-content-between py-0">
                       <small className="mb-0">
@@ -399,7 +399,7 @@ const GroupDetail = () => {
                       const amountOwed = calculateAmountOwedToMember(member.email);
                       return (
                         <option key={member.email} value={member.email}>
-                          {member.name} (Receives {group?.currency}
+                          {member.name} ({amountOwed > 0 ? "Receives" : "Pays"} {group?.currency}
                           {Math.abs(amountOwed.toFixed(2))})
                         </option>
                       );
@@ -411,14 +411,14 @@ const GroupDetail = () => {
                 <Form.Label>Amount to Settle</Form.Label>
                 <Form.Control
                   type="number"
-                  value={Math.abs(settleAmount)}
+                  value={settleAmount}
                   onChange={(e) => {
                     const value = e.target.value;
                     if (value === "" || /^\d*\.?\d{0,2}$/.test(value)) {
                       setSettleAmount(value);
                     }
                   }}
-                  placeholder={selectedRecipient ? `Max: ${calculateAmountOwedToMember(selectedRecipient.email).toFixed(2)}` : "Select recipient first"}
+                  placeholder={selectedRecipient ? `Max: ${Math.abs(calculateAmountOwedToMember(selectedRecipient.email).toFixed(2))}` : "Select recipient first"}
                   min="0.01"
                   step="0.01"
                   max={selectedRecipient ? calculateAmountOwedToMember(selectedRecipient.email) : undefined}
