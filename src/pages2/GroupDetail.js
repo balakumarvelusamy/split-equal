@@ -82,9 +82,9 @@ const GroupDetail = () => {
         throw new Error("Amount must be a positive number");
       }
 
-      const amountOwed = calculateAmountOwedToMember(recipientEmail);
-      if (amount > amountOwed) {
-        throw new Error(`Amount cannot exceed ${amountOwed.toFixed(2)}`);
+      const maxAmount = Math.abs(calculateAmountOwedToMember(recipientEmail));
+      if (amount > maxAmount) {
+        throw new Error(`Amount cannot exceed ${maxAmount.toFixed(2)}`);
       }
       const payerName = group.members.find((m) => m.email === payerEmail)?.name || payerEmail;
       const recipientName = group.members.find((m) => m.email === recipientEmail)?.name || recipientEmail;
@@ -154,26 +154,45 @@ const GroupDetail = () => {
     // The maximum you can settle is the minimum between what you owe and what they're owed
     return Math.min(payerDebt, recipientCredit).toFixed(2);
   };
+
   const calculateAmountOwedToMember = (memberEmail) => {
-    let amountOwed = 0;
+    let rawAmountOwed = 0;
+    let totalSettledAmount = 0;
 
+    // 1. Calculate raw amount owed (before settlements)
     expenses.forEach((expense) => {
-      const paidBy = expense.paidBy;
-      const userShare = expense.shares?.[loggedInUser?.email] || 0;
-      const memberShare = expense.shares?.[memberEmail] || 0;
+      if (expense.splitType !== "settleup-group") {
+        const paidBy = expense.paidBy;
+        const userShare = expense.shares?.[loggedInUser?.email] || 0;
+        const memberShare = expense.shares?.[memberEmail] || 0;
 
-      if (paidBy === memberEmail && userShare > 0) {
-        // You owe this member
-        amountOwed += parseFloat(userShare);
-      } else if (paidBy === loggedInUser?.email && memberShare > 0) {
-        // They owe you (reduces your debt)
-        amountOwed -= parseFloat(memberShare);
+        if (paidBy === memberEmail && userShare > 0) {
+          rawAmountOwed += parseFloat(userShare); // You owe them
+        } else if (paidBy === loggedInUser?.email && memberShare > 0) {
+          rawAmountOwed -= parseFloat(memberShare); // They owe you
+        }
       }
     });
 
-    return amountOwed;
-  };
+    // 2. Sum all settle-up transactions between the two members
+    expenses.forEach((expense) => {
+      if (expense.splitType === "settleup-group") {
+        const settlement = expense.settlementData;
 
+        const isBetweenMembers = (settlement?.payerEmail === loggedInUser?.email && settlement?.recipientEmail === memberEmail) || (settlement?.payerEmail === memberEmail && settlement?.recipientEmail === loggedInUser?.email);
+
+        if (isBetweenMembers) {
+          totalSettledAmount += Math.abs(parseFloat(expense.amount || 0));
+        }
+      }
+    });
+
+    // 3. Final amount owed after subtracting all settlements
+    const finalAmountOwed = Math.abs(rawAmountOwed) - totalSettledAmount;
+
+    // Preserve the direction (who owes whom)
+    return rawAmountOwed >= 0 ? finalAmountOwed : -finalAmountOwed;
+  };
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -298,14 +317,14 @@ const GroupDetail = () => {
                   {group?.members
                     ?.filter((member) => {
                       const amountOwed = calculateAmountOwedToMember(member.email);
-                      return member.email !== loggedInUser?.email && amountOwed > 0.01;
+                      return member.email !== loggedInUser?.email;
                     })
                     .map((member) => {
                       const amountOwed = calculateAmountOwedToMember(member.email);
                       return (
                         <option key={member.email} value={member.email}>
                           {member.name} (Receives {group?.currency}
-                          {amountOwed.toFixed(2)})
+                          {Math.abs(amountOwed.toFixed(2))})
                         </option>
                       );
                     })}
@@ -316,7 +335,7 @@ const GroupDetail = () => {
                 <Form.Label>Amount to Settle</Form.Label>
                 <Form.Control
                   type="number"
-                  value={settleAmount}
+                  value={Math.abs(settleAmount)}
                   onChange={(e) => {
                     const value = e.target.value;
                     if (value === "" || /^\d*\.?\d{0,2}$/.test(value)) {
@@ -340,7 +359,7 @@ const GroupDetail = () => {
                 variant="primary"
                 onClick={() => {
                   if (selectedRecipient && settleAmount) {
-                    handleSettleUp(loggedInUser?.email, selectedRecipient.email, parseFloat(settleAmount));
+                    handleSettleUp(loggedInUser?.email, selectedRecipient.email, parseFloat(Math.abs(settleAmount)));
                   }
                 }}
                 disabled={!selectedRecipient || !settleAmount}
