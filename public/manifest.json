@@ -1,25 +1,25 @@
 {
-  "short_name": "Recipe AI",
-  "name": "Recipe AI",
+  "short_name": "Split Equal",
+  "name": "Split Equal",
   "icons": [
     {
-      "src": "logo.jpg",
+      "src": "splitequal.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "logo.jpg",
+      "src": "splitequal.png",
       "type": "image/jpg",
       "sizes": "192x192"
     },
     {
-      "src": "logo.jpg",
+      "src": "splitequal.png",
       "type": "image/jpg",
       "sizes": "512x512"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#01d6a4",
+  "theme_color": "#16325B",
   "background_color": "#ffffff"
 }
