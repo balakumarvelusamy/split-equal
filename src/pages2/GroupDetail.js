@@ -5,6 +5,7 @@ import { Modal, Button, Form, ListGroup, Badge, Alert } from "react-bootstrap";
 import { FaArrowLeft } from "react-icons/fa";
 import { v4 as uuid } from "uuid";
 import secureLocalStorage from "react-secure-storage";
+import GroupAddExpenseModal from "./GroupAddExpenseModal";
 
 const GroupDetail = () => {
   const { groupId } = useParams();
@@ -14,6 +15,7 @@ const GroupDetail = () => {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showSettleModal, setShowSettleModal] = useState(false);
+  const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
   const [settleAmount, setSettleAmount] = useState("");
   const [selectedRecipient, setSelectedRecipient] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -270,7 +272,7 @@ const GroupDetail = () => {
           </div>
 
           <div className="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
-            <Button variant="warning" size="sm">
+            <Button variant="warning" size="sm" onClick={() => setShowAddExpenseModal(true)}>
               Add Expense
             </Button>
             <Button variant={"warning"} size="sm" onClick={() => setShowSettleModal(true)}>
@@ -442,6 +444,23 @@ const GroupDetail = () => {
               </Button>
             </Modal.Footer>
           </Modal>
+
+          <GroupAddExpenseModal
+            show={showAddExpenseModal}
+            onHide={() => setShowAddExpenseModal(false)}
+            currentGroup={group}
+            loggedInUser={loggedInUser}
+            onExpenseAdded={(updatedGroup) => {
+              setGroup(updatedGroup);
+              const loadExpenses = async () => {
+                const groupExpenses = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
+                const sortedExpenses = groupExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+                setExpenses(sortedExpenses);
+                calculateBalancesFromExpenses(sortedExpenses);
+              };
+              loadExpenses();
+            }}
+          />
         </div>
       )}
     </>
