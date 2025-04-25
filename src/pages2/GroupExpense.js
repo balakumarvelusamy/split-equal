@@ -324,7 +324,7 @@ const GroupExpense = () => {
       </div>
       {loading ? (
         <div className="text-center py-4">
-          <div className="spinner-border text-primary" role="status">
+          <div className="spinner-border text-warning" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
           <p>Loading groups and friends...</p>
