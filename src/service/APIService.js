@@ -645,7 +645,7 @@ export const maskEmail = (email) => {
   return `${first}${masked}${last}@${domain}`;
 };
 
-export const calculateAmountOwedToMember = (expenses, loggedInUser, memberEmail) => {
+export const calculateAmountOwedToMember_ = (expenses, loggedInUser, memberEmail) => {
   let rawAmountOwed = 0;
   let totalSettledAmount = 0;
 

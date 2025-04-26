@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, ListGroup, Badge, Alert } from "react-bootstrap";
-import { getData, addData, UpdateData, getItemsbyid, getCurrencyName, getCountryCurrency, getItemsbyType, calculateAmountOwedToMember } from "../service/APIService";
+import { getData, addData, UpdateData, getItemsbyid, getCurrencyName, getCountryCurrency, getItemsbyType, calculateAmountOwedToMember_, getData_Any2Column } from "../service/APIService";
 import { v4 as uuid } from "uuid";
 import secureLocalStorage from "react-secure-storage";
 import { FaTimes, FaPlus, FaUserFriends, FaArrowRight, FaExclamationTriangle } from "react-icons/fa";
@@ -58,8 +58,14 @@ const GroupExpense = () => {
             group.email === sessionUser.email || // User is creator
             group.members?.some((member) => member.email === sessionUser.email) // User is member
         );
-
-        setGroups(userGroups);
+        const groupsWithExpenses = await Promise.all(
+          userGroups.map(async (group) => {
+            const expenses = await getData_Any2Column("groupId", group.id, "type", "splitequal-group-expenses");
+            return { ...group, expenses };
+          })
+        );
+        setGroups(groupsWithExpenses);
+        //setGroups(userGroups);
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {
@@ -351,34 +357,38 @@ const GroupExpense = () => {
                 const userBalance = group.balances?.[loggedInUser?.email] || 0;
                 return (
                   <ListGroup.Item key={group.id} className="mb-0">
-                    <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex1 justify-content-between align-items-center">
                       <div>
-                        <h6 className="mb-2" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
-                          {group.name} <FaArrowRight className="me-1 text-success" />
-                        </h6>
-                        <small className="text-muted mb-0">
-                          {group.members.length} members • {group.currency}
-                        </small>
-                        <div></div>
-                        {/* Summary here */}
-                      </div>
-                      <div>
-                        <a className="mx-1 p-2 px-2 text-decoration-none border rounded badge text-success viewbutton" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
-                          View <FaArrowRight className="me-1 text-success" />
-                        </a>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h6 className="mb-0" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
+                            <b>{group.name}</b>{" "}
+                            <small className="text-muted mb-0">
+                              {group.members.length} members • {group.currency}
+                            </small>
+                          </h6>
+                          <div>
+                            <a className="mx-1 p-2 px-2 text-decoration-none border rounded badge text-success viewbutton" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
+                              View <FaArrowRight className="me-1 text-success" />
+                            </a>
 
-                        <img
-                          src={add}
-                          alt="Add Expense"
-                          width="40"
-                          className="px-2 border  rounded p-1 mx-2 addexpense"
-                          onClick={() => {
-                            setCurrentGroup(group);
-                            setShowAddExpense(true);
-                            setSplitError("");
-                            setCurrency(group.currency);
-                          }}
-                        />
+                            <img
+                              src={add}
+                              alt="Add Expense"
+                              width="40"
+                              className="px-2 border  rounded p-1  addexpense"
+                              onClick={() => {
+                                setCurrentGroup(group);
+                                setShowAddExpense(true);
+                                setSplitError("");
+                                setCurrency(group.currency);
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="px-3">
+                          <GroupSummary group={group} page="home" loggedInUser={loggedInUser} calculateAmountOwedToMember={(memberEmail) => calculateAmountOwedToMember_(group.expenses || [], loggedInUser, memberEmail)} />
+                        </div>
+                        {/* Summary here */}
                       </div>
                     </div>
                   </ListGroup.Item>

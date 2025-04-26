@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { getData_Any2Column, addData } from "../service/APIService";
+import { getData_Any2Column, addData, calculateAmountOwedToMember_ } from "../service/APIService";
 import { Modal, Button, Form, ListGroup, Badge, Alert } from "react-bootstrap";
 import { FaArrowLeft } from "react-icons/fa";
 import { v4 as uuid } from "uuid";
@@ -247,7 +247,7 @@ const GroupDetail = () => {
             <small className="text-white py-1">{group?.members?.length} members</small>
           </div>
 
-          <GroupSummary group={group} loggedInUser={loggedInUser} calculateAmountOwedToMember={calculateAmountOwedToMember} />
+          <GroupSummary group={group} page="groupdetails" loggedInUser={loggedInUser} calculateAmountOwedToMember={(memberEmail) => calculateAmountOwedToMember_(expenses || [], loggedInUser, memberEmail)} />
           <div className="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
             <Button variant="warning" size="sm" onClick={() => setShowAddExpenseModal(true)}>
               Add Expense
