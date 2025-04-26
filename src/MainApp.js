@@ -132,7 +132,7 @@ const MainApp = () => {
             <Route path="history" element={<ExpenseHistory />} />
             <Route path="friend" element={<FriendDetail />} />
             <Route path="/group/:groupId" element={<GroupDetail />} />
-            <Route path="/groups" element={<GroupExpense friends={[]} loggedInUser={[]} />} />
+            <Route path="/groups" element={<GroupExpense />} />
             <Route path="support" element={<Support />} />
             <Route path="scan" element={<Scan />} />
           </Routes>
