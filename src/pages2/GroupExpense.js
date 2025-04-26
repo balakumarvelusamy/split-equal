@@ -34,6 +34,7 @@ const GroupExpense = () => {
     // Load logged in user from secure storage
     const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
     setLoggedInUser(sessionUser);
+
     const fetchCurrencyOptions = () => {
       const options = getCountryCurrency();
       setCurrencyOptions(options);
@@ -127,88 +128,6 @@ const GroupExpense = () => {
     }
   };
 
-  const addGroupExpense_old = async (currency) => {
-    if (!description || !amount || !currentGroup) {
-      setSplitError("Please fill all fields.");
-      return;
-    }
-
-    if (!validateShares()) {
-      return;
-    }
-
-    setLoading(true);
-    const shares = calculateShares_old();
-    const expenseId = uuid();
-    const currencyName = await getCurrencyName(currency);
-
-    try {
-      // Create expense record
-      const groupExpense = {
-        id: expenseId,
-        groupId: currentGroup.id,
-        description,
-        amount: parseFloat(amount).toFixed(2),
-        currency,
-        currencyName,
-        splitType,
-        shares,
-        paidBy: loggedInUser.email,
-        paidByName: loggedInUser.name,
-        email: loggedInUser.email,
-        type: "splitequal-group-expenses",
-        date: new Date().toISOString(),
-      };
-
-      // Add the expense to the database
-      await addData(groupExpense);
-
-      // Update group balances
-      const updatedGroup = { ...currentGroup };
-      if (!updatedGroup.balances) {
-        updatedGroup.balances = {};
-      }
-
-      // Calculate new balances
-      currentGroup.members.forEach((member) => {
-        const memberEmail = member.email;
-        const shareAmount = shares[memberEmail] || 0;
-
-        if (!updatedGroup.balances[memberEmail]) {
-          updatedGroup.balances[memberEmail] = 0;
-        }
-
-        if (memberEmail === loggedInUser.email) {
-          // The payer's balance increases (they should receive money from others)
-          updatedGroup.balances[memberEmail] += shareAmount * (currentGroup.members.length - 1);
-        } else {
-          // Other members' balances decrease (they owe money to payer)
-          updatedGroup.balances[memberEmail] -= shareAmount;
-        }
-
-        // Round to 2 decimal places
-        updatedGroup.balances[memberEmail] = parseFloat(updatedGroup.balances[memberEmail].toFixed(2));
-      });
-
-      // Update the group in the database
-      await UpdateData(updatedGroup);
-
-      // Update the local state
-      setGroups(groups.map((g) => (g.id === updatedGroup.id ? updatedGroup : g)));
-      setCurrentGroup(updatedGroup);
-
-      // Reset form
-      setDescription("");
-      setAmount("");
-      setCustomShares({});
-      setShowAddExpense(false);
-    } catch (error) {
-      console.error("Error adding group expense:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const toggleFriendSelection = (friend) => {
     setSelectedFriends((prev) => (prev.some((f) => f.friendemail === friend.friendemail) ? prev.filter((f) => f.friendemail !== friend.friendemail) : [...prev, friend]));
   };
@@ -218,35 +137,6 @@ const GroupExpense = () => {
       ...prev,
       [email]: parseFloat(value) || 0,
     }));
-  };
-
-  const calculateShares_old = () => {
-    const totalAmount = parseFloat(amount) || 0;
-    const members = currentGroup?.members || [];
-
-    if (splitType === "equal") {
-      const equalShare = totalAmount / members.length;
-      const shares = {};
-      members.forEach((member) => {
-        shares[member.email] = equalShare;
-      });
-      return shares;
-    } else if (splitType === "percentage") {
-      const shares = {};
-      let totalPercentage = 0;
-
-      // Calculate total percentage entered
-      members.forEach((member) => {
-        const percentage = parseFloat(customShares[member.email]) || 0;
-        totalPercentage += percentage;
-        shares[member.email] = (totalAmount * percentage) / 100;
-      });
-
-      return shares;
-    } else {
-      // Custom shares - just return the custom values
-      return customShares;
-    }
   };
 
   // Validate shares before saving
@@ -367,15 +257,15 @@ const GroupExpense = () => {
                             </small>
                           </h6>
                           <div>
-                            <a className="mx-1 p-2 px-2 text-decoration-none border rounded badge text-success viewbutton" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
+                            <a className="mx-1 p-0 px-2 text-decoration-none border1 rounded badge text-success viewbutton" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
                               View <FaArrowRight className="me-1 text-success" />
                             </a>
 
                             <img
                               src={add}
                               alt="Add Expense"
-                              width="40"
-                              className="px-2 border  rounded p-1  addexpense"
+                              width="35"
+                              className="px-2 border1  rounded   addexpense"
                               onClick={() => {
                                 setCurrentGroup(group);
                                 setShowAddExpense(true);
@@ -386,7 +276,7 @@ const GroupExpense = () => {
                           </div>
                         </div>
                         <div className="px-3">
-                          <GroupSummary group={group} page="home" loggedInUser={loggedInUser} calculateAmountOwedToMember={(memberEmail) => calculateAmountOwedToMember_(group.expenses || [], loggedInUser, memberEmail)} />
+                          <GroupSummary group={group} page="home" loggedInUser={loggedInUser} calculateAmountOwedToMember_={(memberEmail) => calculateAmountOwedToMember_(group.expenses || [], loggedInUser, memberEmail)} />
                         </div>
                         {/* Summary here */}
                       </div>

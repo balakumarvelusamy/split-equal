@@ -85,7 +85,7 @@ const GroupDetail = () => {
         throw new Error("Amount must be a positive number");
       }
 
-      const maxAmount = Math.abs(calculateAmountOwedToMember(recipientEmail));
+      const maxAmount = Math.abs(calculateAmountOwedToMember1(recipientEmail));
       if (amount > maxAmount) {
         throw new Error(`Amount cannot exceed ${maxAmount.toFixed(2)}`);
       }
@@ -158,7 +158,7 @@ const GroupDetail = () => {
     return Math.min(payerDebt, recipientCredit).toFixed(2);
   };
 
-  const calculateAmountOwedToMember = (memberEmail) => {
+  const calculateAmountOwedToMember1 = (memberEmail) => {
     let rawAmountOwed = 0;
     let totalSettledAmount = 0;
 
@@ -247,7 +247,7 @@ const GroupDetail = () => {
             <small className="text-white py-1">{group?.members?.length} members</small>
           </div>
 
-          <GroupSummary group={group} page="groupdetails" loggedInUser={loggedInUser} calculateAmountOwedToMember={(memberEmail) => calculateAmountOwedToMember_(expenses || [], loggedInUser, memberEmail)} />
+          <GroupSummary group={group} page="groupdetails" loggedInUser={loggedInUser} calculateAmountOwedToMember_={(memberEmail) => calculateAmountOwedToMember_(expenses || [], loggedInUser, memberEmail)} />
           <div className="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
             <Button variant="warning" size="sm" onClick={() => setShowAddExpenseModal(true)}>
               Add Expense
@@ -312,11 +312,11 @@ const GroupDetail = () => {
                   <option value="">Select who to pay</option>
                   {group?.members
                     ?.filter((member) => {
-                      const amountOwed = calculateAmountOwedToMember(member.email);
+                      const amountOwed = calculateAmountOwedToMember1(member.email);
                       return member.email !== loggedInUser?.email;
                     })
                     .map((member) => {
-                      const amountOwed = calculateAmountOwedToMember(member.email);
+                      const amountOwed = calculateAmountOwedToMember1(member.email);
                       return (
                         <option key={member.email} value={member.email}>
                           {member.name} ({amountOwed > 0 ? "Receives" : "Pays"} {group?.currency}
@@ -338,10 +338,10 @@ const GroupDetail = () => {
                       setSettleAmount(value);
                     }
                   }}
-                  placeholder={selectedRecipient ? `Max: ${Math.abs(calculateAmountOwedToMember(selectedRecipient.email).toFixed(2))}` : "Select recipient first"}
+                  placeholder={selectedRecipient ? `Max: ${Math.abs(calculateAmountOwedToMember1(selectedRecipient.email).toFixed(2))}` : "Select recipient first"}
                   min="0.01"
                   step="0.01"
-                  max={selectedRecipient ? calculateAmountOwedToMember(selectedRecipient.email) : undefined}
+                  max={selectedRecipient ? calculateAmountOwedToMember1(selectedRecipient.email) : undefined}
                   disabled={!selectedRecipient}
                   required
                 />
