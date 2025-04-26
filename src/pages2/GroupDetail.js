@@ -273,22 +273,34 @@ const GroupDetail = () => {
             <div className="alert alert-info">No expenses yet</div>
           ) : (
             <ListGroup>
-              {expenses.map((expense) => (
-                <ListGroup.Item key={expense.id} className="p-1">
-                  <div className="d-flex justify-content-between p-0">
-                    <div>
-                      <h6 className="mb-0">{expense.description}</h6>
-                      <small className="text-muted">{new Date(expense.date).toLocaleDateString()}</small> | <small className="text-muted">Split: {expense?.splitType}</small> | <small className="text-muted">PaidBy: {expense?.paidByName}</small>
+              {expenses.map((expense) => {
+                const dateObj = new Date(expense.date);
+                const formattedDayMonth = dateObj.toLocaleDateString("en-US", {
+                  day: "numeric",
+                  month: "short",
+                });
+                const formattedYear = dateObj.getFullYear();
+
+                return (
+                  <ListGroup.Item key={expense.id} className="p-1">
+                    <div className="d-flex justify-content-between p-0">
+                      <div>
+                        <h6 className="mb-0">{expense.description}</h6>
+                        <span className="text-center px-1 bg-light rounded text-nowrap ">
+                          <small>{formattedDayMonth}</small>
+                        </span>{" "}
+                        | <small className="text-muted">Split: {expense?.splitType}</small> | <small className="text-muted">PaidBy: {expense?.paidByName}</small>
+                      </div>
+                      <div>
+                        <span className="fw-bold">
+                          {expense.currency}
+                          {expense.amount}
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <span className="fw-bold">
-                        {expense.currency}
-                        {expense.amount}
-                      </span>
-                    </div>
-                  </div>
-                </ListGroup.Item>
-              ))}
+                  </ListGroup.Item>
+                );
+              })}
             </ListGroup>
           )}
 

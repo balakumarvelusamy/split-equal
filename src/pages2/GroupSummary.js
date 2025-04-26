@@ -11,7 +11,7 @@ const GroupSummary = ({ group, page, loggedInUser, calculateAmountOwedToMember_ 
             const isLast = index === array.length - 1;
             const message = amountOwed > 0 ? `You owe <b>${member.name}</b>` : `<b>${member.name}</b> owes you`;
             return (
-              <div key={member.email} className={`${isLast ? "member-connection-line-last" : "member-connection-line"} d-flex justify-content-between py-0`}>
+              <div key={member.email} className={`${isLast ? "member-connection-line-last" : "member-connection-line"} d-flex1 justify-content-between py-0`}>
                 <span>
                   <small className="mb-0">
                     <span contentEditable={false} dangerouslySetInnerHTML={{ __html: message }}></span>
