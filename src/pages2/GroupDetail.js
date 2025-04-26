@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { getData_Any2Column, addData, calculateAmountOwedToMember_ } from "../service/APIService";
+import { getData_Any2Column, addData, calculateAmountOwedToMember_, UpdateData } from "../service/APIService";
 import { Modal, Button, Form, ListGroup, Badge, Alert } from "react-bootstrap";
 import { FaArrowLeft } from "react-icons/fa";
 import { v4 as uuid } from "uuid";
@@ -13,6 +13,9 @@ const GroupDetail = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const [group, setGroup] = useState(state?.group || null);
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+  const [newMemberName, setNewMemberName] = useState("");
+  const [newMemberEmail, setNewMemberEmail] = useState("");
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showSettleModal, setShowSettleModal] = useState(false);
@@ -217,6 +220,34 @@ const GroupDetail = () => {
 
   const userBalance = group.balances?.[group.email] || 0;
 
+  // Add Member Handler
+  const handleAddMember = async () => {
+    if (!newMemberName || !newMemberEmail) {
+      alert("Please fill out name and email.");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newMemberEmail)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+    const existingMember = group.members.find((member) => member.email === newMemberEmail);
+    if (existingMember) {
+      alert("Member already exists in the group.");
+      return;
+    }
+    const updatedGroup = { ...group };
+    updatedGroup.members = [...updatedGroup.members, { name: newMemberName, email: newMemberEmail }];
+    try {
+      await UpdateData(updatedGroup);
+      setGroup(updatedGroup);
+      setShowAddMemberModal(false);
+      setNewMemberName("");
+      setNewMemberEmail("");
+    } catch (error) {
+      console.error("Failed to add member:", error);
+    }
+  };
   return (
     <>
       <header className="groupheader bg-myapp p-3 text-white">
@@ -244,7 +275,9 @@ const GroupDetail = () => {
         <div className="p-2">
           <div className="d-flex justify-content-between">
             <h4 className="py-1 bg-myapp w-75 myapp-text-warning  mb-1">{group?.name}</h4>
-            <small className="text-white py-1">{group?.members?.length} members</small>
+            <small className="text-white py-1" style={{ cursor: "pointer", textDecoration: "underline" }} onClick={() => setShowAddMemberModal(true)}>
+              {group?.members?.length} members
+            </small>
           </div>
 
           <GroupSummary group={group} page="groupdetails" loggedInUser={loggedInUser} calculateAmountOwedToMember_={(memberEmail) => calculateAmountOwedToMember_(expenses || [], loggedInUser, memberEmail)} />
@@ -325,7 +358,7 @@ const GroupDetail = () => {
                   {group?.members
                     ?.filter((member) => {
                       const amountOwed = calculateAmountOwedToMember1(member.email);
-                      return member.email !== loggedInUser?.email;
+                      return member.email !== loggedInUser?.email && Math.abs(amountOwed) > 0.01;
                     })
                     .map((member) => {
                       const amountOwed = calculateAmountOwedToMember1(member.email);
@@ -393,6 +426,44 @@ const GroupDetail = () => {
               loadExpenses();
             }}
           />
+
+          {/* Add Member Modal */}
+          <Modal show={showAddMemberModal} onHide={() => setShowAddMemberModal(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Add New Member</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="mb-3">
+                <h6>Existing Members:</h6>
+                <ul className="list-unstyled ps-2">
+                  {group?.members?.map((member) => (
+                    <li key={member.email} className="py-1">
+                      <small>
+                        {member.name} ({member.email})
+                      </small>
+                    </li>
+                  ))}
+                </ul>
+                <hr />
+              </div>
+              <Form.Group className="mb-3">
+                <Form.Label>Member Name</Form.Label>
+                <Form.Control type="text" placeholder="Enter member name" required value={newMemberName} onChange={(e) => setNewMemberName(e.target.value)} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Member Email</Form.Label>
+                <Form.Control type="email" placeholder="Enter member email" required value={newMemberEmail} pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" onChange={(e) => setNewMemberEmail(e.target.value)} />
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowAddMemberModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={handleAddMember}>
+                Add Member
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
       )}
     </>
