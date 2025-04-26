@@ -199,7 +199,7 @@ const GroupDetail = () => {
   if (loading) {
     return (
       <div className="groupheader text-center py-5">
-        <div className="spinner-border text-primary" role="status">
+        <div className="spinner-border text-info" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
         <p>Loading groups details..</p>
