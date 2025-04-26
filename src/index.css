@@ -111,3 +111,56 @@ code {
   --bs-btn-disabled-bg: #16325B;
   --bs-btn-disabled-border-color: #16325B;
 }
+.member-connection-line {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 0px;
+}
+
+.member-connection-line::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  /* center the T connector vertically */
+  width: 10px;
+  /* horizontal part */
+  height: 10px;
+  /* horizontal line thickness */
+  border-bottom: 1px solid #ccc;
+  /* same color */
+}
+
+.member-connection-line::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background-color: #ccc;
+  /* vertical line */
+}
+/* For last member — L shape */
+.member-connection-line-last {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 0px;
+}
+
+.member-connection-line-last::before {
+  content: "";
+  position: absolute;
+  top: 0em;
+  left: 0;
+  width: 10px;
+  height: 13px;
+  border-left: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+.member-connection-line-last::after {
+  /* No vertical line after last */
+  display: none;
+}
