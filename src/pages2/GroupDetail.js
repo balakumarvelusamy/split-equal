@@ -248,6 +248,24 @@ const GroupDetail = () => {
       console.error("Failed to add member:", error);
     }
   };
+  // Delete Member Handler for Add Member Modal
+  const handleDeleteMember = async (memberToDelete) => {
+    if (!window.confirm(`Are you sure you want to remove ${memberToDelete.name} from the group?`)) {
+      return;
+    }
+
+    const updatedGroup = {
+      ...group,
+      members: group.members.filter((m) => m.email !== memberToDelete.email),
+    };
+
+    try {
+      await UpdateData(updatedGroup);
+      setGroup(updatedGroup);
+    } catch (error) {
+      console.error("Failed to delete member:", error);
+    }
+  };
   return (
     <>
       <header className="groupheader bg-myapp p-3 text-white">
@@ -437,10 +455,15 @@ const GroupDetail = () => {
                 <h6>Existing Members:</h6>
                 <ul className="list-unstyled ps-2">
                   {group?.members?.map((member) => (
-                    <li key={member.email} className="py-1">
+                    <li key={member.email} className="py-1 d-flex justify-content-between align-items-center">
                       <small>
                         {member.name} ({member.email})
                       </small>
+                      {calculateAmountOwedToMember1(member.email) === 0 && member.email !== loggedInUser?.email && (
+                        <Button variant="danger" size="sm" onClick={() => handleDeleteMember(member)}>
+                          Delete
+                        </Button>
+                      )}
                     </li>
                   ))}
                 </ul>
