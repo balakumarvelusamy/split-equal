@@ -3,6 +3,9 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import MainApp from "./MainApp";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./store/store"; // your new store
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -27,9 +30,18 @@ if ("serviceWorker" in navigator) {
 }
 
 root.render(
-  <React.StrictMode>
-    <div className="centered-container">
-      <MainApp />
-    </div>
-  </React.StrictMode>
+  // <React.StrictMode>
+  //   <div className="centered-container">
+  //     <MainApp />
+  //   </div>
+  // </React.StrictMode>
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      <React.StrictMode>
+        <div className="centered-container">
+          <MainApp />
+        </div>
+      </React.StrictMode>
+    </PersistGate>
+  </Provider>
 );

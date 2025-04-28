@@ -3,8 +3,11 @@ import { Modal, Button, Form, Alert } from "react-bootstrap";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { v4 as uuid } from "uuid";
 import { addData, UpdateData, getCurrencyName, getCountryCurrency } from "../service/APIService";
+import { useDispatch } from "react-redux";
+import { updateGroup } from "../store/groupSlice";
 
 const GroupAddExpenseModal = ({ show, onHide, currentGroup, loggedInUser, onExpenseAdded }) => {
+  const dispatch = useDispatch();
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState(currentGroup?.currency || "$");
@@ -128,14 +131,21 @@ const GroupAddExpenseModal = ({ show, onHide, currentGroup, loggedInUser, onExpe
 
       await addData(groupExpense);
 
-      const updatedGroup = { ...currentGroup };
-      if (!updatedGroup.balances) updatedGroup.balances = {};
+      const updatedGroup = {
+        ...currentGroup,
+        balances: { ...currentGroup.balances },
+        members: [...currentGroup.members],
+        expenses: [...(currentGroup.expenses || [])], // ✅ copy existing expenses safely
+      };
 
-      currentGroup.members.forEach((member) => {
+      // Update balances
+      updatedGroup.members.forEach((member) => {
         const memberEmail = member.email;
         const shareAmount = shares[memberEmail] || 0;
 
-        if (!updatedGroup.balances[memberEmail]) updatedGroup.balances[memberEmail] = 0;
+        if (!updatedGroup.balances[memberEmail]) {
+          updatedGroup.balances[memberEmail] = 0;
+        }
 
         if (memberEmail === loggedInUser.email) {
           updatedGroup.balances[memberEmail] += shareAmount * (currentGroup.members.length - 1);
@@ -146,9 +156,12 @@ const GroupAddExpenseModal = ({ show, onHide, currentGroup, loggedInUser, onExpe
         updatedGroup.balances[memberEmail] = parseFloat(updatedGroup.balances[memberEmail].toFixed(2));
       });
 
-      await UpdateData(updatedGroup);
-      onExpenseAdded(updatedGroup); // Notify parent component
+      updatedGroup.expenses.push(groupExpense);
 
+      await UpdateData(updatedGroup);
+      dispatch(updateGroup(updatedGroup));
+      //onHide();
+      onExpenseAdded(updatedGroup);
       // Reset form
       setDescription("");
       setAmount("");
