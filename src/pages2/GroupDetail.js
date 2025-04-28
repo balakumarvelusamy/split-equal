@@ -7,11 +7,15 @@ import { v4 as uuid } from "uuid";
 import secureLocalStorage from "react-secure-storage";
 import GroupAddExpenseModal from "./GroupAddExpenseModal";
 import GroupSummary from "./GroupSummary";
+import { useDispatch, useSelector } from "react-redux";
+import { updateGroup } from "../store/groupSlice";
 
 const GroupDetail = () => {
   const { groupId } = useParams();
   const { state } = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const groups = useSelector((state) => state.groups.groups);
   const [group, setGroup] = useState(state?.group || null);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
   const [newMemberName, setNewMemberName] = useState("");
@@ -131,7 +135,7 @@ const GroupDetail = () => {
       alert(`Settlement failed: ${error.message}`);
     }
   };
-  const calculateMaxSettlement = (payerEmail, recipientEmail) => {
+  const calculateMaxSettlement_old = (payerEmail, recipientEmail) => {
     let payerDebt = 0;
     let recipientCredit = 0;
 
@@ -240,7 +244,12 @@ const GroupDetail = () => {
     updatedGroup.members = [...updatedGroup.members, { name: newMemberName, email: newMemberEmail }];
     try {
       await UpdateData(updatedGroup);
-      setGroup(updatedGroup);
+      //setGroup(updatedGroup); //redux
+      dispatch(updateGroup(updatedGroup));
+      const matchingGroup = groups.find((g) => g.id === updatedGroup.id);
+      if (matchingGroup) {
+        setGroup(matchingGroup);
+      }
       setShowAddMemberModal(false);
       setNewMemberName("");
       setNewMemberEmail("");
@@ -261,7 +270,12 @@ const GroupDetail = () => {
 
     try {
       await UpdateData(updatedGroup);
-      setGroup(updatedGroup);
+      //setGroup(updatedGroup); //redux
+      dispatch(updateGroup(updatedGroup));
+      const matchingGroup = groups.find((g) => g.id === updatedGroup.id);
+      if (matchingGroup) {
+        setGroup(matchingGroup);
+      }
     } catch (error) {
       console.error("Failed to delete member:", error);
     }
@@ -434,7 +448,7 @@ const GroupDetail = () => {
             currentGroup={group}
             loggedInUser={loggedInUser}
             onExpenseAdded={(updatedGroup) => {
-              setGroup(updatedGroup);
+              //setGroup(updatedGroup); redux
               const loadExpenses = async () => {
                 const groupExpenses = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
                 const sortedExpenses = groupExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -442,6 +456,11 @@ const GroupDetail = () => {
                 calculateBalancesFromExpenses(sortedExpenses);
               };
               loadExpenses();
+              const matchingGroup = groups.find((g) => g.id === updatedGroup.id);
+              if (matchingGroup) {
+                setGroup(matchingGroup);
+              }
+              dispatch(updateGroup(updatedGroup));
             }}
           />
 

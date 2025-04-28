@@ -9,12 +9,17 @@ import add from "../images/plus2.png";
 import GroupAddExpenseModal from "./GroupAddExpenseModal";
 import GroupSummary from "./GroupSummary";
 
+import { useSelector, useDispatch } from "react-redux";
+import { setGroups, updateGroup } from "../store/groupSlice";
+
 const GroupExpense = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [selectedFriends, setSelectedFriends] = useState([]);
-  const [groups, setGroups] = useState([]);
+  //const [groups, setGroups] = useState([]); // use for call api in current page
+  const groups = useSelector((state) => state.groups.groups); // redux
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [currentGroup, setCurrentGroup] = useState(null);
   const [description, setDescription] = useState("");
@@ -43,6 +48,12 @@ const GroupExpense = () => {
     // Load data when component mounts
     const loadData = async () => {
       if (!sessionUser?.email) return;
+      const userFriends = await getData(sessionUser.email, "splitequal-friends");
+      setFriends(userFriends);
+      if (groups.length > 0) {
+        console.log("Groups already in store, skip loading.");
+        return; // ❌ Don't reload if already in Redux
+      }
 
       setLoading(true);
       try {
@@ -65,8 +76,8 @@ const GroupExpense = () => {
             return { ...group, expenses };
           })
         );
-        setGroups(groupsWithExpenses);
-        //setGroups(userGroups);
+        //setGroups(groupsWithExpenses);
+        dispatch(setGroups(groupsWithExpenses));
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {
@@ -330,7 +341,7 @@ const GroupExpense = () => {
       </Modal>
       {/* Add Group Expense Modal */}
 
-      <GroupAddExpenseModal
+      {/* <GroupAddExpenseModal
         show={showAddExpense}
         onHide={() => setShowAddExpense(false)}
         currentGroup={currentGroup}
@@ -339,7 +350,8 @@ const GroupExpense = () => {
           setGroups(groups.map((g) => (g.id === updatedGroup.id ? updatedGroup : g)));
           setCurrentGroup(updatedGroup);
         }}
-      />
+      /> */}
+      <GroupAddExpenseModal show={showAddExpense} onHide={() => setShowAddExpense(false)} currentGroup={currentGroup} loggedInUser={loggedInUser} />
     </div>
   );
 };
