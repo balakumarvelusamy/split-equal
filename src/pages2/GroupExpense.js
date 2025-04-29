@@ -280,7 +280,9 @@ const GroupExpense = () => {
     <div className="container">
       <div className="d-flex justify-content-between align-items-middle mb-1">
         <p className="mb-0">
-          <h5>Groups</h5>
+          <Button variant="warning" className="p-1 px-2 text-nowrap" onClick={() => setShowCreateGroup(true)}>
+            Create Group
+          </Button>
         </p>
         <p className="mb-0">
           <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
@@ -296,15 +298,12 @@ const GroupExpense = () => {
       ) : (
         <>
           <div className="input-group w-auto">
-            <input type="text" className="form-control form-control-sm w-50" placeholder="Search Groups" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
+            <input type="text" className="form-control form-control-sm w-75" placeholder="Search Groups" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
             {searchText && (
               <Button variant="outline-secondary" className="form-control w-10" size="sm" onClick={() => setSearchText("")}>
                 x
               </Button>
             )}
-            <Button variant="warning" size="sm" className="form-control  px-2 text-nowrap border-none" onClick={() => setShowCreateGroup(true)}>
-              + Group
-            </Button>
           </div>
 
           {groups.length === 0 ? (
