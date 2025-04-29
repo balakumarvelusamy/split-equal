@@ -478,11 +478,11 @@ const GroupDetail = () => {
                       <small>
                         {member.name} ({member.email})
                       </small>
-                      {calculateAmountOwedToMember1(member.email) === 0 && member.email !== loggedInUser?.email && (
+                      {/* {calculateAmountOwedToMember1(member.email) === 0 && member.email !== loggedInUser?.email && (
                         <Button variant="danger" size="sm" onClick={() => handleDeleteMember(member)}>
                           Delete
                         </Button>
-                      )}
+                      )} */}
                     </li>
                   ))}
                 </ul>
