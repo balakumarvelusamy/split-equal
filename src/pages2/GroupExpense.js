@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import add from "../images/plus2.png";
 import GroupAddExpenseModal from "./GroupAddExpenseModal";
 import GroupSummary from "./GroupSummary";
-
+import { FaSync } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { setGroups, updateGroup } from "../store/groupSlice";
 
@@ -35,6 +35,16 @@ const GroupExpense = () => {
   const [showSettleModal, setShowSettleModal] = useState(false);
   const [settleAmount, setSettleAmount] = useState("");
   const [selectedRecipient, setSelectedRecipient] = useState(null);
+
+  const [refreshPosition, setRefreshPosition] = useState({ left: "50%", marginBottom: "75px" });
+  const [isDragging, setIsDragging] = useState(false);
+  const [refreshBalance_, setrefreshBalance_] = useState(0);
+  const refreshBtn = {
+    zIndex: 1000,
+    left: "50%",
+    transform: "translateX(-50%)",
+    position: "absolute",
+  };
   useEffect(() => {
     // Load logged in user from secure storage
     const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
@@ -86,7 +96,7 @@ const GroupExpense = () => {
     };
 
     loadData();
-  }, []);
+  }, [refreshBalance_]);
   useEffect(() => {
     if (!currentGroup || !amount) return;
 
@@ -138,7 +148,48 @@ const GroupExpense = () => {
       console.error("Error creating group:", error);
     }
   };
+  const handleRefresh = async () => {
+    if (!loggedInUser?.email) return;
+    try {
+      setLoading(true);
+      const userFriends = await getData(loggedInUser.email, "splitequal-friends");
+      setFriends(userFriends);
 
+      const allGroups = await getItemsbyType("splitequal-groups");
+
+      const userGroups = allGroups.filter((group) => group.email === loggedInUser.email || group.members?.some((member) => member.email === loggedInUser.email));
+
+      const groupsWithExpenses = await Promise.all(
+        userGroups.map(async (group) => {
+          const expenses = await getData_Any2Column("groupId", group.id, "type", "splitequal-group-expenses");
+          return { ...group, expenses };
+        })
+      );
+
+      dispatch(setGroups(groupsWithExpenses));
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startDragging = (e) => {
+    setIsDragging(true);
+    e.preventDefault();
+  };
+
+  const stopDragging = () => {
+    setIsDragging(false);
+  };
+
+  const handleDragging = (e) => {
+    if (isDragging) {
+      const buttonX = e.clientX;
+      const newLeftPercentage = Math.min(Math.max((buttonX / window.innerWidth) * 100, 5), 95);
+      setRefreshPosition((prev) => ({ ...prev, left: `${newLeftPercentage}%` }));
+    }
+  };
   const toggleFriendSelection = (friend) => {
     setSelectedFriends((prev) => (prev.some((f) => f.friendemail === friend.friendemail) ? prev.filter((f) => f.friendemail !== friend.friendemail) : [...prev, friend]));
   };
@@ -261,7 +312,7 @@ const GroupExpense = () => {
                     <div className="d-flex1 justify-content-between align-items-center">
                       <div>
                         <div className="d-flex justify-content-between align-items-center">
-                          <h6 className="mb-0" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
+                          <h6 className="mb-0 color-myapp" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
                             <b>{group.name}</b>{" "}
                             <small className="text-muted mb-0">
                               {group.members.length} members • {group.currency}
@@ -351,7 +402,12 @@ const GroupExpense = () => {
           setCurrentGroup(updatedGroup);
         }}
       /> */}
-      <GroupAddExpenseModal show={showAddExpense} onHide={() => setShowAddExpense(false)} currentGroup={currentGroup} loggedInUser={loggedInUser} />
+      <GroupAddExpenseModal show={showAddExpense} page="home" onHide={() => setShowAddExpense(false)} currentGroup={currentGroup} loggedInUser={loggedInUser} />
+      <div align="center" style={{ ...refreshBtn, left: refreshPosition.left, marginBottom: refreshPosition.marginBottom }} className="position-fixed bottom-0 px-1" onMouseDown={startDragging} onMouseMove={handleDragging} onMouseUp={stopDragging} onMouseLeave={stopDragging}>
+        <Button className="rounded-circle d-flex align-items-center justify-content-center shadow bg-myapp" onClick={handleRefresh} style={{ width: "40px", height: "40px", border: "1px solid white" }} disabled={loading}>
+          {loading ? <i className="fas fa-spinner fa-spin"></i> : <FaSync size={20} />}
+        </Button>
+      </div>
     </div>
   );
 };

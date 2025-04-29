@@ -31,7 +31,10 @@ code {
   color: #FFDC7F !important;
 }
 .myapp-text-sucess {
-  color: #b3face !important;
+  color: #8bddaa !important;
+}
+.text-sucess {
+  color: #01a540 !important;
 }
 .myapp-text-danger {
   color: #ff7f7f !important;

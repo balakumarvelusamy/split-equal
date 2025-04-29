@@ -6,7 +6,7 @@ import { addData, UpdateData, getCurrencyName, getCountryCurrency } from "../ser
 import { useDispatch } from "react-redux";
 import { updateGroup } from "../store/groupSlice";
 
-const GroupAddExpenseModal = ({ show, onHide, currentGroup, loggedInUser, onExpenseAdded }) => {
+const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, onExpenseAdded }) => {
   const dispatch = useDispatch();
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -160,8 +160,7 @@ const GroupAddExpenseModal = ({ show, onHide, currentGroup, loggedInUser, onExpe
 
       await UpdateData(updatedGroup);
       dispatch(updateGroup(updatedGroup));
-      //onHide();
-      onExpenseAdded(updatedGroup);
+      page != "home" && onExpenseAdded(updatedGroup);
       // Reset form
       setDescription("");
       setAmount("");
