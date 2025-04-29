@@ -298,8 +298,8 @@ const GroupExpense = () => {
           <div className="input-group w-auto">
             <input type="text" className="form-control form-control-sm w-50" placeholder="Search Groups" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
             {searchText && (
-              <Button variant="outline-secondary" className="form-control w-20" size="sm" onClick={() => setSearchText("")}>
-                Clear
+              <Button variant="outline-secondary" className="form-control w-10" size="sm" onClick={() => setSearchText("")}>
+                x
               </Button>
             )}
             <Button variant="warning" size="sm" className="form-control  px-2 text-nowrap border-none" onClick={() => setShowCreateGroup(true)}>
@@ -311,6 +311,15 @@ const GroupExpense = () => {
             <div className="text-center py-4">
               <FaUserFriends size={48} className="text-muted mb-3" />
               <p>No groups created yet</p>
+            </div>
+          ) : groups.filter((group) => group.name.toLowerCase().includes(searchText.toLowerCase())).length === 0 ? (
+            <div className="text-center py-4">
+              <p>No groups found</p>
+              {searchText && (
+                <Button variant="outline-secondary" onClick={() => setSearchText("")}>
+                  Clear Search
+                </Button>
+              )}
             </div>
           ) : (
             <ListGroup>
