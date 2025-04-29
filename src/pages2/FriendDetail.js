@@ -234,60 +234,6 @@ const FriendDetail = () => {
               </Modal.Footer>
             </Modal>
 
-            {/* <Modal onHide={() => setShowSettleUp(false)} backdrop="static">
-            <div className="modal-header">
-              <p className="mb-0 text-dark">
-                Current Settle Up with <b>{friend.friendname}</b>
-              </p>
-              <a onClick={() => setShowSettleUp(false)}>
-                <img src={close} alt="Logo" className="" width="30" />
-              </a>
-            </div>
-            <Modal.Body>
-              <div className="grid p-1">
-                <div>
-                  <div>{friend.balance > 0 ? `You (${loggedInUser?.name}) receive from ${friend?.friendname}` : `You (${loggedInUser?.name}) pay ${friend?.friendname}`}</div>
-                </div>
-                <div className="input-group">
-                  <span className="form-control w-10" align="center">
-                    {friend?.currency}
-                  </span>
-                  <input
-                    type="number"
-                    className="form-control w-75"
-                    placeholder="Settle Amount"
-                    value={settleUpAmounts ? Math.abs(settleUpAmounts) : ""} // Display as positive
-                    onChange={(e) => {
-                      const value = parseFloat(e.target.value);
-                      // Always subtract value from balance during settle-up
-                      setSettleUpAmounts(value > 0 ? value : 0); // Store positive for easier calculation
-                    }}
-                    step="any"
-                    inputMode="decimal"
-                  />
-                </div>
-
-                <Button
-                  className="btn form-control btn-warning w-100 mt-2"
-                  disabled={
-                    loading || !settleUpAmounts // Disable when balance is 0
-                  }
-                  onClick={() => handleSettleUp(friend.email, parseFloat(friend.balance < 0 ? Math.abs(settleUpAmounts) : settleUpAmounts), friend)}
-                >
-                  {loading ? (
-                    <>
-                      <span className="px-1">
-                        <i className="fas fa-spinner fa-spin text-light"></i>
-                      </span>
-                      Please wait...
-                    </>
-                  ) : (
-                    "Confirm Settle Up"
-                  )}
-                </Button>
-              </div>
-            </Modal.Body>
-          </Modal> */}
             <SettleUp friend={friend} balance={parseFloat(Math.abs(friend.balance).toFixed(2))} loggedInUser={loggedInUser} showSettleUp={showSettleUp} setShowSettleUp={setShowSettleUp} refreshBalance={refreshBalance} />
           </>
         )}
