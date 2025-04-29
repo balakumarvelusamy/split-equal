@@ -15,6 +15,7 @@ import { setGroups, updateGroup } from "../store/groupSlice";
 const GroupExpense = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [searchText, setSearchText] = useState("");
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [selectedFriends, setSelectedFriends] = useState([]);
@@ -277,7 +278,10 @@ const GroupExpense = () => {
 
   return (
     <div className="container">
-      <div align="right">
+      <div className="d-flex justify-content-between align-items-middle mb-1">
+        <p className="mb-0">
+          <h5>Groups</h5>
+        </p>
         <p className="mb-0">
           <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
         </p>
@@ -291,10 +295,15 @@ const GroupExpense = () => {
         </div>
       ) : (
         <>
-          <div className="d-flex justify-content-between align-items-center my-2">
-            <h5>Groups</h5>
-            <Button variant="warning" onClick={() => setShowCreateGroup(true)}>
-              <FaPlus /> Create Group
+          <div className="input-group w-auto">
+            <input type="text" className="form-control form-control-sm w-50" placeholder="Search Groups" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
+            {searchText && (
+              <Button variant="outline-secondary" className="form-control w-20" size="sm" onClick={() => setSearchText("")}>
+                Clear
+              </Button>
+            )}
+            <Button variant="warning" size="sm" className="form-control  px-2 text-nowrap border-none" onClick={() => setShowCreateGroup(true)}>
+              + Group
             </Button>
           </div>
 
@@ -305,47 +314,49 @@ const GroupExpense = () => {
             </div>
           ) : (
             <ListGroup>
-              {groups.map((group) => {
-                const userBalance = group.balances?.[loggedInUser?.email] || 0;
-                return (
-                  <ListGroup.Item key={group.id} className="mb-0">
-                    <div className="d-flex1 justify-content-between align-items-center">
-                      <div>
-                        <div className="d-flex justify-content-between align-items-center">
-                          <h6 className="mb-0 color-myapp" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
-                            <b>{group.name}</b>{" "}
-                            <small className="text-muted mb-0">
-                              {group.members.length} members • {group.currency}
-                            </small>
-                          </h6>
-                          <div>
-                            <a className="mx-1 p-2 px-2 text-decoration-none border1 rounded badge text-success viewbutton" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
-                              View <FaArrowRight className="me-1 text-success" />
-                            </a>
+              {groups
+                .filter((group) => group.name.toLowerCase().includes(searchText.toLowerCase()))
+                .map((group) => {
+                  const userBalance = group.balances?.[loggedInUser?.email] || 0;
+                  return (
+                    <ListGroup.Item key={group.id} className="mb-0">
+                      <div className="d-flex1 justify-content-between align-items-center">
+                        <div>
+                          <div className="d-flex justify-content-between align-items-center">
+                            <h6 className="mb-0 color-myapp" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
+                              <b>{group.name}</b>{" "}
+                              <small className="text-muted mb-0">
+                                {group.members.length} members • {group.currency}
+                              </small>
+                            </h6>
+                            <div>
+                              <a className="mx-1 p-2 px-2 text-decoration-none border1 rounded badge text-success viewbutton" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
+                                View <FaArrowRight className="me-1 text-success" />
+                              </a>
 
-                            <img
-                              src={add}
-                              alt="Add Expense"
-                              width="35"
-                              className="px-2 p-2 border1  rounded   addexpense"
-                              onClick={() => {
-                                setCurrentGroup(group);
-                                setShowAddExpense(true);
-                                setSplitError("");
-                                setCurrency(group.currency);
-                              }}
-                            />
+                              <img
+                                src={add}
+                                alt="Add Expense"
+                                width="35"
+                                className="px-2 p-2 border1  rounded   addexpense"
+                                onClick={() => {
+                                  setCurrentGroup(group);
+                                  setShowAddExpense(true);
+                                  setSplitError("");
+                                  setCurrency(group.currency);
+                                }}
+                              />
+                            </div>
                           </div>
+                          <div className="px-2">
+                            <GroupSummary group={group} page="home" loggedInUser={loggedInUser} calculateAmountOwedToMember_={(memberEmail) => calculateAmountOwedToMember_(group.expenses || [], loggedInUser, memberEmail)} />
+                          </div>
+                          {/* Summary here */}
                         </div>
-                        <div className="px-2">
-                          <GroupSummary group={group} page="home" loggedInUser={loggedInUser} calculateAmountOwedToMember_={(memberEmail) => calculateAmountOwedToMember_(group.expenses || [], loggedInUser, memberEmail)} />
-                        </div>
-                        {/* Summary here */}
                       </div>
-                    </div>
-                  </ListGroup.Item>
-                );
-              })}
+                    </ListGroup.Item>
+                  );
+                })}
             </ListGroup>
           )}
         </>
