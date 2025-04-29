@@ -2,7 +2,7 @@ import React from "react";
 
 const GroupSummary = ({ group, page, loggedInUser, calculateAmountOwedToMember_ }) => {
   return (
-    <div className="mt-0">
+    <div className={`${page === "home" ? "text-muted" : ""} mt-0 `}>
       {group?.members
         ?.filter((member) => member.email !== loggedInUser?.email)
         .map((member, index, array) => {
