@@ -15,6 +15,10 @@ const GroupDetail = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchText, setSearchText] = useState("");
+  const [refreshBalance_, setrefreshBalance_] = useState(0);
+  // State to control visible expense count for "Load More"
+  const [visibleExpensesCount, setVisibleExpensesCount] = useState(10);
   const groups = useSelector((state) => state.groups.groups);
   const [group, setGroup] = useState(state?.group || null);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
@@ -29,6 +33,9 @@ const GroupDetail = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [memberBalances, setMemberBalances] = useState({});
   const [netBalance, setNetBalance] = useState(0);
+  // Expense Modal State
+  const [selectedExpense, setSelectedExpense] = useState(null);
+  const [showExpenseModal, setShowExpenseModal] = useState(false);
   const calculateBalancesFromExpenses = useCallback(
     (expenses) => {
       if (!loggedInUser?.email) return;
@@ -37,6 +44,7 @@ const GroupDetail = () => {
       let totalOwedToUser = 0;
 
       expenses.forEach((expense) => {
+        if (expense.isdeleted === 1) return;
         const paidBy = expense.paidBy;
         const shares = expense.shares || {};
         const userShare = shares[loggedInUser.email] || 0;
@@ -60,9 +68,10 @@ const GroupDetail = () => {
       setLoading(true);
       try {
         const groupExpenses = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
+        const filteredExpenses = groupExpenses.filter((exp) => exp.isdeleted !== 1);
         const sortedExpenses = groupExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
         setExpenses(sortedExpenses);
-        calculateBalancesFromExpenses(groupExpenses);
+        calculateBalancesFromExpenses(filteredExpenses);
 
         if (!group) {
           const groupData = await getData_Any2Column("id", groupId, "type", "splitequal-groups");
@@ -76,7 +85,7 @@ const GroupDetail = () => {
     };
 
     loadGroupData();
-  }, [groupId]);
+  }, [groupId, refreshBalance_]);
 
   // Calculate your balance (logged in user)
   const yourBalance = memberBalances[group?.email] || 0;
@@ -333,40 +342,79 @@ const GroupDetail = () => {
       ) : (
         <div className="container mt-3">
           {/* Expense History */}
-          <h5>Expense History</h5>
+          <div className="input-group w-auto">
+            <input type="text" className="form-control w-75" placeholder="Search Groups Expense" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
+            {searchText && (
+              <Button variant="outline-secondary" className="form-control w-auto" size="sm" onClick={() => setSearchText("")}>
+                x
+              </Button>
+            )}
+          </div>
+          <h6>Expense History</h6>
           {expenses.length === 0 ? (
             <div className="alert alert-info">No expenses yet</div>
+          ) : expenses.filter((expense) => JSON.stringify(expense).toLowerCase().includes(searchText.toLowerCase())).length === 0 ? (
+            <div className="text-center py-4">
+              <p>No Expense found</p>
+              {searchText && (
+                <Button variant="outline-secondary" onClick={() => setSearchText("")}>
+                  Clear Search
+                </Button>
+              )}
+            </div>
           ) : (
-            <ListGroup>
-              {expenses.map((expense) => {
-                const dateObj = new Date(expense.date);
-                const formattedDayMonth = dateObj.toLocaleDateString("en-US", {
-                  day: "numeric",
-                  month: "short",
-                });
-                const formattedYear = dateObj.getFullYear();
+            (() => {
+              const filteredExpenses = expenses.filter((expense) => JSON.stringify(expense).toLowerCase().includes(searchText.toLowerCase()));
+              const visibleExpenses = filteredExpenses.slice(0, visibleExpensesCount);
+              return (
+                <ListGroup>
+                  {visibleExpenses.map((expense) => {
+                    const dateObj = new Date(expense.date);
+                    const formattedDayMonth = dateObj.toLocaleDateString("en-US", {
+                      day: "numeric",
+                      month: "short",
+                    });
 
-                return (
-                  <ListGroup.Item key={expense.id} className="p-1">
-                    <div className="d-flex justify-content-between p-0">
-                      <div>
-                        <h6 className="mb-0">{expense.description}</h6>
-                        <span className="text-center px-1 bg-light rounded text-nowrap ">
-                          <small>{formattedDayMonth}</small>
-                        </span>{" "}
-                        | <small className="text-muted">Split: {expense?.splitType}</small> | <small className="text-muted">PaidBy: {expense?.paidByName}</small>
-                      </div>
-                      <div>
-                        <span className="fw-bold">
-                          {expense.currency}
-                          {expense.amount}
-                        </span>
-                      </div>
+                    return (
+                      <ListGroup.Item key={expense.id} className="p-1">
+                        <div className="d-flex justify-content-between p-0">
+                          <div>
+                            <h6
+                              className={`mb-0 color-myapp  ${expense.isdeleted ? "text-decoration-line-through" : ""}`}
+                              style={{ cursor: "pointer", color: "blue" }}
+                              onClick={() => {
+                                setSelectedExpense(expense);
+                                setShowExpenseModal(true);
+                              }}
+                            >
+                              {expense.description}
+                            </h6>
+                            <span className="text-center px-1 bg-light rounded text-nowrap ">
+                              <small>{formattedDayMonth}</small>
+                            </span>{" "}
+                            <small className="text-muted">| Split: {expense?.splitType}</small> <small className="text-muted">| PaidBy: {expense?.paidByName}</small>
+                          </div>
+                          <div>
+                            <span className="fw-bold text-muted">
+                              {expense.currency}
+                              {expense.amount}
+                            </span>
+                          </div>
+                        </div>
+                      </ListGroup.Item>
+                    );
+                  })}
+
+                  {filteredExpenses.length > visibleExpensesCount && (
+                    <div className="text-center my-2">
+                      <button className="btn btn-warning" onClick={() => setVisibleExpensesCount((prev) => prev + 20)}>
+                        Load More
+                      </button>
                     </div>
-                  </ListGroup.Item>
-                );
-              })}
-            </ListGroup>
+                  )}
+                </ListGroup>
+              );
+            })()
           )}
 
           <Modal show={showSettleModal} onHide={() => setShowSettleModal(false)}>
@@ -503,6 +551,79 @@ const GroupDetail = () => {
               </Button>
               <Button variant="primary" onClick={handleAddMember}>
                 Add Member
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Expense Details Modal */}
+          <Modal show={showExpenseModal} onHide={() => setShowExpenseModal(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Expense Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {selectedExpense && (
+                <>
+                  {/* <Form.Group className="mb-2">
+                    <Form.Label>Description</Form.Label>
+                    <Form.Control type="text" value={selectedExpense.description} onChange={(e) => setSelectedExpense({ ...selectedExpense, description: e.target.value })} />
+                  </Form.Group> */}
+                  <p className="mb-0">
+                    <strong>Description:</strong> {selectedExpense.description}
+                  </p>
+
+                  <p className="mb-0">
+                    <strong>Amount:</strong> {selectedExpense.amount}
+                  </p>
+                  <p className="mb-0">
+                    <strong>Split Type:</strong> {selectedExpense.splitType}
+                  </p>
+
+                  <p className="mb-0">
+                    <strong>Shares:</strong>
+                  </p>
+                  <ul className="list-unstyled ps-3">
+                    {selectedExpense.shares &&
+                      Object.entries(selectedExpense.shares).map(([email, share]) => (
+                        <li key={email}>
+                          {email}: {share}
+                        </li>
+                      ))}
+                  </ul>
+                </>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              {!selectedExpense?.isdeleted ? (
+                <>
+                  <Button
+                    variant="danger"
+                    onClick={async () => {
+                      const updated = { ...selectedExpense, isdeleted: 1 };
+                      await UpdateData(updated);
+                      setrefreshBalance_(refreshBalance_ + 1);
+                      setShowExpenseModal(false);
+                    }}
+                  >
+                    {!loading ? "Delete" : "Deleting"}
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={async () => {
+                      await UpdateData(selectedExpense);
+                      const refreshed = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
+                      const sorted = refreshed.sort((a, b) => new Date(b.date) - new Date(a.date));
+                      setExpenses(sorted);
+                      setShowExpenseModal(false);
+                    }}
+                  >
+                    {!loading ? "Save" : "Saving"}
+                  </Button>
+                </>
+              ) : (
+                "Expense is Deleted"
+              )}
+              <Button variant="secondary" onClick={() => setShowExpenseModal(false)}>
+                Close
               </Button>
             </Modal.Footer>
           </Modal>
