@@ -73,7 +73,7 @@ const GroupDetail = () => {
         setExpenses(sortedExpenses);
         calculateBalancesFromExpenses(filteredExpenses);
 
-        if (!group) {
+        if (!group || 1 == 1) {
           const groupData = await getData_Any2Column("id", groupId, "type", "splitequal-groups");
           //setGroup(groupData[0]);
           const fullGroup = { ...groupData[0], expenses: sortedExpenses };
