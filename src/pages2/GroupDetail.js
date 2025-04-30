@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { getData_Any2Column, addData, calculateAmountOwedToMember_, UpdateData } from "../service/APIService";
 import { Modal, Button, Form, ListGroup, Badge, Alert } from "react-bootstrap";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaRecycle } from "react-icons/fa";
 import { v4 as uuid } from "uuid";
 import secureLocalStorage from "react-secure-storage";
 import GroupAddExpenseModal from "./GroupAddExpenseModal";
@@ -75,7 +75,17 @@ const GroupDetail = () => {
 
         if (!group) {
           const groupData = await getData_Any2Column("id", groupId, "type", "splitequal-groups");
-          setGroup(groupData[0]);
+          //setGroup(groupData[0]);
+          const fullGroup = { ...groupData[0], expenses: sortedExpenses };
+          setGroup(fullGroup);
+          dispatch(updateGroup(fullGroup));
+        } else {
+          dispatch(
+            updateGroup({
+              ...group,
+              expenses: sortedExpenses,
+            })
+          );
         }
       } catch (error) {
         console.error("Error loading group data:", error);
@@ -395,7 +405,7 @@ const GroupDetail = () => {
                             <small className="text-muted">| Split: {expense?.splitType}</small> <small className="text-muted">| PaidBy: {expense?.paidByName}</small>
                           </div>
                           <div>
-                            <span className="fw-bold text-muted">
+                            <span className={`fw-bold text-muted ${expense.isdeleted ? "text-decoration-line-through" : ""}`}>
                               {expense.currency}
                               {expense.amount}
                             </span>
@@ -606,21 +616,32 @@ const GroupDetail = () => {
                   >
                     {!loading ? "Delete" : "Deleting"}
                   </Button>
-                  <Button
+                  {/* <Button
                     variant="primary"
                     onClick={async () => {
                       await UpdateData(selectedExpense);
-                      const refreshed = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
-                      const sorted = refreshed.sort((a, b) => new Date(b.date) - new Date(a.date));
-                      setExpenses(sorted);
+                      setrefreshBalance_(refreshBalance_ + 1);
                       setShowExpenseModal(false);
                     }}
                   >
                     {!loading ? "Save" : "Saving"}
-                  </Button>
+                  </Button> */}
                 </>
               ) : (
-                "Expense is Deleted"
+                <>
+                  <span className="text-danger px-2">Status: Deleted</span>
+                  <Button
+                    variant="danger"
+                    onClick={async () => {
+                      const updated = { ...selectedExpense, isdeleted: 0 };
+                      await UpdateData(updated);
+                      setrefreshBalance_(refreshBalance_ + 1);
+                      setShowExpenseModal(false);
+                    }}
+                  >
+                    <FaRecycle className="me-1" /> Restore
+                  </Button>
+                </>
               )}
               <Button variant="secondary" onClick={() => setShowExpenseModal(false)}>
                 Close
