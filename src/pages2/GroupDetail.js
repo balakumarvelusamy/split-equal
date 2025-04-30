@@ -15,6 +15,9 @@ const GroupDetail = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchText, setSearchText] = useState("");
+  // State to control visible expense count for "Load More"
+  const [visibleExpensesCount, setVisibleExpensesCount] = useState(10);
   const groups = useSelector((state) => state.groups.groups);
   const [group, setGroup] = useState(state?.group || null);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
@@ -333,40 +336,70 @@ const GroupDetail = () => {
       ) : (
         <div className="container mt-3">
           {/* Expense History */}
-          <h5>Expense History</h5>
+          <div className="input-group w-auto">
+            <input type="text" className="form-control w-75" placeholder="Search Groups Expense" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
+            {searchText && (
+              <Button variant="outline-secondary" className="form-control w-auto" size="sm" onClick={() => setSearchText("")}>
+                x
+              </Button>
+            )}
+          </div>
+          <h6>Expense History</h6>
           {expenses.length === 0 ? (
             <div className="alert alert-info">No expenses yet</div>
+          ) : expenses.filter((expense) => JSON.stringify(expense).toLowerCase().includes(searchText.toLowerCase())).length === 0 ? (
+            <div className="text-center py-4">
+              <p>No Expense found</p>
+              {searchText && (
+                <Button variant="outline-secondary" onClick={() => setSearchText("")}>
+                  Clear Search
+                </Button>
+              )}
+            </div>
           ) : (
-            <ListGroup>
-              {expenses.map((expense) => {
-                const dateObj = new Date(expense.date);
-                const formattedDayMonth = dateObj.toLocaleDateString("en-US", {
-                  day: "numeric",
-                  month: "short",
-                });
-                const formattedYear = dateObj.getFullYear();
+            (() => {
+              const filteredExpenses = expenses.filter((expense) => JSON.stringify(expense).toLowerCase().includes(searchText.toLowerCase()));
+              const visibleExpenses = filteredExpenses.slice(0, visibleExpensesCount);
+              return (
+                <ListGroup>
+                  {visibleExpenses.map((expense) => {
+                    const dateObj = new Date(expense.date);
+                    const formattedDayMonth = dateObj.toLocaleDateString("en-US", {
+                      day: "numeric",
+                      month: "short",
+                    });
 
-                return (
-                  <ListGroup.Item key={expense.id} className="p-1">
-                    <div className="d-flex justify-content-between p-0">
-                      <div>
-                        <h6 className="mb-0">{expense.description}</h6>
-                        <span className="text-center px-1 bg-light rounded text-nowrap ">
-                          <small>{formattedDayMonth}</small>
-                        </span>{" "}
-                        | <small className="text-muted">Split: {expense?.splitType}</small> | <small className="text-muted">PaidBy: {expense?.paidByName}</small>
-                      </div>
-                      <div>
-                        <span className="fw-bold">
-                          {expense.currency}
-                          {expense.amount}
-                        </span>
-                      </div>
+                    return (
+                      <ListGroup.Item key={expense.id} className="p-1">
+                        <div className="d-flex justify-content-between p-0">
+                          <div>
+                            <h6 className="mb-0">{expense.description}</h6>
+                            <span className="text-center px-1 bg-light rounded text-nowrap ">
+                              <small>{formattedDayMonth}</small>
+                            </span>{" "}
+                            <small className="text-muted">| Split: {expense?.splitType}</small> <small className="text-muted">| PaidBy: {expense?.paidByName}</small>
+                          </div>
+                          <div>
+                            <span className="fw-bold">
+                              {expense.currency}
+                              {expense.amount}
+                            </span>
+                          </div>
+                        </div>
+                      </ListGroup.Item>
+                    );
+                  })}
+
+                  {filteredExpenses.length > visibleExpensesCount && (
+                    <div className="text-center my-2">
+                      <button className="btn btn-warning" onClick={() => setVisibleExpensesCount((prev) => prev + 20)}>
+                        Load More
+                      </button>
                     </div>
-                  </ListGroup.Item>
-                );
-              })}
-            </ListGroup>
+                  )}
+                </ListGroup>
+              );
+            })()
           )}
 
           <Modal show={showSettleModal} onHide={() => setShowSettleModal(false)}>
