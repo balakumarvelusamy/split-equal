@@ -9,7 +9,8 @@ import GroupAddExpenseModal from "./GroupAddExpenseModal";
 import GroupSummary from "./GroupSummary";
 import { useDispatch, useSelector } from "react-redux";
 import { updateGroup } from "../store/groupSlice";
-
+import GroupChatModal from "../components2/GroupChatModal";
+import { FaSync, FaComment, FaComments } from "react-icons/fa";
 const GroupDetail = () => {
   const { groupId } = useParams();
   const { state } = useLocation();
@@ -33,9 +34,46 @@ const GroupDetail = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [memberBalances, setMemberBalances] = useState({});
   const [netBalance, setNetBalance] = useState(0);
+  const [showChatModal, setShowChatModal] = useState(false);
   // Expense Modal State
   const [selectedExpense, setSelectedExpense] = useState(null);
   const [showExpenseModal, setShowExpenseModal] = useState(false);
+
+  const [refreshPosition, setRefreshPosition] = useState({ left: "90%", marginBottom: "75px" });
+  const [isDragging, setIsDragging] = useState(false);
+  const refreshBtn = {
+    zIndex: 1000,
+    left: "90%",
+    transform: "translateX(-50%)",
+    position: "absolute",
+  };
+
+  const startDragging = (e) => {
+    setIsDragging(true);
+    e.preventDefault();
+  };
+
+  const stopDragging = () => {
+    setIsDragging(false);
+  };
+
+  const handleDragging = (e) => {
+    if (isDragging) {
+      const buttonX = e.clientX;
+      const newLeftPercentage = Math.min(Math.max((buttonX / window.innerWidth) * 100, 5), 95);
+      setRefreshPosition((prev) => ({ ...prev, left: `${newLeftPercentage}%` }));
+    }
+  };
+  const handleChats = async () => {
+    if (!loggedInUser?.email) return;
+    try {
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const calculateBalancesFromExpenses = useCallback(
     (expenses) => {
       if (!loggedInUser?.email) return;
@@ -427,6 +465,12 @@ const GroupDetail = () => {
             })()
           )}
 
+          <div align="center" style={{ ...refreshBtn, left: refreshPosition.left, marginBottom: refreshPosition.marginBottom }} className="position-fixed bottom-0 px-1" onMouseDown={startDragging} onMouseMove={handleDragging} onMouseUp={stopDragging} onMouseLeave={stopDragging}>
+            <Button className="rounded-circle d-flex align-items-center justify-content-center shadow bg-myapp p-1" onClick={() => setShowChatModal(true)} style={{ width: "40px", height: "40px", border: "1px solid white" }} disabled={loading}>
+              <FaComments />
+            </Button>
+          </div>
+
           <Modal show={showSettleModal} onHide={() => setShowSettleModal(false)}>
             <Modal.Header closeButton>
               <Modal.Title>Settle Up in {group?.name}</Modal.Title>
@@ -521,6 +565,7 @@ const GroupDetail = () => {
               dispatch(updateGroup(updatedGroup));
             }}
           />
+          <GroupChatModal show={showChatModal} onHide={() => setShowChatModal(false)} groupId={group.id} loggedInUser={loggedInUser} />
 
           {/* Add Member Modal */}
           <Modal show={showAddMemberModal} onHide={() => setShowAddMemberModal(false)}>
