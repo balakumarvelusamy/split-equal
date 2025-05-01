@@ -33,6 +33,7 @@ const GroupChatModal = ({ show, onHide, groupId, loggedInUser }) => {
     if (!newMessage.trim()) return;
     const newChat = {
       name: loggedInUser.name,
+      email: loggedInUser.email,
       message: newMessage.trim(),
       date: new Date().toISOString(),
       isdeleted: false,
@@ -51,30 +52,41 @@ const GroupChatModal = ({ show, onHide, groupId, loggedInUser }) => {
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
-      <Modal.Header closeButton>
-        <Modal.Title>Group Chat</Modal.Title>
-      </Modal.Header>
-      <Modal.Body style={{ maxHeight: "400px", overflowY: "auto" }}>
+      <Modal.Header className="p-2">
         <InputGroup className="mb-1">
-          <Form.Control type="text" className="w-75" placeholder="Search messages..." value={searchText} onChange={(e) => setSearchText(e.target.value)} />
+          <Form.Control type="text" className="w-50" placeholder="Search messages..." value={searchText} onChange={(e) => setSearchText(e.target.value)} />
           <Button variant="outline-secondary" className="form-control" onClick={() => setSearchText("")}>
             Clear
           </Button>
         </InputGroup>
+      </Modal.Header>
+      <Modal.Body className="px-2 p-1" style={{ maxHeight: "400px", overflowY: "auto" }}>
+        {filteredChats.map((chat, idx) => {
+          const isOwnMessage = chat.email === loggedInUser.email;
+          return (
+            <div key={idx} className={`d-flex mb-2 ${isOwnMessage ? "justify-content-end" : "justify-content-start"}`}>
+              <div className={`p-1 rounded ${isOwnMessage ? "myapp-bg-warning text-dark" : "bg-light text-dark"}`} style={{ maxWidth: "75%", wordBreak: "break-word" }}>
+                <div>
+                  <span className="fw-bold">{chat.name}: </span> <span>{chat.message}</span>
+                </div>
 
-        {filteredChats.map((chat, idx) => (
-          <div key={idx} className="mb-2">
-            <strong>{chat.name}</strong>: {chat.message}
-            <div className="text-muted" style={{ fontSize: "0.8em" }}>
-              {new Date(chat.date).toLocaleString()}
+                <div className="text-muted" style={{ fontSize: "0.65em" }}>
+                  {new Date(chat.date).toLocaleString()}
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </Modal.Body>
-      <Modal.Footer>
-        <Form.Control type="text" placeholder="Type your message" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSend()} />
-        <Button variant="primary" onClick={handleSend}>
-          Send
+      <Modal.Footer className="d-flex justify-content-between align-items-center w-100">
+        <div className="d-flex flex-grow-1 justify-content-end align-items-center gap-2">
+          <Form.Control type="text" placeholder="Type your message" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSend()} />
+          <Button variant="primary" onClick={handleSend}>
+            Send
+          </Button>
+        </div>
+        <Button variant="secondary" className="px-1" onClick={onHide}>
+          Close
         </Button>
       </Modal.Footer>
     </Modal>

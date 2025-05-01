@@ -26,8 +26,11 @@ code {
 .color-myapp2 {
   color: #78B7D0 !important;
 }
-.myapp-text-warning
+.myapp-bg-warning
 {
+  background-color: #FFDC7F !important;
+}
+.myapp-text-warning {
   color: #FFDC7F !important;
 }
 .myapp-text-sucess {
