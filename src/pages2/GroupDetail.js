@@ -103,32 +103,28 @@ const GroupDetail = () => {
     setLoggedInUser(sessionUser);
 
     const loadGroupData = async () => {
-      setLoading(true);
       try {
+        // 1. Use existing Redux store group (if available)
+        if (group && group.expenses?.length > 0) {
+          setExpenses(group.expenses);
+          calculateBalancesFromExpenses(group.expenses.filter((exp) => exp.isdeleted !== 1));
+        }
+
+        // 2. Fetch latest data in the background
         const groupExpenses = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
         const filteredExpenses = groupExpenses.filter((exp) => exp.isdeleted !== 1);
         const sortedExpenses = groupExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+
         setExpenses(sortedExpenses);
         calculateBalancesFromExpenses(filteredExpenses);
 
-        if (!group || 1 == 1) {
-          const groupData = await getData_Any2Column("id", groupId, "type", "splitequal-groups");
-          //setGroup(groupData[0]);
-          const fullGroup = { ...groupData[0], expenses: sortedExpenses };
-          setGroup(fullGroup);
-          dispatch(updateGroup(fullGroup));
-        } else {
-          dispatch(
-            updateGroup({
-              ...group,
-              expenses: sortedExpenses,
-            })
-          );
-        }
+        const groupData = await getData_Any2Column("id", groupId, "type", "splitequal-groups");
+        const fullGroup = { ...groupData[0], expenses: sortedExpenses };
+
+        setGroup(fullGroup);
+        dispatch(updateGroup(fullGroup));
       } catch (error) {
         console.error("Error loading group data:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
