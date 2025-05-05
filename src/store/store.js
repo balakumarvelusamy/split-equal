@@ -4,6 +4,7 @@ import storage from "redux-persist/lib/storage"; // default: localStorage
 import { combineReducers } from "redux";
 import { encryptTransform } from "redux-persist-transform-encrypt";
 import groupReducer from "./groupSlice"; // we will create this next
+import userReducer from "./userSlice";
 
 const persistConfig = {
   key: "root",
@@ -20,6 +21,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   groups: groupReducer,
+  user: userReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

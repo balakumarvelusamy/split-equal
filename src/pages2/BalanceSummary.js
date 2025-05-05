@@ -58,18 +58,7 @@ const BalanceSummary = ({ friends, loggedInUser, onSettleUp, refreshBalance, loa
     <div>
       <h6 className="mb-2">Balance Summary</h6>
 
-      {loading ? (
-        <p className="border rounded">
-          <div className="skeleton-loader">
-            <div className="skeleton-box d-flex align-items-center justify-content-center">
-              <span className="px-1">
-                <i className="fas fa-spinner fa-spin text-success"></i>
-              </span>
-              Loading... Please wait...
-            </div>
-          </div>
-        </p>
-      ) : (
+      {
         <>
           <div className="row justify-content-center mb-4">
             <div className="col-md-12">
@@ -115,7 +104,7 @@ const BalanceSummary = ({ friends, loggedInUser, onSettleUp, refreshBalance, loa
             </div>
           </div>
         </>
-      )}
+      }
     </div>
   );
 };
