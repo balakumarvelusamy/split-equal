@@ -107,7 +107,8 @@ const Home = () => {
     return;
   };
   const refreshBalance = async () => {
-    await getData(loggedInUser.email, "splitequal-friends");
+    const userFriends = await getData(loggedInUser.email, "splitequal-friends");
+    dispatch(setFriends(userFriends));
     groupedFriendsMain();
     setrefreshBalance_(refreshBalance_ + 1);
     console.log("update balance", refreshBalance_);
