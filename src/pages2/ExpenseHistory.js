@@ -73,7 +73,7 @@ const ExpenseList = () => {
           <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
         </p>
       </div>
-      <h5 className="mb-3">Expense List {displayedExpenses.length + "/" + expenses.length}</h5>
+      <h5 className="mb-3">Expense List {"Showing " + displayedExpenses.length + " of " + expenses.length}</h5>
 
       {/* Search Bar */}
       <div className="input-group mb-3">
