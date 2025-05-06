@@ -129,7 +129,7 @@ const SettleUp = ({ friend, balance, loggedInUser, showSettleUp, setShowSettleUp
               inputMode="decimal"
             />
           </div>
-          <Button className="btn form-control btn-warning w-100 mt-2" disabled={loading || !settleUpAmounts} onClick={() => handleSettleUp(friend.email, parseFloat(Math.abs(settleUpAmounts)), friend)}>
+          <Button className="btn form-control btn-warning w-100 mt-2 text-dark" disabled={loading || !settleUpAmounts} onClick={() => handleSettleUp(friend.email, parseFloat(Math.abs(settleUpAmounts)), friend)}>
             {loading ? (
               <>
                 <span className="px-1">

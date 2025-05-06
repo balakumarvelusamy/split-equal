@@ -103,7 +103,7 @@ const FriendDetail = () => {
               <span
                 onClick={() =>
                   navigate(-1, {
-                    state: { refresh: refreshBalance_ + 1 }, // Pass a refresh flag
+                    state: { refresh: Date.now() }, // Pass a refresh flag
                   })
                 }
                 style={{ cursor: "pointer" }}
