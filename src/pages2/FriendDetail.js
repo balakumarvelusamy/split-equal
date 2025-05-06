@@ -27,22 +27,31 @@ const FriendDetail = () => {
   const loggedInUserEmail = secureLocalStorage.getItem("loggedInUserEmail");
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [settleUpAmounts, setSettleUpAmounts] = useState("");
+  const [friendData, setFriendData] = useState({
+    friendemail: "",
+    friendname: "",
+    currency: "",
+    currencyname: "",
+    balance: "",
+  });
+
   const useQuery = () => {
     return new URLSearchParams(useLocation().search);
   };
   const query = new URLSearchParams(useLocation().search);
   const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
-  const friendemail_ = query.get("friendemail");
-  const friendname_ = query.get("friendname");
-  const currency_ = query.get("currency");
-  const balance_ = query.get("balance");
+
   useEffect(() => {
+    setFriendData({
+      friendemail: query.get("friendemail") || "",
+      friendname: query.get("friendname") || "",
+      currency: query.get("currency") || "",
+      currencyname: query.get("currencyname") || "",
+      balance: query.get("balance") || "",
+    });
     setLoading(true);
     setLoggedInUser(sessionUser);
-    const friendemail = query.get("friendemail");
-    const friendname = query.get("friendname");
-    const currency = query.get("currency");
-    const balance = query.get("balance");
+    const friendemail = query.get("friendemail") || "";
     const id = query.get("id");
     setId(id);
     console.log("FriendDetail", friendemail);
@@ -51,7 +60,17 @@ const FriendDetail = () => {
       console.log("getItemsbyId id", id);
       console.log("getItemsbyId friendbyid", friendbyid);
       const selectedFriend = friendbyid.find((f) => f.friendemail === friendemail);
-      setFriend(selectedFriend);
+      if (selectedFriend?.length >= 1) {
+        setFriendData({
+          friendemail: selectedFriend.friendemail || "",
+          friendname: selectedFriend.friendname || "",
+          currency: selectedFriend.currency || "",
+          currencyname: selectedFriend.currencyName || "",
+          balance: selectedFriend.balance || "",
+        });
+      }
+
+      setFriend(selectedFriend || []);
       const data1 = await getData_Any2Column("friendemail", friendemail, "type", "splitequal-expense");
       const data2 = await getData_Any2Column("email", friendemail, "type", "splitequal-expense");
       const mergedData = data1.concat(data2);
@@ -97,13 +116,8 @@ const FriendDetail = () => {
   return (
     <>
       <div className="container">
-        {loading && 1 == 2 ? (
-          <p className="p-2 border rounded">
-            <span className="px-1">
-              <i className="fas fa-spinner fa-spin text-success"></i>
-            </span>
-            Loading... Please wait...
-          </p>
+        {friend.length === 0 ? (
+          <p className="p-2 border rounded">Friend not founds.</p>
         ) : (
           <>
             <div className="d-flex justify-content-between align-items-center mb-3">
@@ -123,12 +137,12 @@ const FriendDetail = () => {
                 </p>
               </span>
             </div>
-            <div className="d-flex justify-content-between align-items-center mb-3 border p-2 rounded" style={friend.balance < 0 ? cardStyleRed : cardStyleGreen}>
+            <div className="d-flex justify-content-between align-items-center mb-3 border p-2 rounded" style={friend && friend.balance < 0 ? cardStyleRed : cardStyleGreen}>
               <div>
                 {loading ? (
                   <>
-                    <h4 className="mb-0">{friendname_}</h4>
-                    <small>{maskEmail(friendemail_)}</small>
+                    <h4 className="mb-0">{friendData.friendname}</h4>
+                    <small>{maskEmail(friendData.friendemail)}</small>
                   </>
                 ) : (
                   <>
@@ -139,18 +153,18 @@ const FriendDetail = () => {
               </div>
               <div>
                 <h4 className="mb-0" align="right">
-                  {friend.balance == 0 ? (
+                  {friend && friend.balance == 0 ? (
                     <>
                       <b className="text-dark">{friend.currency + " " + 0}</b>
                       <span></span>
                     </>
                   ) : loading ? (
-                    <span className={balance_ < 0 ? "text-danger" : "text-success"}>
+                    <span className={friendData.balance < 0 ? "text-danger" : "text-success"}>
                       <b>
                         {0 ||
-                          currency_ +
+                          friendData.currency +
                             " " +
-                            Math.abs(balance_)
+                            Math.abs(friendData.balance)
                               .toFixed(2)
                               .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                       </b>
@@ -171,14 +185,14 @@ const FriendDetail = () => {
                   )}
                 </h4>
                 <small align="right">
-                  {friend.balance === 0 ? (
+                  {friend && friend.balance === 0 ? (
                     <>
                       <span> (No Balance - {friend.currencyName})</span>
                     </>
                   ) : (
-                    <span className={friend.balance < 0 ? "text-danger" : "text-success"}>
-                      <span>{friend.balance < 0 ? " You Pay" : " You Receive"}</span>
-                      <span>({friend.currencyName})</span>
+                    <span className={friend && friend.balance < 0 ? "text-danger" : "text-success"}>
+                      <span>{friend && friend.balance < 0 ? " You Pay" : " You Receive"}</span>
+                      <span>({friendData.currencyname || (friend && friend.currencyName)})</span>
                     </span>
                   )}
                 </small>
