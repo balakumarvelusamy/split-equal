@@ -96,6 +96,7 @@ const Home = () => {
       console.log(newFriend);
       await addData(newFriend);
       setShowAddFriend(false);
+      await refreshBalance();
     } catch (error) {
       console.error("Error adding friend:", error);
     }
