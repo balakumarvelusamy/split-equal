@@ -32,10 +32,17 @@ const FriendDetail = () => {
   };
   const query = new URLSearchParams(useLocation().search);
   const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+  const friendemail_ = query.get("friendemail");
+  const friendname_ = query.get("friendname");
+  const currency_ = query.get("currency");
+  const balance_ = query.get("balance");
   useEffect(() => {
     setLoading(true);
     setLoggedInUser(sessionUser);
     const friendemail = query.get("friendemail");
+    const friendname = query.get("friendname");
+    const currency = query.get("currency");
+    const balance = query.get("balance");
     const id = query.get("id");
     setId(id);
     console.log("FriendDetail", friendemail);
@@ -119,9 +126,10 @@ const FriendDetail = () => {
             <div className="d-flex justify-content-between align-items-center mb-3 border p-2 rounded" style={friend.balance < 0 ? cardStyleRed : cardStyleGreen}>
               <div>
                 {loading ? (
-                  <span className="px-1">
-                    <i className="fas fa-spinner fa-spin text-success"></i>
-                  </span>
+                  <>
+                    <h4 className="mb-0">{friendname_}</h4>
+                    <small>{maskEmail(friendemail_)}</small>
+                  </>
                 ) : (
                   <>
                     <h4 className="mb-0">{friend.friendname}</h4>
@@ -137,8 +145,15 @@ const FriendDetail = () => {
                       <span></span>
                     </>
                   ) : loading ? (
-                    <span className="px-1">
-                      <i className="fas fa-spinner fa-spin text-success"></i>
+                    <span className={balance_ < 0 ? "text-danger" : "text-success"}>
+                      <b>
+                        {0 ||
+                          currency_ +
+                            " " +
+                            Math.abs(balance_)
+                              .toFixed(2)
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      </b>
                     </span>
                   ) : (
                     friend && (
@@ -169,14 +184,6 @@ const FriendDetail = () => {
                 </small>
               </div>
             </div>
-            <div className="d-flex justify-content-between align-items-center mb-4 d-none">
-              <h4>
-                Balance:
-                <span className={friend.balance < 0 ? "text-danger" : "text-success"}>
-                  {friend.currency} {Math.abs(friend.balance).toFixed(2)}
-                </span>
-              </h4>
-            </div>
             <div className="d-flex justify-content-between align-items-center mb-4">
               <Button onClick={() => setShowAddExpense(true)} variant="warning" className="me-2">
                 Add Expense
@@ -186,8 +193,8 @@ const FriendDetail = () => {
               </Button>
             </div>
             <div className="d-flex justify-content-between align-items-center mb-1">
-              <label className="fw-bold">Expenses {displayedExpenses.length + "/" + expenses.length}</label>
-              <input type="text" className="form-control w-75" placeholder="Search expenses" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+              <label className="fw-bold d-none">Expenses {"Showing " + displayedExpenses.length + " of " + expenses.length}</label>
+              <input type="text" className="form-control w-100" placeholder={"Search Expenses - Showing " + displayedExpenses.length + " of " + expenses.length} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
 
             <ul className="list-group">
