@@ -96,6 +96,7 @@ const Home = () => {
       console.log(newFriend);
       await addData(newFriend);
       setShowAddFriend(false);
+      await refreshBalance();
     } catch (error) {
       console.error("Error adding friend:", error);
     }
@@ -267,7 +268,7 @@ const Home = () => {
                         </div>
 
                         <div className="text-nowrap">
-                          <a className="mx-1 p-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/friend?id=${friend.id}&friendname=${friendGroup[0].friendname}&friendemail=${friend.friendemail}&currency=${friend.currency}&balance=${Number(friend.balance)}`}>
+                          <a className="mx-1 p-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/friend?id=${friend.id}&friendname=${friendGroup[0].friendname}&friendemail=${friend.friendemail}&currency=${friend.currency}&currencyname=${friend.currencyName}&balance=${Number(friend.balance)}`}>
                             View <FaArrowRight className="me-1 text-success" />
                           </a>
                           <img
@@ -332,7 +333,7 @@ const Home = () => {
                                 setFriendToSettle(friend);
                               }}
                             />
-                            <a className="ms-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/friend?id=${friend.id}&friendname=${friend.friendname}&friendemail=${friend.friendemail}&currency=${friend.currency}&balance=${Number(friend.balance)}`}>
+                            <a className="ms-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/friend?id=${friend.id}&friendname=${friend.friendname}&friendemail=${friend.friendemail}&currency=${friend.currency}&currencyname=${friend.currencyName}&balance=${Number(friend.balance)}`}>
                               <FaArrowRight className="m-1 text-success" />
                             </a>
                           </span>
