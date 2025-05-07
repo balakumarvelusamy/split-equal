@@ -46,6 +46,7 @@ const Home = () => {
   const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
   const [refreshPosition, setRefreshPosition] = useState({ left: "50%", marginBottom: "75px" });
   const [isDragging, setIsDragging] = useState(false);
+  console.log("location.state?.refresh ", location.state?.refresh);
   // Fetch friends and expenses on mount
   useEffect(() => {
     const initializeData = async () => {

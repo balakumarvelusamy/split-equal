@@ -123,7 +123,7 @@ const FriendDetail = () => {
             <div className="d-flex justify-content-between align-items-center mb-3">
               <span
                 onClick={() =>
-                  navigate(-1, {
+                  navigate("/", {
                     state: { refresh: Date.now() }, // Pass a refresh flag
                   })
                 }
