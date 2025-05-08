@@ -28,10 +28,17 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
 
     const members = currentGroup.members;
     if (splitType === "equal") {
-      const equalShare = parseFloat(amount) / members.length;
+      const selectedMembers =
+        Object.keys(customShares).length > 0
+          ? Object.entries(customShares)
+              .filter(([email, include]) => include)
+              .map(([email]) => email)
+          : members.map((m) => m.email);
+
+      const equalShare = parseFloat(amount) / selectedMembers.length;
       const newShares = {};
       members.forEach((member) => {
-        newShares[member.email] = parseFloat(equalShare.toFixed(2));
+        newShares[member.email] = selectedMembers.includes(member.email) ? parseFloat(equalShare.toFixed(2)) : 0;
       });
       setCustomShares(newShares);
     }
@@ -51,10 +58,17 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
     const members = currentGroup?.members || [];
 
     if (splitType === "equal") {
-      const equalShare = totalAmount / members.length;
+      const selectedMembers =
+        Object.keys(customShares).length > 0
+          ? Object.entries(customShares)
+              .filter(([email, share]) => share !== 0)
+              .map(([email]) => email)
+          : members.map((m) => m.email);
+
+      const equalShare = totalAmount / selectedMembers.length;
       const shares = {};
       members.forEach((member) => {
-        shares[member.email] = equalShare;
+        shares[member.email] = selectedMembers.includes(member.email) ? equalShare : 0;
       });
       return shares;
     } else if (splitType === "percentage") {
@@ -177,6 +191,45 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
 
   const renderSharesInput = () => {
     if (!currentGroup) return null;
+    console.log(splitType);
+    if (splitType === "equal") {
+      const updateSummary = () => {}; // Placeholder for any update summary logic if needed
+      return (
+        <Form.Group className="mb-1">
+          <Form.Label>Select Members to Split</Form.Label>
+          <div className="border rounded p-1">
+            {currentGroup.members.map((member) => (
+              <div key={member.email} className="d-flex align-items-center mb-1">
+                <Form.Check
+                  type="checkbox"
+                  label={`${member.name} ${member.email === loggedInUser?.email ? "(You)" : ""}`}
+                  checked={customShares[member.email] !== 0}
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
+                    const updatedShares = {
+                      ...customShares,
+                      [member.email]: isChecked ? 1 : 0,
+                    };
+
+                    const selectedMembers = Object.entries(updatedShares)
+                      .filter(([email, include]) => include)
+                      .map(([email]) => email);
+
+                    const equalShare = parseFloat(amount) / selectedMembers.length || 0;
+                    const newShares = {};
+                    currentGroup.members.forEach((m) => {
+                      newShares[m.email] = selectedMembers.includes(m.email) ? parseFloat(equalShare.toFixed(2)) : 0;
+                    });
+                    setCustomShares(newShares);
+                    updateSummary();
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </Form.Group>
+      );
+    }
 
     return (
       <Form.Group className="mb-1">
@@ -190,7 +243,8 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
               {splitType !== "percentage" && <span className="mx-2">{currency}</span>}
               <Form.Control
                 type="number"
-                style={{ width: "100px", height: "40px" }}
+                style={{ width: "100px", height: "30px" }}
+                className="p-0"
                 value={customShares[member.email] || ""}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -201,6 +255,7 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
                 }}
                 placeholder={splitType === "percentage" ? "0%" : "0"}
                 min="0"
+                inputMode="decimal"
                 step={splitType === "percentage" ? "1" : "0.01"}
               />
             </div>
@@ -222,11 +277,11 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
         </Form.Group>
 
         <div className="row mb-1">
-          <div className="col-md-6">
+          <div className="col">
             <b>Amount*</b>
-            <Form.Control type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" step="0.01" />
+            <Form.Control type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" step="0.01" inputMode="decimal" />
           </div>
-          <div className="col-md-6">
+          <div className="col">
             <b>Currency*</b>
 
             <Form.Control as="select" value={currency} disabled onChange={(e) => setCurrency(e.target.value)} required>
@@ -248,7 +303,7 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
           </div>
         </Form.Group>
 
-        {splitType !== "equal" && renderSharesInput()}
+        {renderSharesInput()}
 
         {splitError && (
           <Alert variant="danger" className="mt-1 p-1">
@@ -261,7 +316,7 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
           <strong>Summary:</strong>
           <ul className="mt-1 mb-0">
             {currentGroup?.members.map((member) => {
-              const share = calculateShares()[member.email] || 0;
+              const share = customShares[member.email] || 0;
               return (
                 <li key={member.email}>
                   {member.name}: {currency} {share.toFixed(2)}

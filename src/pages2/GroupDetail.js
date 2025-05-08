@@ -623,7 +623,7 @@ const GroupDetail = () => {
                   </p>
 
                   <p className="mb-0">
-                    <strong>Amount:</strong> {selectedExpense.amount}
+                    <strong>Amount:</strong> {selectedExpense.currency + selectedExpense.amount}
                   </p>
                   <p className="mb-0">
                     <strong>Split Type:</strong> {selectedExpense.splitType}
