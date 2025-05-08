@@ -106,14 +106,15 @@ const GroupDetail = () => {
       try {
         // 1. Use existing Redux store group (if available)
         if (group && group.expenses?.length > 0) {
-          setExpenses(group.expenses);
-          calculateBalancesFromExpenses(group.expenses.filter((exp) => exp.isdeleted !== 1));
+          const filteredExpenses = group.expenses.filter((exp) => exp.isdeleted !== 1);
+          setExpenses(filteredExpenses);
+          calculateBalancesFromExpenses(filteredExpenses);
         }
 
         // 2. Fetch latest data in the background
         const groupExpenses = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
         const filteredExpenses = groupExpenses.filter((exp) => exp.isdeleted !== 1);
-        const sortedExpenses = groupExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const sortedExpenses = filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         setExpenses(sortedExpenses);
         calculateBalancesFromExpenses(filteredExpenses);
@@ -224,7 +225,7 @@ const GroupDetail = () => {
 
     // 1. Calculate raw amount owed (before settlements)
     expenses.forEach((expense) => {
-      if (expense.splitType !== "settleup-group") {
+      if (expense.splitType !== "settleup-group" && expense.isdeleted !== 1) {
         const paidBy = expense.paidBy;
         const userShare = expense.shares?.[loggedInUser?.email] || 0;
         const memberShare = expense.shares?.[memberEmail] || 0;
@@ -239,7 +240,7 @@ const GroupDetail = () => {
 
     // 2. Sum all settle-up transactions between the two members
     expenses.forEach((expense) => {
-      if (expense.splitType === "settleup-group") {
+      if (expense.splitType === "settleup-group" && expense.isdeleted !== 1) {
         const settlement = expense.settlementData;
 
         const isBetweenMembers = (settlement?.payerEmail === loggedInUser?.email && settlement?.recipientEmail === memberEmail) || (settlement?.payerEmail === memberEmail && settlement?.recipientEmail === loggedInUser?.email);
@@ -516,6 +517,7 @@ const GroupDetail = () => {
                   placeholder={selectedRecipient ? `Max: ${Math.abs(calculateAmountOwedToMember1(selectedRecipient.email).toFixed(2))}` : "Select recipient first"}
                   min="0.01"
                   step="0.01"
+                  inputMode="decimal"
                   max={selectedRecipient ? calculateAmountOwedToMember1(selectedRecipient.email) : undefined}
                   disabled={!selectedRecipient}
                   required
