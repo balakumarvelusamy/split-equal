@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { getData, deleteData, UpdateData } from "../service/APIService";
+import { getData, deleteData, UpdateData, addData } from "../service/APIService";
 import { Link } from "react-router-dom";
 import { FaArrowRight, FaRegEdit } from "react-icons/fa";
 import { Button, Modal } from "react-bootstrap";
+import AddFriend from "./AddFriend";
 import secureLocalStorage from "react-secure-storage";
+import { v4 as uuid } from "uuid";
+import close from "../images/delete.png";
 const Profile = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [loggedInUserName, setLoggedInUserName] = useState("");
@@ -14,6 +17,7 @@ const Profile = () => {
   const [updatedName, setUpdatedName] = useState("");
   const [updatedEmail, setUpdatedEmail] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddFriend, setShowAddFriend] = useState(false);
 
   useEffect(() => {
     const initializeUserSession = async () => {
@@ -34,6 +38,12 @@ const Profile = () => {
     };
     initializeUserSession();
   }, []);
+  const handleLogout = () => {
+    secureLocalStorage.removeItem("loggedInUser");
+    secureLocalStorage.removeItem("guestUser");
+    //navigate("/");
+    window.location.reload();
+  };
 
   const removeFriend = async (friendId) => {
     const isConfirmed = window.confirm("Are you sure you want to delete this friend?");
@@ -49,6 +59,36 @@ const Profile = () => {
     setUpdatedName(friend.friendname);
     setUpdatedEmail(friend.friendemail);
     setShowEditModal(true);
+  };
+
+  const addFriend = async (friend) => {
+    if (!loggedInUser) return;
+    if (loggedInUser === friend.friendemail) {
+      alert("Logged user cannot be added a friend.");
+      return;
+    }
+    try {
+      // Fetch existing friends to check for duplicates
+      const existingFriends = await getData(loggedInUser, "splitequal-friends");
+      const friendExists = existingFriends.some((f) => f.friendemail === friend.friendemail);
+      if (friendExists) {
+        alert("This friend already exists.");
+        return; // Stop execution if friend exists
+      }
+      const newFriend = {
+        ...friend,
+        email: loggedInUser,
+        id: uuid(),
+        balance: 0,
+        type: "splitequal-friends",
+      };
+      console.log(newFriend);
+      await addData(newFriend);
+      window.location.reload();
+      setShowAddFriend(false);
+    } catch (error) {
+      console.error("Error adding friend:", error);
+    }
   };
 
   const handleUpdateFriend = async () => {
@@ -106,9 +146,21 @@ const Profile = () => {
           </div>
         </div>
         <div className="p-1">
-          <div>
+          <div className="mb-1 d-flex justify-content-between align-items-center">
             <h6 className="fw-bold">Manage Friends List</h6>
+            <div>
+              {loggedInUserEmail === "guest" ? (
+                <a className="btn btn-sm btn-warning" onClick={(e) => handleLogout()}>
+                  Please Log in
+                </a>
+              ) : (
+                <button className="btn btn-sm btn-warning" onClick={(e) => setShowAddFriend(true)}>
+                  Add Friend
+                </button>
+              )}
+            </div>
           </div>
+
           {loading ? (
             <p className="p-2 border rounded">
               <span className="px-1">
@@ -210,6 +262,22 @@ const Profile = () => {
           <Button variant="warning" onClick={handleUpdateFriend} disabled={loading}>
             {loading ? "Updating..." : "Update"}
           </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showAddFriend} onHide={(e) => setShowAddFriend(false)} backdrop="static" keyboard={false}>
+        <div className="modal-header">
+          <h5 className="modal-title">Add a New Friend</h5>
+          <a onClick={(e) => setShowAddFriend(false)}>
+            <img src={close} alt="Logo" className="" width="30" />
+          </a>
+        </div>
+        <Modal.Body>
+          <AddFriend onAddFriend={addFriend} />
+        </Modal.Body>
+        <Modal.Footer>
+          <button type="button" onClick={(e) => setShowAddFriend(false)} className=" text-dark btn-lg btn-secondary bg-light border mt-2 ms-1 w-25">
+            Close
+          </button>
         </Modal.Footer>
       </Modal>
     </>
