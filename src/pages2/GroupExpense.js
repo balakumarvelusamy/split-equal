@@ -83,7 +83,7 @@ const GroupExpense = () => {
         );
         const groupsWithExpenses = await Promise.all(
           userGroups.map(async (group) => {
-            const expenses = await getData_Any2Column("groupId", group.id, "type", "splitequal-group-expenses");
+            const expenses = (await getData_Any2Column("groupId", group.id, "type", "splitequal-group-expenses")).filter((expense) => expense.isdeleted !== 1);
             return { ...group, expenses };
           })
         );
@@ -288,7 +288,7 @@ const GroupExpense = () => {
           <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
         </p>
       </div>
-      {loading ? (
+      {loading && 1 == 2 ? (
         <div className="text-center py-4">
           <div className="spinner-border text-warning" role="status">
             <span className="visually-hidden">Loading...</span>
