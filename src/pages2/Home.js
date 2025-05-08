@@ -46,6 +46,8 @@ const Home = () => {
   const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
   const [refreshPosition, setRefreshPosition] = useState({ left: "50%", marginBottom: "75px" });
   const [isDragging, setIsDragging] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  console.log("location.state?.refresh ", location.state?.refresh);
   // Fetch friends and expenses on mount
   useEffect(() => {
     const initializeData = async () => {
@@ -227,6 +229,9 @@ const Home = () => {
             )}
           </div>
         </div>
+        <div className="mb-2">
+          <input type="text" className="form-control" placeholder="Search friends by name or email" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        </div>
 
         {friendsStore.length === 0 ? (
           "No friends added yet."
@@ -234,6 +239,10 @@ const Home = () => {
           <>
             <ul className="list-group mb-4">
               {Object.entries(groupedFriendsMain)
+                .filter(([email, group]) => {
+                  const friend = group[0];
+                  return friend.friendname.toLowerCase().includes(searchTerm.toLowerCase()) || friend.friendemail.toLowerCase().includes(searchTerm.toLowerCase());
+                })
                 .sort(([emailA], [emailB]) => emailA.localeCompare(emailB))
                 .map(([friendEmail, friendGroup]) => (
                   <li key={friendEmail} className="p-1 list-group-item">
