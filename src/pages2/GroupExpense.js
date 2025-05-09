@@ -428,16 +428,6 @@ const GroupExpense = () => {
       </Modal>
       {/* Add Group Expense Modal */}
 
-      {/* <GroupAddExpenseModal
-        show={showAddExpense}
-        onHide={() => setShowAddExpense(false)}
-        currentGroup={currentGroup}
-        loggedInUser={loggedInUser}
-        onExpenseAdded={(updatedGroup) => {
-          setGroups(groups.map((g) => (g.id === updatedGroup.id ? updatedGroup : g)));
-          setCurrentGroup(updatedGroup);
-        }}
-      /> */}
       <GroupAddExpenseModal show={showAddExpense} page="home" onHide={() => setShowAddExpense(false)} currentGroup={currentGroup} loggedInUser={loggedInUser} />
       <div align="center" style={{ ...refreshBtn, left: refreshPosition.left, marginBottom: refreshPosition.marginBottom }} className="position-fixed bottom-0 px-1" onMouseDown={startDragging} onMouseMove={handleDragging} onMouseUp={stopDragging} onMouseLeave={stopDragging}>
         <Button className="rounded-circle d-flex align-items-center justify-content-center shadow bg-myapp" onClick={handleRefresh} style={{ width: "40px", height: "40px", border: "1px solid white" }} disabled={loading}>

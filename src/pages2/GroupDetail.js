@@ -626,7 +626,7 @@ const GroupDetail = () => {
                   </p>
 
                   <p className="mb-0">
-                    <strong>Amount:</strong> {selectedExpense.currency + selectedExpense.amount}
+                    <strong>Amount:</strong> {selectedExpense.currency} {parseFloat(selectedExpense.amount).toFixed(2)}
                   </p>
                   <p className="mb-0">
                     <strong>Split Type:</strong> {selectedExpense.splitType}
@@ -639,7 +639,7 @@ const GroupDetail = () => {
                     {selectedExpense.shares &&
                       Object.entries(selectedExpense.shares).map(([email, share]) => (
                         <li key={email}>
-                          {email}: {share}
+                          {email}:<b>{selectedExpense.currency + parseFloat(share).toFixed(2)}</b>
                         </li>
                       ))}
                   </ul>
