@@ -162,7 +162,7 @@ const GroupExpense = () => {
 
       const groupsWithExpenses = await Promise.all(
         userGroups.map(async (group) => {
-          const expenses = await getData_Any2Column("groupId", group.id, "type", "splitequal-group-expenses");
+          const expenses = (await getData_Any2Column("groupId", group.id, "type", "splitequal-group-expenses")).filter((expense) => expense.isdeleted !== 1);
           return { ...group, expenses };
         })
       );
