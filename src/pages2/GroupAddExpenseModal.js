@@ -196,7 +196,13 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
       const updateSummary = () => {}; // Placeholder for any update summary logic if needed
       return (
         <Form.Group className="mb-1">
-          <Form.Label>Select Members to Split</Form.Label>
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <div>Select Members to Split</div>
+            <a href="/profile" className="text-primary text-decoration-none">
+              Add Friends
+            </a>
+          </div>
+
           <div className="border rounded p-1">
             {currentGroup.members.map((member) => (
               <div key={member.email} className="d-flex align-items-center mb-1">
