@@ -19,6 +19,7 @@ const GroupExpense = () => {
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [selectedFriends, setSelectedFriends] = useState([]);
+  const [searchFriendText, setSearchFriendText] = useState("");
   //const [groups, setGroups] = useState([]); // use for call api in current page
   const groups = useSelector((state) => state.groups.groups); // redux
   const [showAddExpense, setShowAddExpense] = useState(false);
@@ -371,18 +372,18 @@ const GroupExpense = () => {
       )}
       {/* Create Group Modal */}
       <Modal show={showCreateGroup} onHide={() => setShowCreateGroup(false)}>
-        <Modal.Header closeButton>
+        <Modal.Header closeButton className="py-1">
           <Modal.Title>Create New Group</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <Form.Group className="mb-3">
-            <Form.Label>Group Name</Form.Label>
+        <Modal.Body className="py-1">
+          <Form.Group className="mb-1">
+            Group Name
             <Form.Control type="text" value={groupName} onChange={(e) => setGroupName(e.target.value)} placeholder="Enter group name" />
           </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Default Currency</Form.Label>
-            <Form.Select value={currency} onChange={(e) => setCurrency(e.target.value)} required>
+          <Form.Group className="mb-1">
+            Default Currency
+            <Form.Select className="form-control" value={currency} onChange={(e) => setCurrency(e.target.value)} required>
               {currencyOptions.map((option) => (
                 <option key={option.currency} value={option.currency}>
                   {option.currencyName} ({option.currency})
@@ -392,11 +393,27 @@ const GroupExpense = () => {
           </Form.Group>
 
           <Form.Group>
-            <Form.Label>Select Friends</Form.Label>
+            <div className="d-flex justify-content-between align-items-center">
+              <div>Select Friends</div>
+              <div>
+                <a href="/profile" className="text-primary text-decoration-none">
+                  Add Friends
+                </a>
+              </div>
+            </div>
+
+            <Form.Control type="text" placeholder="Search friends" className="mb-2 p-1" value={searchFriendText} onChange={(e) => setSearchFriendText(e.target.value)} />
             <div className="border rounded p-2" style={{ maxHeight: "200px", overflowY: "auto" }}>
-              {friends.map((friend) => (
-                <Form.Check key={friend.friendemail} type="checkbox" label={friend.friendname} checked={selectedFriends.some((f) => f.friendemail === friend.friendemail)} onChange={() => toggleFriendSelection(friend)} />
-              ))}
+              {friends
+                .filter((friend) => friend.friendname.toLowerCase().includes(searchFriendText.toLowerCase()))
+                .sort((a, b) => {
+                  const aSelected = selectedFriends.some((f) => f.friendemail === a.friendemail);
+                  const bSelected = selectedFriends.some((f) => f.friendemail === b.friendemail);
+                  return aSelected === bSelected ? 0 : aSelected ? -1 : 1;
+                })
+                .map((friend) => (
+                  <Form.Check key={friend.friendemail} type="checkbox" className="text-nowrap" label={friend.friendname + " - " + friend.friendemail} checked={selectedFriends.some((f) => f.friendemail === friend.friendemail)} onChange={() => toggleFriendSelection(friend)} />
+                ))}
             </div>
           </Form.Group>
         </Modal.Body>
