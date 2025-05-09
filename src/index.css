@@ -120,7 +120,8 @@ code {
 .btn:hover
 {
   background-color: #16325B !important;
-  border-color: #16325B !important
+  border-color: #FFDC7F !important;
+  color:#FFDC7F !important
 }
 .member-connection-line {
   position: relative;
