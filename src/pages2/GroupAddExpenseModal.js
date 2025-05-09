@@ -122,6 +122,13 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
       setSplitError("Please select Split Type.");
       return;
     }
+    if (splitType === "equal") {
+      const selectedMembers = Object.entries(customShares).filter(([email, share]) => share !== 0);
+      if (selectedMembers.length === 0) {
+        setSplitError("Please select at least one member to split the expense.");
+        return;
+      }
+    }
     if (!validateShares()) return;
 
     setLoading(true);
