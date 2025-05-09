@@ -99,6 +99,7 @@ const GroupDetail = () => {
     [loggedInUser]
   );
   useEffect(() => {
+    console.log("groupId", groupId);
     const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
     setLoggedInUser(sessionUser);
 
