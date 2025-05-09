@@ -338,15 +338,15 @@ const GroupExpense = () => {
                               </small>
                             </h6>
                             <div>
-                              <a className="mx-1 p-2 px-2 text-decoration-none border1 rounded badge text-success viewbutton" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
+                              <a className="mx-1 p-1 px-2 text-decoration-none border rounded badge text-success viewbutton" style={{ cursor: "pointer" }} onClick={() => navigate(`/group/${group.id}`, { state: { group } })}>
                                 View <FaArrowRight className="me-1 text-success" />
                               </a>
 
                               <img
                                 src={add}
                                 alt="Add Expense"
-                                width="35"
-                                className="px-2 p-2 border1  rounded   addexpense"
+                                width="33"
+                                className="px-2 p-1 border  rounded   addexpense"
                                 onClick={() => {
                                   setCurrentGroup(group);
                                   setShowAddExpense(true);

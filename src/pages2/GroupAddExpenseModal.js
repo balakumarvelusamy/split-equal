@@ -236,7 +236,7 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
         <Form.Label>{splitType === "percentage" ? "Percentage Shares" : "Custom Shares"}</Form.Label>
         <div className="border rounded p-1">
           {currentGroup.members.map((member) => (
-            <div key={member.email} className="d-flex align-items-center mb-1">
+            <div key={member.email} className="d-flex align-items-center mb-0">
               <div className="flex-grow-1">
                 {member.name} {member.email === loggedInUser?.email && "(You)"}
               </div>
@@ -244,7 +244,7 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
               <Form.Control
                 type="number"
                 style={{ width: "100px", height: "30px" }}
-                className="p-0"
+                className="p-1"
                 value={customShares[member.email] || ""}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -267,10 +267,10 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
 
   return (
     <Modal show={show} onHide={onHide} size="lg">
-      <Modal.Header closeButton>
+      <Modal.Header closeButton className="py-1">
         <b>Add Group Expense - {currentGroup?.name}</b>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className="py-1">
         <Form.Group className="mb-1">
           <b>Description*</b>
           <Form.Control type="text" value={description} required onChange={(e) => setDescription(e.target.value)} placeholder="What was this expense for?" />
@@ -313,8 +313,8 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
         )}
 
         <div className="alert alert-info mt-3 p-1">
-          <strong>Summary:</strong>
-          <ul className="mt-1 mb-0">
+          <strong className="d-none">Summary:</strong>
+          <ul className="mt-0 mb-0">
             {currentGroup?.members.map((member) => {
               const share = customShares[member.email] || 0;
               return (
@@ -327,7 +327,7 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
           </ul>
         </div>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="py-1">
         <Button variant="secondary" onClick={onHide}>
           Cancel
         </Button>
