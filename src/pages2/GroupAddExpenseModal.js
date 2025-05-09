@@ -312,10 +312,16 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
 
         <Form.Group className="mb-1">
           <b>Split Type*</b>
-          <div>
-            <Form.Check type="radio" label="Equal" name="splitType" checked={splitType === "equal"} onChange={() => setSplitType("equal")} inline />
-            <Form.Check type="radio" label="Percentage" name="splitType" checked={splitType === "percentage"} onChange={() => setSplitType("percentage")} inline />
-            <Form.Check type="radio" label="Custom" name="splitType" checked={splitType === "custom"} onChange={() => setSplitType("custom")} inline />
+          <div className="btn-group w-100" role="group">
+            <label className={`btn btn-sm ${splitType === "equal" ? "btn-primary" : "btn-outline-secondary"} flex-fill`}>
+              <input type="radio" name="splitType" checked={splitType === "equal"} onChange={() => setSplitType("equal")} style={{ display: "none" }} /> Equal
+            </label>
+            <label className={`btn btn-sm ${splitType === "percentage" ? "btn-primary" : "btn-outline-secondary"} flex-fill`}>
+              <input type="radio" name="splitType" checked={splitType === "percentage"} onChange={() => setSplitType("percentage")} style={{ display: "none" }} /> Percentage
+            </label>
+            <label className={`btn btn-sm ${splitType === "custom" ? "btn-primary" : "btn-outline-secondary"} flex-fill`}>
+              <input type="radio" name="splitType" checked={splitType === "custom"} onChange={() => setSplitType("custom")} style={{ display: "none" }} /> Custom
+            </label>
           </div>
         </Form.Group>
 
