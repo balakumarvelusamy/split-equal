@@ -317,7 +317,7 @@ const GroupAddExpenseModal = ({ show, page, onHide, currentGroup, loggedInUser, 
               <input type="radio" name="splitType" checked={splitType === "equal"} onChange={() => setSplitType("equal")} style={{ display: "none" }} /> Equal
             </label>
             <label className={`btn btn-sm ${splitType === "percentage" ? "btn-primary" : "btn-outline-secondary"} flex-fill`}>
-              <input type="radio" name="splitType" checked={splitType === "percentage"} onChange={() => setSplitType("percentage")} style={{ display: "none" }} /> Percentage
+              <input type="radio" name="splitType" checked={splitType === "percentage"} onChange={() => setSplitType("percentage")} style={{ display: "none" }} /> <span>Percentage</span>
             </label>
             <label className={`btn btn-sm ${splitType === "custom" ? "btn-primary" : "btn-outline-secondary"} flex-fill`}>
               <input type="radio" name="splitType" checked={splitType === "custom"} onChange={() => setSplitType("custom")} style={{ display: "none" }} /> Custom

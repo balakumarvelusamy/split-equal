@@ -117,6 +117,11 @@ code {
   --bs-btn-disabled-bg: #16325B;
   --bs-btn-disabled-border-color: #16325B;
 }
+.btn:hover
+{
+  background-color: #16325B !important;
+  border-color: #16325B !important
+}
 .member-connection-line {
   position: relative;
   padding-left: 20px;
