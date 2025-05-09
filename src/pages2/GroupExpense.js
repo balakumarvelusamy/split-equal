@@ -84,7 +84,7 @@ const GroupExpense = () => {
         );
         const groupsWithExpenses = await Promise.all(
           userGroups.map(async (group) => {
-            const expenses = (await getData_Any2Column("groupId", group.id, "type", "splitequal-group-expenses")).filter((expense) => expense.isdeleted !== 1);
+            const expenses = (await getData_Any2Column("groupId", group.id, "type", "splitequal-group-expenses")).filter((expense) => expense.isdeleted !== 12); // no need to filter here
             return { ...group, expenses };
           })
         );
@@ -163,7 +163,7 @@ const GroupExpense = () => {
 
       const groupsWithExpenses = await Promise.all(
         userGroups.map(async (group) => {
-          const expenses = (await getData_Any2Column("groupId", group.id, "type", "splitequal-group-expenses")).filter((expense) => expense.isdeleted !== 1);
+          const expenses = (await getData_Any2Column("groupId", group.id, "type", "splitequal-group-expenses")).filter((expense) => expense.isdeleted !== 12); // no need to filter here
           return { ...group, expenses };
         })
       );

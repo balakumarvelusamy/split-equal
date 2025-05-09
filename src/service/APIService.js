@@ -650,22 +650,24 @@ export const calculateAmountOwedToMember_ = (expenses, loggedInUser, memberEmail
   let totalSettledAmount = 0;
 
   expenses.forEach((expense) => {
-    if (expense.splitType !== "settleup-group") {
-      if (expense.isdeleted === 1) return;
-      const paidBy = expense.paidBy;
-      const userShare = expense.shares?.[loggedInUser?.email] || 0;
-      const memberShare = expense.shares?.[memberEmail] || 0;
+    if (expense.isdeleted !== 1) {
+      if (expense.splitType !== "settleup-group") {
+        if (expense.isdeleted === 1) return;
+        const paidBy = expense.paidBy;
+        const userShare = expense.shares?.[loggedInUser?.email] || 0;
+        const memberShare = expense.shares?.[memberEmail] || 0;
 
-      if (paidBy === memberEmail && userShare > 0) {
-        rawAmountOwed += parseFloat(userShare);
-      } else if (paidBy === loggedInUser?.email && memberShare > 0) {
-        rawAmountOwed -= parseFloat(memberShare);
-      }
-    } else {
-      const settlement = expense.settlementData;
-      const isBetween = (settlement?.payerEmail === loggedInUser?.email && settlement?.recipientEmail === memberEmail) || (settlement?.payerEmail === memberEmail && settlement?.recipientEmail === loggedInUser?.email);
-      if (isBetween) {
-        totalSettledAmount += Math.abs(parseFloat(expense.amount || 0));
+        if (paidBy === memberEmail && userShare > 0) {
+          rawAmountOwed += parseFloat(userShare);
+        } else if (paidBy === loggedInUser?.email && memberShare > 0) {
+          rawAmountOwed -= parseFloat(memberShare);
+        }
+      } else {
+        const settlement = expense.settlementData;
+        const isBetween = (settlement?.payerEmail === loggedInUser?.email && settlement?.recipientEmail === memberEmail) || (settlement?.payerEmail === memberEmail && settlement?.recipientEmail === loggedInUser?.email);
+        if (isBetween) {
+          totalSettledAmount += Math.abs(parseFloat(expense.amount || 0));
+        }
       }
     }
   });

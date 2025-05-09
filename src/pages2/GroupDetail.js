@@ -102,27 +102,26 @@ const GroupDetail = () => {
     console.log("groupId", groupId);
     const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
     setLoggedInUser(sessionUser);
-
+    console.log("refreshBalance_", refreshBalance_);
     const loadGroupData = async () => {
       try {
         // 1. Use existing Redux store group (if available)
         if (group && group.expenses?.length > 0) {
+          const sortedExpenses = group.expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
           const filteredExpenses = group.expenses.filter((exp) => exp.isdeleted !== 1);
-          setExpenses(filteredExpenses);
+          setExpenses(sortedExpenses);
           calculateBalancesFromExpenses(filteredExpenses);
         }
-
+        console.log("refreshBalance_ loaded1");
         // 2. Fetch latest data in the background
         const groupExpenses = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
+        const sortedExpenses = groupExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
         const filteredExpenses = groupExpenses.filter((exp) => exp.isdeleted !== 1);
-        const sortedExpenses = filteredExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
-
+        console.log("refreshBalance_ loaded2");
         setExpenses(sortedExpenses);
         calculateBalancesFromExpenses(filteredExpenses);
-
         const groupData = await getData_Any2Column("id", groupId, "type", "splitequal-groups");
         const fullGroup = { ...groupData[0], expenses: sortedExpenses };
-
         setGroup(fullGroup);
         dispatch(updateGroup(fullGroup));
       } catch (error) {
@@ -257,6 +256,18 @@ const GroupDetail = () => {
 
     // Preserve the direction (who owes whom)
     return rawAmountOwed >= 0 ? finalAmountOwed : -finalAmountOwed;
+  };
+  const refresh = async () => {
+    const groupExpenses = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
+    const sortedExpenses = groupExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const filteredExpenses = groupExpenses.filter((exp) => exp.isdeleted !== 1);
+    console.log("refreshBalance_ loaded2");
+    setExpenses(sortedExpenses);
+    calculateBalancesFromExpenses(filteredExpenses);
+    const groupData = await getData_Any2Column("id", groupId, "type", "splitequal-groups");
+    const fullGroup = { ...groupData[0], expenses: sortedExpenses };
+    setGroup(fullGroup);
+    dispatch(updateGroup(fullGroup));
   };
   if (loading) {
     return (
@@ -654,7 +665,8 @@ const GroupDetail = () => {
                     onClick={async () => {
                       const updated = { ...selectedExpense, isdeleted: 1 };
                       await UpdateData(updated);
-                      setrefreshBalance_(refreshBalance_ + 1);
+                      // setrefreshBalance_(Date.now());
+                      refresh();
                       setShowExpenseModal(false);
                     }}
                   >
@@ -679,7 +691,8 @@ const GroupDetail = () => {
                     onClick={async () => {
                       const updated = { ...selectedExpense, isdeleted: 0 };
                       await UpdateData(updated);
-                      setrefreshBalance_(refreshBalance_ + 1);
+                      //setrefreshBalance_(Date.now());
+                      refresh();
                       setShowExpenseModal(false);
                     }}
                   >
