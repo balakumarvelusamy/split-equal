@@ -652,7 +652,6 @@ export const calculateAmountOwedToMember_ = (expenses, loggedInUser, memberEmail
   expenses.forEach((expense) => {
     if (expense.isdeleted !== 1) {
       if (expense.splitType !== "settleup-group") {
-        if (expense.isdeleted === 1) return;
         const paidBy = expense.paidBy;
         const userShare = expense.shares?.[loggedInUser?.email] || 0;
         const memberShare = expense.shares?.[memberEmail] || 0;
