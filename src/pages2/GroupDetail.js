@@ -136,6 +136,7 @@ const GroupDetail = () => {
   const yourBalance = memberBalances[group?.email] || 0;
 
   const handleSettleUp = async (payerEmail, recipientEmail, amount) => {
+    console.log("settle up");
     if (!payerEmail || !recipientEmail || !amount || !group?.id) {
       console.error("Missing required parameters for settlement");
       return;
@@ -143,11 +144,13 @@ const GroupDetail = () => {
 
     try {
       if (typeof amount !== "number" || amount <= 0) {
-        throw new Error("Amount must be a positive number");
+        throw new Error("Please enter Settle up amount.");
       }
 
       const maxAmount = Math.abs(calculateAmountOwedToMember1(recipientEmail));
-      if (amount > maxAmount) {
+      console.log("maxAmount", maxAmount);
+      console.log("amount", amount);
+      if (amount > maxAmount + 0.01) {
         throw new Error(`Amount cannot exceed ${maxAmount.toFixed(2)}`);
       }
       const payerName = group.members.find((m) => m.email === payerEmail)?.name || payerEmail;
@@ -188,35 +191,6 @@ const GroupDetail = () => {
       console.error("Settlement failed:", error.message || error);
       alert(`Settlement failed: ${error.message}`);
     }
-  };
-  const calculateMaxSettlement_old = (payerEmail, recipientEmail) => {
-    let payerDebt = 0;
-    let recipientCredit = 0;
-
-    expenses.forEach((expense) => {
-      const paidBy = expense.paidBy;
-      const payerShare = expense.shares?.[payerEmail] || 0;
-      const recipientShare = expense.shares?.[recipientEmail] || 0;
-
-      if (paidBy === recipientEmail && payerShare > 0) {
-        // You owe this recipient
-        payerDebt += parseFloat(payerShare);
-      } else if (paidBy === payerEmail && recipientShare > 0) {
-        // They owe you (reduces your debt)
-        payerDebt -= parseFloat(recipientShare);
-      }
-
-      if (paidBy === payerEmail && recipientShare > 0) {
-        // You paid, they owe you
-        recipientCredit += parseFloat(recipientShare);
-      } else if (paidBy === recipientEmail && payerShare > 0) {
-        // They paid, you owe them (reduces what they're owed)
-        recipientCredit -= parseFloat(payerShare);
-      }
-    });
-
-    // The maximum you can settle is the minimum between what you owe and what they're owed
-    return Math.min(payerDebt, recipientCredit).toFixed(2);
   };
 
   const calculateAmountOwedToMember1 = (memberEmail) => {
@@ -530,7 +504,7 @@ const GroupDetail = () => {
                   min="0.01"
                   step="0.01"
                   inputMode="decimal"
-                  max={selectedRecipient ? calculateAmountOwedToMember1(selectedRecipient.email) : undefined}
+                  max={selectedRecipient ? calculateAmountOwedToMember1(selectedRecipient.email) : ""}
                   disabled={!selectedRecipient}
                   required
                 />
@@ -547,7 +521,7 @@ const GroupDetail = () => {
                     handleSettleUp(loggedInUser?.email, selectedRecipient.email, parseFloat(Math.abs(settleAmount)));
                   }
                 }}
-                disabled={!selectedRecipient || !settleAmount}
+                //disabled={!selectedRecipient || !settleAmount}
               >
                 Confirm Settlement
               </Button>
