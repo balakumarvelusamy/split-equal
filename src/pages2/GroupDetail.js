@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateGroup } from "../store/groupSlice";
 import GroupChatModal from "../components2/GroupChatModal";
 import { FaSync, FaComment, FaComments } from "react-icons/fa";
+import Select from "react-select";
 const GroupDetail = () => {
   const { groupId } = useParams();
   const { state } = useLocation();
@@ -27,9 +28,10 @@ const GroupDetail = () => {
   const [newMemberEmail, setNewMemberEmail] = useState("");
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [settleloading, setSettleLoading] = useState(false);
   const [showSettleModal, setShowSettleModal] = useState(false);
   const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
-  const [settleAmount, setSettleAmount] = useState("");
+  const [settleAmount, setSettleAmount] = useState(0);
   const [selectedRecipient, setSelectedRecipient] = useState(null);
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [memberBalances, setMemberBalances] = useState({});
@@ -136,6 +138,7 @@ const GroupDetail = () => {
   const yourBalance = memberBalances[group?.email] || 0;
 
   const handleSettleUp = async (payerEmail, recipientEmail, amount) => {
+    setSettleLoading(true);
     console.log("settle up");
     if (!payerEmail || !recipientEmail || !amount || !group?.id) {
       console.error("Missing required parameters for settlement");
@@ -187,7 +190,11 @@ const GroupDetail = () => {
       setShowSettleModal(false);
       setSettleAmount("");
       setSelectedRecipient(null);
+      setSettleLoading(false);
+      const fullGroup = { ...group, expenses: updatedExpenses };
+      dispatch(updateGroup(fullGroup));
     } catch (error) {
+      setSettleLoading(false);
       console.error("Settlement failed:", error.message || error);
       alert(`Settlement failed: ${error.message}`);
     }
@@ -243,6 +250,31 @@ const GroupDetail = () => {
     setGroup(fullGroup);
     dispatch(updateGroup(fullGroup));
   };
+  const recipientOptions = group?.members
+    ?.filter((member) => {
+      const amountOwed = calculateAmountOwedToMember1(member.email);
+      return member.email !== loggedInUser?.email && Math.abs(amountOwed) > 0.01;
+    })
+    .map((member) => {
+      const amountOwed = calculateAmountOwedToMember1(member.email);
+      const isReceive = amountOwed < 0;
+      return {
+        value: member.email,
+        label: `${loggedInUser?.name} ${amountOwed > 0 ? "pays" : "receives"} ${group.currency}${Math.abs(amountOwed).toFixed(2)} ${isReceive ? "←" : "→"} ${member.name}`,
+        color: amountOwed > 0 ? "red" : "green",
+        member,
+      };
+    });
+
+  const customStyles = {
+    option: (styles, { data, isFocused, isSelected }) => ({
+      ...styles,
+      padding: "12px",
+      color: data.color,
+      backgroundColor: isFocused ? "#f0f0f0" : isSelected ? "#e0e0e0" : "white",
+    }),
+  };
+
   if (loading) {
     return (
       <div className="groupheader text-center py-5">
@@ -461,7 +493,7 @@ const GroupDetail = () => {
             <Modal.Body>
               <Form.Group className="mb-3">
                 <Form.Label>Recipient</Form.Label>
-                <Form.Select
+                {/* <Form.Select
                   value={selectedRecipient?.email || ""}
                   onChange={(e) => {
                     const recipientEmail = e.target.value;
@@ -486,7 +518,17 @@ const GroupDetail = () => {
                         </option>
                       );
                     })}
-                </Form.Select>
+                </Form.Select> */}
+                <Select
+                  value={selectedRecipient ? recipientOptions.find((opt) => opt.value === selectedRecipient.email) : null}
+                  onChange={(selectedOption) => {
+                    setSelectedRecipient(selectedOption.member);
+                    setSettleAmount("");
+                  }}
+                  options={recipientOptions}
+                  styles={customStyles}
+                  placeholder="Select who to pay"
+                />
               </Form.Group>
 
               <Form.Group className="mb-3">
@@ -521,9 +563,9 @@ const GroupDetail = () => {
                     handleSettleUp(loggedInUser?.email, selectedRecipient.email, parseFloat(Math.abs(settleAmount)));
                   }
                 }}
-                //disabled={!selectedRecipient || !settleAmount}
+                disabled={!selectedRecipient || !settleAmount}
               >
-                Confirm Settlement
+                {settleloading ? "Saving..." : "Confirm Settlement"}
               </Button>
             </Modal.Footer>
           </Modal>
