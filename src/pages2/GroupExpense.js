@@ -301,7 +301,7 @@ const GroupExpense = () => {
           <div className="input-group w-auto">
             <input type="text" className="form-control w-75" placeholder="Search Groups" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
             {searchText && (
-              <Button className="form-control text-muted w-auto" size="sm" onClick={() => setSearchText("")}>
+              <Button className="form-control text-light w-auto" size="sm" onClick={() => setSearchText("")}>
                 x
               </Button>
             )}
