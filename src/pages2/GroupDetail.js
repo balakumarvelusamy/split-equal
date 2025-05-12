@@ -258,6 +258,7 @@ const GroupDetail = () => {
     .map((member) => {
       const amountOwed = calculateAmountOwedToMember1(member.email);
       const isReceive = amountOwed < 0;
+
       return {
         value: member.email,
         label: `${loggedInUser?.name} ${amountOwed > 0 ? "pays" : "receives"} ${group.currency}${Math.abs(amountOwed).toFixed(2)} ${isReceive ? "←" : "→"} ${member.name}`,
@@ -522,8 +523,10 @@ const GroupDetail = () => {
                 <Select
                   value={selectedRecipient ? recipientOptions.find((opt) => opt.value === selectedRecipient.email) : null}
                   onChange={(selectedOption) => {
+                    const recipient = selectedOption.member;
+                    const amountOwed = Math.abs(calculateAmountOwedToMember1(recipient.email)).toFixed(2) || 0;
                     setSelectedRecipient(selectedOption.member);
-                    setSettleAmount("");
+                    setSettleAmount(amountOwed);
                   }}
                   options={recipientOptions}
                   styles={customStyles}
