@@ -62,9 +62,10 @@ const GroupExpense = () => {
       if (!sessionUser?.email) return;
       const userFriends = await getData(sessionUser.email, "splitequal-friends");
       setFriends(userFriends);
-      if (groups.length > 0) {
+      if (groups.length > 0 && 2 == 1) {
+        //always load group data ,remove this condition if it impact the performance
         console.log("Groups already in store, skip loading.");
-        return; // ❌ Don't reload if already in Redux
+        return;
       }
 
       setLoading(true);
