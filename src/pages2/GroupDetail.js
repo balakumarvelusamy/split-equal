@@ -468,30 +468,32 @@ const GroupDetail = () => {
                               </span>
                               <div>
                                 <small className="text-muted d-none">Split: {expense?.splitType}</small>{" "}
-                                <small className="text-muted">
-                                  <span className="">Paid by {expense?.paidByName} .</span>
-                                  {expense?.paidBy === loggedInUser?.email ? (
-                                    <>
-                                      {"You paid "}
-                                      <b className="text-success">{expense.currency + parseFloat(expense.amount).toFixed(2)}</b>
-                                      {" and will get back "}
-                                      <b className="text-success">
-                                        {expense.currency +
-                                          Object.entries(expense?.shares || {})
-                                            .filter(([email]) => email !== loggedInUser?.email)
-                                            .reduce((sum, [, share]) => sum + parseFloat(share), 0)
-                                            .toFixed(2)}
-                                      </b>
-                                    </>
-                                  ) : expense?.shares?.[loggedInUser?.email] > 0 ? (
-                                    <>
-                                      {" You owe "}
-                                      <b className="myapp-text-danger">{expense.currency + parseFloat(expense.shares[loggedInUser.email]).toFixed(2)}</b>
-                                    </>
-                                  ) : (
-                                    " You owe none"
-                                  )}
-                                </small>
+                                {expense?.splitType !== "settleup-group" && (
+                                  <small className="text-muted">
+                                    <span className="">Paid by {expense?.paidByName}. </span>
+                                    {expense?.paidBy === loggedInUser?.email ? (
+                                      <>
+                                        {"You paid "}
+                                        <b className="text-success">{expense.currency + parseFloat(expense.amount).toFixed(2)}</b>
+                                        {" and will get back "}
+                                        <b className="text-success">
+                                          {expense.currency +
+                                            Object.entries(expense?.shares || {})
+                                              .filter(([email]) => email !== loggedInUser?.email)
+                                              .reduce((sum, [, share]) => sum + parseFloat(share), 0)
+                                              .toFixed(2)}
+                                        </b>
+                                      </>
+                                    ) : expense?.shares?.[loggedInUser?.email] > 0 ? (
+                                      <>
+                                        {" You owe "}
+                                        <b className="myapp-text-danger">{expense.currency + parseFloat(expense.shares[loggedInUser.email]).toFixed(2)}</b>
+                                      </>
+                                    ) : (
+                                      " You owe none"
+                                    )}
+                                  </small>
+                                )}
                               </div>
                             </div>
                             <div>
