@@ -358,7 +358,7 @@ const GroupDetail = () => {
   };
   return (
     <>
-      <header className="groupheader bg-myapp p-3 text-white">
+      <header className="groupheader bg-myapp p-3 text-white ">
         <div className="d-flex justify-content-between align-items-middle mb-1">
           {/* Back Button */}
           <span onClick={() => navigate(-1)} style={{ cursor: "pointer" }}>
@@ -399,125 +399,140 @@ const GroupDetail = () => {
           </div>
         </div>
       </header>
-      {loading ? (
-        <div className="text-center py-4">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
+      <div>
+        {loading ? (
+          <div className="text-center py-4">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p>Loading groups details..</p>
           </div>
-          <p>Loading groups details..</p>
-        </div>
-      ) : (
-        <div className="container mt-3">
-          {/* Expense History */}
-          <div className="input-group w-auto">
-            <input type="text" className="form-control w-75" placeholder="Search Groups Expense" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
-            {searchText && (
-              <Button variant="outline-secondary" className="form-control w-auto" size="sm" onClick={() => setSearchText("")}>
-                x
-              </Button>
-            )}
-          </div>
-          <h6>Expense History</h6>
-          {expenses.length === 0 ? (
-            <div className="alert alert-info">No expenses yet</div>
-          ) : expenses.filter((expense) => JSON.stringify(expense).toLowerCase().includes(searchText.toLowerCase())).length === 0 ? (
-            <div className="text-center py-4">
-              <p>No Expense found</p>
+        ) : (
+          <div className="container mt-3">
+            {/* Expense History */}
+            <div className="input-group w-auto">
+              <input type="text" className="form-control w-75" placeholder="Search Groups Expense" value={searchText} onChange={(e) => setSearchText(e.target.value)} />
               {searchText && (
-                <Button variant="outline-secondary" onClick={() => setSearchText("")}>
-                  Clear Search
+                <Button variant="outline-secondary" className="form-control w-auto" size="sm" onClick={() => setSearchText("")}>
+                  x
                 </Button>
               )}
             </div>
-          ) : (
-            (() => {
-              const filteredExpenses = expenses.filter((expense) => JSON.stringify(expense).toLowerCase().includes(searchText.toLowerCase()));
-              const visibleExpenses = filteredExpenses.slice(0, visibleExpensesCount);
-              return (
-                <ListGroup>
-                  {visibleExpenses.map((expense) => {
-                    const dateObj = new Date(expense.date);
-                    const formattedDayMonth = dateObj.toLocaleDateString("en-US", {
-                      day: "numeric",
-                      month: "short",
-                    });
+            <h6>Expense History</h6>
+            {expenses.length === 0 ? (
+              <div className="alert alert-info">No expenses yet</div>
+            ) : expenses.filter((expense) => JSON.stringify(expense).toLowerCase().includes(searchText.toLowerCase())).length === 0 ? (
+              <div className="text-center py-4">
+                <p>No Expense found</p>
+                {searchText && (
+                  <Button variant="outline-secondary" onClick={() => setSearchText("")}>
+                    Clear Search
+                  </Button>
+                )}
+              </div>
+            ) : (
+              (() => {
+                const filteredExpenses = expenses.filter((expense) => JSON.stringify(expense).toLowerCase().includes(searchText.toLowerCase()));
+                const visibleExpenses = filteredExpenses.slice(0, visibleExpensesCount);
+                return (
+                  <ListGroup>
+                    {visibleExpenses.map((expense) => {
+                      const dateObj = new Date(expense.date);
+                      const formattedDayMonth = dateObj.toLocaleDateString("en-US", {
+                        day: "numeric",
+                        month: "short",
+                      });
 
-                    return (
-                      <ListGroup.Item key={expense.id} className="p-1">
-                        <div className="d-flex justify-content-between p-0">
-                          <div>
-                            <span
-                              className="text-center px-1 bg-light border  rounded text-nowrap text-decoration-none "
-                              onClick={() => {
-                                setSelectedExpense(expense);
-                                setShowExpenseModal(true);
-                              }}
-                            >
-                              <small>{formattedDayMonth}</small>
-                            </span>
-                            <span
-                              className={`mb-0 color-myapp  ${expense.isdeleted ? "text-decoration-line-through" : ""}`}
-                              style={{ cursor: "pointer", color: "blue" }}
-                              onClick={() => {
-                                setSelectedExpense(expense);
-                                setShowExpenseModal(true);
-                              }}
-                            >
-                              <small className="px-1">{expense.description}</small>
-                            </span>
+                      return (
+                        <ListGroup.Item key={expense.id} className="p-1">
+                          <div className="d-flex justify-content-between p-0">
                             <div>
-                              <small className="text-muted">Split: {expense?.splitType}</small>{" "}
-                              <small className="text-muted">
-                                | Paid by {expense?.paidByName} &
-                                {expense?.shares?.[loggedInUser?.email] > 0 ? (
-                                  <>
-                                    You owe: <b className="myapp-text-danger">{expense.currency + parseFloat(expense.shares[loggedInUser.email]).toFixed(2)}</b>
-                                  </>
-                                ) : (
-                                  <> You owe none</>
-                                )}
+                              <span
+                                className="text-center px-1 bg-light border  rounded text-nowrap text-decoration-none "
+                                onClick={() => {
+                                  setSelectedExpense(expense);
+                                  setShowExpenseModal(true);
+                                }}
+                              >
+                                <small>{formattedDayMonth}</small>
+                              </span>
+                              <span
+                                className={`mb-0 color-myapp  ${expense.isdeleted ? "text-decoration-line-through" : ""}`}
+                                style={{ cursor: "pointer", color: "blue" }}
+                                onClick={() => {
+                                  setSelectedExpense(expense);
+                                  setShowExpenseModal(true);
+                                }}
+                              >
+                                <small className="px-1">{expense.description}</small>
+                              </span>
+                              <div>
+                                <small className="text-muted d-none">Split: {expense?.splitType}</small>{" "}
+                                <small className="text-muted">
+                                  <span className="">Paid by {expense?.paidByName} .</span>
+                                  {expense?.paidBy === loggedInUser?.email ? (
+                                    <>
+                                      {"You paid "}
+                                      <b className="text-success">{expense.currency + parseFloat(expense.amount).toFixed(2)}</b>
+                                      {" and will get back "}
+                                      <b className="text-success">
+                                        {expense.currency +
+                                          Object.entries(expense?.shares || {})
+                                            .filter(([email]) => email !== loggedInUser?.email)
+                                            .reduce((sum, [, share]) => sum + parseFloat(share), 0)
+                                            .toFixed(2)}
+                                      </b>
+                                    </>
+                                  ) : expense?.shares?.[loggedInUser?.email] > 0 ? (
+                                    <>
+                                      {" You owe "}
+                                      <b className="myapp-text-danger">{expense.currency + parseFloat(expense.shares[loggedInUser.email]).toFixed(2)}</b>
+                                    </>
+                                  ) : (
+                                    " You owe none"
+                                  )}
+                                </small>
+                              </div>
+                            </div>
+                            <div>
+                              <small>
+                                <span className={`fw-bold ${expense.isdeleted ? "text-decoration-line-through " : ""}`}>
+                                  {expense.currency}
+                                  {expense.amount}
+                                </span>
                               </small>
                             </div>
                           </div>
-                          <div>
-                            <small>
-                              <span className={`fw-bold ${expense.isdeleted ? "text-decoration-line-through " : ""}`}>
-                                {expense.currency}
-                                {expense.amount}
-                              </span>
-                            </small>
-                          </div>
-                        </div>
-                      </ListGroup.Item>
-                    );
-                  })}
+                        </ListGroup.Item>
+                      );
+                    })}
 
-                  {filteredExpenses.length > visibleExpensesCount && (
-                    <div className="text-center my-2">
-                      <button className="btn btn-warning" onClick={() => setVisibleExpensesCount((prev) => prev + 20)}>
-                        Load More
-                      </button>
-                    </div>
-                  )}
-                </ListGroup>
-              );
-            })()
-          )}
+                    {filteredExpenses.length > visibleExpensesCount && (
+                      <div className="text-center my-2">
+                        <button className="btn btn-warning" onClick={() => setVisibleExpensesCount((prev) => prev + 20)}>
+                          Load More
+                        </button>
+                      </div>
+                    )}
+                  </ListGroup>
+                );
+              })()
+            )}
 
-          <div align="center" style={{ ...refreshBtn, left: refreshPosition.left, marginBottom: refreshPosition.marginBottom }} className="position-fixed bottom-0 px-1" onMouseDown={startDragging} onMouseMove={handleDragging} onMouseUp={stopDragging} onMouseLeave={stopDragging}>
-            <Button className="rounded-circle d-flex align-items-center justify-content-center shadow bg-myapp p-1" onClick={() => setShowChatModal(true)} style={{ width: "40px", height: "40px", border: "1px solid white" }} disabled={loading}>
-              <FaComments />
-            </Button>
-          </div>
+            <div align="center" style={{ ...refreshBtn, left: refreshPosition.left, marginBottom: refreshPosition.marginBottom }} className="position-fixed bottom-0 px-1" onMouseDown={startDragging} onMouseMove={handleDragging} onMouseUp={stopDragging} onMouseLeave={stopDragging}>
+              <Button className="rounded-circle d-flex align-items-center justify-content-center shadow bg-myapp p-1" onClick={() => setShowChatModal(true)} style={{ width: "40px", height: "40px", border: "1px solid white" }} disabled={loading}>
+                <FaComments />
+              </Button>
+            </div>
 
-          <Modal show={showSettleModal} onHide={() => setShowSettleModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Settle Up in {group?.name}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form.Group className="mb-3">
-                <Form.Label>Recipient</Form.Label>
-                {/* <Form.Select
+            <Modal show={showSettleModal} onHide={() => setShowSettleModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Settle Up in {group?.name}</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form.Group className="mb-3">
+                  <Form.Label>Recipient</Form.Label>
+                  {/* <Form.Select
                   value={selectedRecipient?.email || ""}
                   onChange={(e) => {
                     const recipientEmail = e.target.value;
@@ -543,177 +558,203 @@ const GroupDetail = () => {
                       );
                     })}
                 </Form.Select> */}
-                <Select
-                  value={selectedRecipient ? recipientOptions.find((opt) => opt.value === selectedRecipient.email) : null}
-                  onChange={(selectedOption) => {
-                    const recipient = selectedOption.member;
-                    const amountOwed = Math.abs(calculateAmountOwedToMember1(recipient.email)).toFixed(2) || 0;
-                    setSelectedRecipient(selectedOption.member);
-                    setSettleAmount(amountOwed);
-                  }}
-                  options={recipientOptions}
-                  styles={customStyles}
-                  placeholder="Select who to pay"
-                />
-              </Form.Group>
+                  <Select
+                    value={selectedRecipient ? recipientOptions.find((opt) => opt.value === selectedRecipient.email) : null}
+                    onChange={(selectedOption) => {
+                      const recipient = selectedOption.member;
+                      const amountOwed = Math.abs(calculateAmountOwedToMember1(recipient.email)).toFixed(2) || 0;
+                      setSelectedRecipient(selectedOption.member);
+                      setSettleAmount(amountOwed);
+                    }}
+                    options={recipientOptions}
+                    styles={customStyles}
+                    placeholder="Select who to pay"
+                  />
+                </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Amount to Settle</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={settleAmount}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === "" || /^\d*\.?\d{0,2}$/.test(value)) {
-                      setSettleAmount(value);
+                <Form.Group className="mb-3">
+                  <Form.Label>Amount to Settle</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={settleAmount}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === "" || /^\d*\.?\d{0,2}$/.test(value)) {
+                        setSettleAmount(value);
+                      }
+                    }}
+                    placeholder={selectedRecipient ? `Max: ${Math.abs(calculateAmountOwedToMember1(selectedRecipient.email).toFixed(2))}` : "Select recipient first"}
+                    min="0.01"
+                    step="0.01"
+                    inputMode="decimal"
+                    max={selectedRecipient ? calculateAmountOwedToMember1(selectedRecipient.email) : ""}
+                    disabled={!selectedRecipient}
+                    required
+                  />
+                </Form.Group>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowSettleModal(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    if (selectedRecipient && settleAmount) {
+                      handleSettleUp(loggedInUser?.email, selectedRecipient.email, parseFloat(Math.abs(settleAmount)));
                     }
                   }}
-                  placeholder={selectedRecipient ? `Max: ${Math.abs(calculateAmountOwedToMember1(selectedRecipient.email).toFixed(2))}` : "Select recipient first"}
-                  min="0.01"
-                  step="0.01"
-                  inputMode="decimal"
-                  max={selectedRecipient ? calculateAmountOwedToMember1(selectedRecipient.email) : ""}
-                  disabled={!selectedRecipient}
-                  required
-                />
-              </Form.Group>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowSettleModal(false)}>
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => {
-                  if (selectedRecipient && settleAmount) {
-                    handleSettleUp(loggedInUser?.email, selectedRecipient.email, parseFloat(Math.abs(settleAmount)));
-                  }
-                }}
-                disabled={!selectedRecipient || !settleAmount}
-              >
-                {settleloading ? "Saving..." : "Confirm Settlement"}
-              </Button>
-            </Modal.Footer>
-          </Modal>
+                  disabled={!selectedRecipient || !settleAmount}
+                >
+                  {settleloading ? "Saving..." : "Confirm Settlement"}
+                </Button>
+              </Modal.Footer>
+            </Modal>
 
-          <GroupAddExpenseModal
-            show={showAddExpenseModal}
-            onHide={() => setShowAddExpenseModal(false)}
-            currentGroup={group}
-            loggedInUser={loggedInUser}
-            onExpenseAdded={(updatedGroup) => {
-              //setGroup(updatedGroup); redux
-              const loadExpenses = async () => {
-                const groupExpenses = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
-                const sortedExpenses = groupExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
-                setExpenses(sortedExpenses);
-                calculateBalancesFromExpenses(sortedExpenses);
-              };
-              loadExpenses();
-              const matchingGroup = groups.find((g) => g.id === updatedGroup.id);
-              if (matchingGroup) {
-                setGroup(matchingGroup);
-              }
-              dispatch(updateGroup(updatedGroup));
-            }}
-          />
-          <GroupChatModal show={showChatModal} onHide={() => setShowChatModal(false)} groupId={group.id} loggedInUser={loggedInUser} />
+            <GroupAddExpenseModal
+              show={showAddExpenseModal}
+              onHide={() => setShowAddExpenseModal(false)}
+              currentGroup={group}
+              loggedInUser={loggedInUser}
+              onExpenseAdded={(updatedGroup) => {
+                //setGroup(updatedGroup); redux
+                const loadExpenses = async () => {
+                  const groupExpenses = await getData_Any2Column("groupId", groupId, "type", "splitequal-group-expenses");
+                  const sortedExpenses = groupExpenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+                  setExpenses(sortedExpenses);
+                  calculateBalancesFromExpenses(sortedExpenses);
+                };
+                loadExpenses();
+                const matchingGroup = groups.find((g) => g.id === updatedGroup.id);
+                if (matchingGroup) {
+                  setGroup(matchingGroup);
+                }
+                dispatch(updateGroup(updatedGroup));
+              }}
+            />
+            <GroupChatModal show={showChatModal} onHide={() => setShowChatModal(false)} groupId={group.id} loggedInUser={loggedInUser} />
 
-          {/* Add Member Modal */}
-          <Modal show={showAddMemberModal} onHide={() => setShowAddMemberModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Add New Member</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div className="mb-3">
-                <h6>Existing Members:</h6>
-                <ul className="list-unstyled ps-2">
-                  {group?.members?.map((member) => (
-                    <li key={member.email} className="py-1 d-flex justify-content-between align-items-center">
-                      <small>
-                        {member.name} ({member.email})
-                      </small>
-                      {/* {calculateAmountOwedToMember1(member.email) === 0 && member.email !== loggedInUser?.email && (
+            {/* Add Member Modal */}
+            <Modal show={showAddMemberModal} onHide={() => setShowAddMemberModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Add New Member</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="mb-3">
+                  <h6>Existing Members:</h6>
+                  <ul className="list-unstyled ps-2">
+                    {group?.members?.map((member) => (
+                      <li key={member.email} className="py-1 d-flex justify-content-between align-items-center">
+                        <small>
+                          {member.name} ({member.email})
+                        </small>
+                        {/* {calculateAmountOwedToMember1(member.email) === 0 && member.email !== loggedInUser?.email && (
                         <Button variant="danger" size="sm" onClick={() => handleDeleteMember(member)}>
                           Delete
                         </Button>
                       )} */}
-                    </li>
-                  ))}
-                </ul>
-                <hr />
-              </div>
-              <Form.Group className="mb-3">
-                <Form.Label>Member Name</Form.Label>
-                <Form.Control type="text" placeholder="Enter member name" required value={newMemberName} onChange={(e) => setNewMemberName(e.target.value)} />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Member Email</Form.Label>
-                <Form.Control type="email" placeholder="Enter member email" required value={newMemberEmail} pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" onChange={(e) => setNewMemberEmail(e.target.value)} />
-              </Form.Group>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowAddMemberModal(false)}>
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={handleAddMember}>
-                Add Member
-              </Button>
-            </Modal.Footer>
-          </Modal>
+                      </li>
+                    ))}
+                  </ul>
+                  <hr />
+                </div>
+                <Form.Group className="mb-3">
+                  <Form.Label>Member Name</Form.Label>
+                  <Form.Control type="text" placeholder="Enter member name" required value={newMemberName} onChange={(e) => setNewMemberName(e.target.value)} />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Member Email</Form.Label>
+                  <Form.Control type="email" placeholder="Enter member email" required value={newMemberEmail} pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" onChange={(e) => setNewMemberEmail(e.target.value)} />
+                </Form.Group>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowAddMemberModal(false)}>
+                  Cancel
+                </Button>
+                <Button variant="primary" onClick={handleAddMember}>
+                  Add Member
+                </Button>
+              </Modal.Footer>
+            </Modal>
 
-          {/* Expense Details Modal */}
-          <Modal show={showExpenseModal} onHide={() => setShowExpenseModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Expense Details</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {selectedExpense && (
-                <>
-                  {/* <Form.Group className="mb-2">
+            {/* Expense Details Modal */}
+            <Modal show={showExpenseModal} onHide={() => setShowExpenseModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Expense Details</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {selectedExpense && (
+                  <>
+                    {/* <Form.Group className="mb-2">
                     <Form.Label>Description</Form.Label>
                     <Form.Control type="text" value={selectedExpense.description} onChange={(e) => setSelectedExpense({ ...selectedExpense, description: e.target.value })} />
                   </Form.Group> */}
-                  <p className="mb-0">
-                    <strong>Description:</strong> {selectedExpense.description}
-                  </p>
-
-                  <p className="mb-0">
-                    <strong>Amount:</strong> {selectedExpense.currency} {parseFloat(selectedExpense.amount).toFixed(2)}
-                  </p>
-                  <p className="mb-0">
-                    <strong>Split Type:</strong> {selectedExpense.splitType}
-                  </p>
-
-                  <p className="mb-0">
-                    <strong>Shares:</strong>
-                  </p>
-                  <ul className="list-unstyled ps-3">
-                    {selectedExpense.shares &&
-                      Object.entries(selectedExpense.shares).map(([email, share]) => (
-                        <li key={email}>
-                          {email}:<b>{selectedExpense.currency + parseFloat(share).toFixed(2)}</b>
-                        </li>
-                      ))}
-                  </ul>
-                </>
-              )}
-            </Modal.Body>
-            <Modal.Footer>
-              {!selectedExpense?.isdeleted ? (
-                <>
-                  <Button
-                    variant="danger"
-                    onClick={async () => {
-                      const updated = { ...selectedExpense, isdeleted: 1 };
-                      await UpdateData(updated);
-                      // setrefreshBalance_(Date.now());
-                      refresh();
-                      setShowExpenseModal(false);
-                    }}
-                  >
-                    {!loading ? "Delete" : "Deleting"}
-                  </Button>
+                    <p className="mb-0">
+                      <strong>Description:</strong> {selectedExpense.description}
+                    </p>
+                    <p className="mb-0">
+                      <strong>Amount:</strong> {selectedExpense.currency} {parseFloat(selectedExpense.amount).toFixed(2)}
+                    </p>
+                    <p className="mb-0">
+                      <strong>Split Type:</strong> {selectedExpense.splitType}
+                    </p>
+                    {selectedExpense.splitType !== "settleup-group" && (
+                      <>
+                        {" "}
+                        <p className="mb-0">
+                          <strong>Shares:</strong>
+                        </p>
+                        <ul className="list-unstyled ps-3">
+                          {selectedExpense.shares &&
+                            Object.entries(selectedExpense.shares).map(([email, share]) => (
+                              <li key={email}>
+                                {email}:<b>{selectedExpense.currency + parseFloat(share).toFixed(2)}</b>
+                              </li>
+                            ))}
+                        </ul>
+                      </>
+                    )}
+                  </>
+                )}
+              </Modal.Body>
+              <Modal.Footer className="d-flex justify-content-between align-items-middle">
+                <div>
+                  {!selectedExpense?.isdeleted ? (
+                    <Button
+                      variant="danger"
+                      onClick={async () => {
+                        const confirmDelete = window.confirm("Are you sure you want to delete this expense?");
+                        if (confirmDelete) {
+                          const updated = { ...selectedExpense, isdeleted: 1 };
+                          await UpdateData(updated);
+                          refresh();
+                          setShowExpenseModal(false);
+                        }
+                      }}
+                    >
+                      {!loading ? "Delete" : "Deleting"}
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        variant="danger"
+                        onClick={async () => {
+                          const confirmRestore = window.confirm("Do you want to restore this deleted expense?");
+                          if (confirmRestore) {
+                            const updated = { ...selectedExpense, isdeleted: 0 };
+                            await UpdateData(updated);
+                            refresh();
+                            setShowExpenseModal(false);
+                          }
+                        }}
+                      >
+                        <FaRecycle className="me-1" /> Restore
+                      </Button>{" "}
+                      <span className="text-danger px-2">Status: Deleted</span>
+                    </>
+                  )}
+                </div>
+                <div>
                   {/* <Button
                     variant="primary"
                     onClick={async () => {
@@ -724,31 +765,17 @@ const GroupDetail = () => {
                   >
                     {!loading ? "Save" : "Saving"}
                   </Button> */}
-                </>
-              ) : (
-                <>
-                  <span className="text-danger px-2">Status: Deleted</span>
-                  <Button
-                    variant="danger"
-                    onClick={async () => {
-                      const updated = { ...selectedExpense, isdeleted: 0 };
-                      await UpdateData(updated);
-                      //setrefreshBalance_(Date.now());
-                      refresh();
-                      setShowExpenseModal(false);
-                    }}
-                  >
-                    <FaRecycle className="me-1" /> Restore
+                </div>
+                <div>
+                  <Button variant="secondary" onClick={() => setShowExpenseModal(false)}>
+                    Close
                   </Button>
-                </>
-              )}
-              <Button variant="secondary" onClick={() => setShowExpenseModal(false)}>
-                Close
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        </div>
-      )}
+                </div>
+              </Modal.Footer>
+            </Modal>
+          </div>
+        )}
+      </div>
     </>
   );
 };
