@@ -153,7 +153,10 @@ const GroupDetail = () => {
       const maxAmount = Math.abs(calculateAmountOwedToMember1(recipientEmail));
       console.log("maxAmount", maxAmount);
       console.log("amount", amount);
-      if (amount > maxAmount + 0.01) {
+      const roundedAmount = Math.round(amount * 100) / 100;
+      const roundedMax = Math.round(maxAmount * 100) / 100;
+
+      if (roundedAmount > roundedMax) {
         throw new Error(`Amount cannot exceed ${maxAmount.toFixed(2)}`);
       }
       const payerName = group.members.find((m) => m.email === payerEmail)?.name || payerEmail;
@@ -443,7 +446,16 @@ const GroupDetail = () => {
                       <ListGroup.Item key={expense.id} className="p-1">
                         <div className="d-flex justify-content-between p-0">
                           <div>
-                            <h6
+                            <span
+                              className="text-center px-1 bg-light border  rounded text-nowrap text-decoration-none "
+                              onClick={() => {
+                                setSelectedExpense(expense);
+                                setShowExpenseModal(true);
+                              }}
+                            >
+                              <small>{formattedDayMonth}</small>
+                            </span>
+                            <span
                               className={`mb-0 color-myapp  ${expense.isdeleted ? "text-decoration-line-through" : ""}`}
                               style={{ cursor: "pointer", color: "blue" }}
                               onClick={() => {
@@ -451,18 +463,29 @@ const GroupDetail = () => {
                                 setShowExpenseModal(true);
                               }}
                             >
-                              {expense.description}
-                            </h6>
-                            <span className="text-center px-1 bg-light rounded text-nowrap ">
-                              <small>{formattedDayMonth}</small>
-                            </span>{" "}
-                            <small className="text-muted">| Split: {expense?.splitType}</small> <small className="text-muted">| PaidBy: {expense?.paidByName}</small>
+                              <small className="px-1">{expense.description}</small>
+                            </span>
+                            <div>
+                              <small className="text-muted">Split: {expense?.splitType}</small>{" "}
+                              <small className="text-muted">
+                                | Paid by {expense?.paidByName} &
+                                {expense?.shares?.[loggedInUser?.email] > 0 ? (
+                                  <>
+                                    You owe: <b className="myapp-text-danger">{expense.currency + parseFloat(expense.shares[loggedInUser.email]).toFixed(2)}</b>
+                                  </>
+                                ) : (
+                                  <> You owe none</>
+                                )}
+                              </small>
+                            </div>
                           </div>
                           <div>
-                            <span className={`fw-bold text-muted ${expense.isdeleted ? "text-decoration-line-through" : ""}`}>
-                              {expense.currency}
-                              {expense.amount}
-                            </span>
+                            <small>
+                              <span className={`fw-bold ${expense.isdeleted ? "text-decoration-line-through " : ""}`}>
+                                {expense.currency}
+                                {expense.amount}
+                              </span>
+                            </small>
                           </div>
                         </div>
                       </ListGroup.Item>
