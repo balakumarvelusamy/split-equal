@@ -470,11 +470,11 @@ const GroupDetail = () => {
                                 <small className="text-muted d-none">Split: {expense?.splitType}</small>{" "}
                                 {expense?.splitType !== "settleup-group" && (
                                   <small className="text-muted">
-                                    <span className="">Paid by {expense?.paidByName}. </span>
+                                    <span className="d-none">Paid by {expense?.paidByName}. </span>
                                     {expense?.paidBy === loggedInUser?.email ? (
                                       <>
                                         {"You paid "}
-                                        <b className="text-success">{expense.currency + parseFloat(expense.amount).toFixed(2)}</b>
+                                        <b className="">{expense.currency + parseFloat(expense.amount).toFixed(2)}</b>
                                         {" and will get back "}
                                         <b className="text-success">
                                           {expense.currency +
@@ -486,6 +486,7 @@ const GroupDetail = () => {
                                       </>
                                     ) : expense?.shares?.[loggedInUser?.email] > 0 ? (
                                       <>
+                                        <span className="">Paid by {expense?.paidByName}. </span>
                                         {" You owe "}
                                         <b className="myapp-text-danger">{expense.currency + parseFloat(expense.shares[loggedInUser.email]).toFixed(2)}</b>
                                       </>
