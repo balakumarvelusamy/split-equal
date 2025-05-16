@@ -254,19 +254,19 @@ const Profile = () => {
                 </span>{" "}
                 Support
               </button>
-              <button className="btn btn-danger p-1 px-1 btn-sm w-auto" onClick={() => (setShowDeleteSection(!showDeleteSection), setFinalConfirm(false))}>
-                <span>
-                  <i className="fi fi-rr-trash"></i>
-                </span>{" "}
-                Delete Profile{" "}
-                {showDeleteSection && (
-                  <span>
-                    <i className="fi fi-rr-cross"></i>
-                  </span>
-                )}
-              </button>
             </div>
           )}
+          <button className="btn btn-danger p-1 px-1 btn-sm w-auto" onClick={() => (setShowDeleteSection(!showDeleteSection), setFinalConfirm(false))}>
+            <span>
+              <i className="fi fi-rr-trash"></i>
+            </span>{" "}
+            Delete Profile{" "}
+            {showDeleteSection && (
+              <span>
+                <i className="fi fi-rr-cross"></i>
+              </span>
+            )}
+          </button>
           {showDeleteSection && (
             <div className="mt-3 border rounded p-3 bg-light" align="left">
               {" "}
@@ -333,13 +333,13 @@ const Profile = () => {
           </div>
         </div>
       )}
-      <div className="container d-none">
+      <div className="container">
         <span>
-          <button className="share-button" onClick={() => copyToClipboard(config.iosurl)}>
+          <button className="share-button bg-myapp" onClick={() => copyToClipboard(config.iosurl)}>
             <i className="fa fa-apple"></i>
           </button>
         </span>
-        <span>
+        <span className="d-none">
           <button className="share-button" style={{ bottom: "145px" }} onClick={() => copyToClipboard(config.androidurl)}>
             <i className="fa fa-android"></i>
           </button>
@@ -361,7 +361,7 @@ const Profile = () => {
                 zIndex: 1000,
               }}
             >
-              Link copied to clipboard for Sharing
+              Link copied to clipboard for sharing
             </div>
           </div>
         )}
