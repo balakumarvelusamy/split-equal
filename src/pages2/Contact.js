@@ -234,7 +234,7 @@ const Contact = () => {
       {!isLoggedIn && (
         <p className="mt-5">
           To view your support cases, please{" "}
-          <a href="/manage/profile" className="my-link">
+          <a href="/" className="my-link">
             Log In
           </a>
         </p>

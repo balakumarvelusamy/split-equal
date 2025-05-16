@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import Header from "./components2/Header";
 import BottomNav from "./components2/BottomNav";
 import Home from "./pages2/Home";
-import Profile from "./pages2/Profile";
+import Manage from "./pages2/Manage";
 import ExpenseHistory from "./pages2/ExpenseHistory";
 import FriendDetail from "./pages2/FriendDetail";
 import Support from "./pages2/Support";
@@ -127,7 +127,7 @@ const MainApp = () => {
           {!window.location.pathname.includes("/group/") && <Header title={config.apptitle} />}
           <Routes>
             <Route path="" element={<Home />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="manage" element={<Manage />} />
             <Route path="friendslists" element={<ExpenseHistory />} />
             <Route path="history" element={<ExpenseHistory />} />
             <Route path="friend" element={<FriendDetail />} />

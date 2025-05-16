@@ -5,6 +5,7 @@ const initialState = {
   friends: [],
   expenses: [],
   loggedInUser: null,
+  userInfo: null,
 };
 
 const userSlice = createSlice({
@@ -20,8 +21,16 @@ const userSlice = createSlice({
     setLoggedInUser(state, action) {
       state.loggedInUser = action.payload;
     },
+    setUserInfo(state, action) {
+      state.userInfo = action.payload;
+    },
+    logoutUser(state, action) {
+      state.loggedInUser = null;
+      state.friends = [];
+      state.expenses = [];
+    },
   },
 });
 
-export const { setFriends, setExpenses, setLoggedInUser } = userSlice.actions;
+export const { setFriends, setExpenses, setLoggedInUser, setUserInfo, logoutUser } = userSlice.actions;
 export default userSlice.reducer;

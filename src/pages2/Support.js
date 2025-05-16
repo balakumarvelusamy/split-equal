@@ -7,7 +7,12 @@ import { fetchUsers, deleteUser, sendEmail, UpdateUser, getCountryCurrency, mask
 import { Modal, Button } from "react-bootstrap";
 import close from "../images/delete.png";
 import secureLocalStorage from "react-secure-storage";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser, setLoggedInUser } from "../store/userSlice";
+import { persistor } from "../store/store";
 const Profile = () => {
+  const dispatch = useDispatch();
+  const loggedInUserStore = useSelector((state) => state.user.loggedInUser);
   const [sessionInitialized, setSessionInitialized] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [alertVisible, setAlertVisible] = useState(false);
@@ -28,7 +33,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); // Initialize navigate
   const [deleteSuccess, setDeleteSuccess] = useState(false);
-  const loggedInUserEmail = secureLocalStorage.getItem("loggedInUserEmail");
+  const loggedInUserEmail = loggedInUserStore?.email;
   const [showModal, setShowModal] = useState(false);
   useEffect(() => {
     const initializeUserSession = async () => {
@@ -40,9 +45,10 @@ const Profile = () => {
       setCountries(countryList);
       const isBiometricEnabled = secureLocalStorage.getItem("biometricEnabled") === "true";
       setBiometricEnabled(isBiometricEnabled);
-      const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+      const sessionUser = loggedInUserStore;
+      console.log("loggedInUserStore profile", loggedInUserStore);
       const guestUser = JSON.parse(secureLocalStorage.getItem("guestUser"));
-      if (sessionUser && loggedInUserEmail != "guest") {
+      if (sessionUser != null && sessionUser && loggedInUserEmail != "guest") {
         setLoggedInUser(sessionUser.email);
         setLoggedInUserName(sessionUser.name);
         setCountry(sessionUser.country || "");
@@ -88,7 +94,11 @@ const Profile = () => {
       secureLocalStorage.removeItem("loggedInUser");
       secureLocalStorage.removeItem("guestUser");
       secureLocalStorage.setItem("isLoggedOut", true);
-      navigate("/");
+      dispatch(logoutUser());
+      persistor.purge().then(() => {
+        window.location.reload(); // reloads fresh without old persisted state
+      });
+      //navigate("/");
     }
   };
   const handleDeleteProfile = async () => {

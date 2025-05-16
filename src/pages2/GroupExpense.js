@@ -11,10 +11,12 @@ import GroupSummary from "./GroupSummary";
 import { FaSync } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { setGroups, updateGroup } from "../store/groupSlice";
+import { setUserInfo, setLoggedInUser } from "../store/userSlice";
 
 const GroupExpense = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const loggedInUserStore = useSelector((state) => state.user.loggedInUser);
   const [searchText, setSearchText] = useState("");
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [groupName, setGroupName] = useState("");
@@ -49,7 +51,9 @@ const GroupExpense = () => {
   };
   useEffect(() => {
     // Load logged in user from secure storage
-    const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+    //const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+    const sessionUser = loggedInUserStore;
+    console.log("loggedInUserStore", loggedInUserStore);
     setLoggedInUser(sessionUser);
 
     const fetchCurrencyOptions = () => {
@@ -59,7 +63,10 @@ const GroupExpense = () => {
     fetchCurrencyOptions();
     // Load data when component mounts
     const loadData = async () => {
-      if (!sessionUser?.email) return;
+      if (!sessionUser?.email) {
+        console.log("Please log in to access.");
+        return;
+      }
       const userFriends = await getData(sessionUser.email, "splitequal-friends");
       setFriends(userFriends);
       if (groups.length > 0 && 2 == 1) {
@@ -73,7 +80,7 @@ const GroupExpense = () => {
         // Load friends
         const userFriends = await getData(sessionUser.email, "splitequal-friends");
         setFriends(userFriends);
-
+        console.log("sessionUser.email", sessionUser.email);
         // Load all groups where user is either creator or member
         const allGroups = await getItemsbyType("splitequal-groups"); // Get all groups
 
@@ -282,20 +289,20 @@ const GroupExpense = () => {
     <div className="container">
       <div className="d-flex justify-content-between align-items-middle mb-1">
         <p className="mb-0">
-          <Button variant="warning" className="p-1 px-2 text-nowrap" onClick={() => setShowCreateGroup(true)}>
-            Create Group
+          <Button variant="warning" disabled={!loggedInUser?.email ? true : false} className="p-1 px-2 text-nowrap" onClick={() => setShowCreateGroup(true)}>
+            {loggedInUser?.email ? "Create Group" : "Log in to Create Group"}
           </Button>
         </p>
         <p className="mb-0">
           <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
         </p>
       </div>
-      {loading && 1 == 2 ? (
+      {!loggedInUser?.email ? (
         <div className="text-center py-4">
-          <div className="spinner-border text-warning" role="status">
+          <div className=" text-warning" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
-          <p>Loading groups and friends...</p>
+          <p>Please Log in to create group and share the expense with friends</p>
         </div>
       ) : (
         <>
