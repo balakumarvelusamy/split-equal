@@ -28,7 +28,7 @@ const BottomNav = () => (
       </span>
       <div>History</div>
     </NavLink>{" "}
-    <NavLink to="/profile" className={({ isActive }) => (isActive ? "active" : "")}>
+    <NavLink to="/manage" className={({ isActive }) => (isActive ? "active" : "")}>
       <span>
         <i className="fi fi-rr-settings"></i>
       </span>
