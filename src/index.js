@@ -12,11 +12,11 @@ import { generateClient } from "aws-amplify/api";
 Amplify.configure({
   API: {
     GraphQL: {
-      endpoint: "https://m24bivvguzhttlxrar4grzwzum.appsync-api.ap-south-1.amazonaws.com/graphql",
-      region: "ap-south-1",
+      endpoint: process.env.REACT_GRAPHQL,
+      region: process.env.REACT_APP_S3_REGION,
       defaultAuthMode: "apiKey",
-      apiKey: "da2-xvk63jh7xrhbfjvwswqg7imlju",
-      subscriptionEndpoint: "wss://m24bivvguzhttlxrar4grzwzum.appsync-realtime-api.ap-south-1.amazonaws.com/graphql",
+      apiKey: process.env.REACT_APP_KEY_APPSYNC,
+      subscriptionEndpoint: process.env.REACT_SUB_ENDPOINT_APPSYNC,
     },
   },
 });
