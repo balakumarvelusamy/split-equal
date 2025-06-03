@@ -86,7 +86,7 @@ const GroupChatModal = ({ show, onHide, groupId, loggedInUser }) => {
       isdeleted: false,
       groupId: groupId,
     };
-
+    setNewMessage("");
     try {
       await client.graphql({
         query: sendMessage,
@@ -109,7 +109,7 @@ const GroupChatModal = ({ show, onHide, groupId, loggedInUser }) => {
     <Modal show={show} onHide={onHide} Close className="pb-0 mb-0" size="lg">
       <Modal.Header className="p-2">
         <InputGroup className="mb-1">
-          <Form.Control type="text" className="w-50 p-0 m-0 " style={{ height: "35px" }} placeholder="Search messages..." value={searchText} onChange={(e) => setSearchText(e.target.value)} />
+          <Form.Control type="text" className="w-50 px-1 p-0 m-0 " style={{ height: "35px" }} placeholder="Search messages..." value={searchText} onChange={(e) => setSearchText(e.target.value)} />
           <Button className="form-control1 px-2" style={{ height: "35px", padding: "2px" }} onClick={() => setSearchText("")}>
             Clear
           </Button>
@@ -141,7 +141,7 @@ const GroupChatModal = ({ show, onHide, groupId, loggedInUser }) => {
               <FaTimes />
             </Button>
             <Form.Control type="text" className="form-control w-50 mb-0 mt-0" placeholder="Type your message" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSend()} />
-            <Button variant="primary" className="form-control mb-0 mt-0" onClick={handleSend} disabled={sending}>
+            <Button variant="primary" className="form-control mb-0 mt-0" onClick={handleSend}>
               {sending ? (
                 <>
                   <span className="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
