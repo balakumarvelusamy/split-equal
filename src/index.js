@@ -12,15 +12,15 @@ import { generateClient } from "aws-amplify/api";
 Amplify.configure({
   API: {
     GraphQL: {
-      endpoint: process.env.REACT_GRAPHQL,
+      endpoint: process.env.REACT_APP_GRAPHQL_APPSYNC,
       region: process.env.REACT_APP_S3_REGION,
       defaultAuthMode: "apiKey",
       apiKey: process.env.REACT_APP_KEY_APPSYNC,
-      subscriptionEndpoint: process.env.REACT_SUB_ENDPOINT_APPSYNC,
+      subscriptionEndpoint: process.env.REACT_APP_SUB_ENDPOINT_APPSYNC,
     },
   },
 });
-
+console.log("process.env.REACT_SUB_ENDPOINT_APPSYNC", process.env.REACT_APP_SUB_ENDPOINT_APPSYNC);
 const container = document.getElementById("root");
 const root = createRoot(container);
 
