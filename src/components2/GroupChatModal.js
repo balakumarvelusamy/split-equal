@@ -109,8 +109,8 @@ const GroupChatModal = ({ show, onHide, groupId, loggedInUser }) => {
     <Modal show={show} onHide={onHide} Close className="pb-0 mb-0" size="lg">
       <Modal.Header className="p-2">
         <InputGroup className="mb-1">
-          <Form.Control type="text" className="w-50" placeholder="Search messages..." value={searchText} onChange={(e) => setSearchText(e.target.value)} />
-          <Button className="form-control" onClick={() => setSearchText("")}>
+          <Form.Control type="text" className="w-50 p-0 m-0 " style={{ height: "35px" }} placeholder="Search messages..." value={searchText} onChange={(e) => setSearchText(e.target.value)} />
+          <Button className="form-control1 px-2" style={{ height: "35px", padding: "2px" }} onClick={() => setSearchText("")}>
             Clear
           </Button>
         </InputGroup>
@@ -135,7 +135,7 @@ const GroupChatModal = ({ show, onHide, groupId, loggedInUser }) => {
       </Modal.Body>
       <Modal.Footer className="p-0 mt-0 "></Modal.Footer>
       <div>
-        <div className="d-flex flex-grow-1 justify-content-end align-items-center gap-0 p-0">
+        <div className="d-flex flex-grow-1 justify-content-end align-items-center gap-0 p-1">
           <InputGroup className="mb-0 pb-0">
             <Button variant="primary" className="px-1 form-control mb-0 mt-0" onClick={onHide}>
               <FaTimes />
