@@ -124,7 +124,7 @@ const MainApp = () => {
     if (isLoggedIn) {
       return (
         <>
-          {!window.location.pathname.includes("/group/") && <Header title={config.apptitle} />}
+          <Header title={config.apptitle} />
           <Routes>
             <Route path="" element={<Home />} />
             <Route path="manage" element={<Manage />} />
