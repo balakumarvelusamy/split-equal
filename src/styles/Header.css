@@ -27,10 +27,26 @@
   border-bottom-right-radius: 40px !important;
   font-size: 20px;
   text-align: left;
-  background-color: #78B7D0;
-  color: #000000 !important;
+  background-color: #16325B;
+  color: #ffffff !important;
     
 }
-
+.groupheader {
+  justify-content: space-between !important;
+  align-items: center;
+  color: white;
+  border-bottom-left-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  background-color: #16325B;
+}
+.zindexback
+{
+  z-index: -10000 !important;
+}
 
 

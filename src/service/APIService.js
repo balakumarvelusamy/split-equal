@@ -38,7 +38,7 @@ export const sendEmail = async (data) => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const result = await response; // Parse JSON response
+    const result = await response.json(); // Parse JSON response
     console.log("Email sent successfully", result);
     return result;
   } catch (err) {
@@ -580,13 +580,13 @@ export const uploadFileToS3 = async (imagename, file) => {
 
 export const imagetoCaption = async (imageUrl) => {
   try {
-    const response = await fetch(process.env.REACT_APP_AI_SERVICE_URL + "image-to-caption", {
+    const response = await fetch(process.env.REACT_APP_AI_SERVICE_URL + "image-to-bill-split", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        imageUrl: imageUrl,
+        image_url: imageUrl,
       }),
     });
 
@@ -596,7 +596,7 @@ export const imagetoCaption = async (imageUrl) => {
     }
 
     const data = await response.json();
-    return data.caption; // Assuming the response contains a "caption" field
+    return data; // Assuming the response contains a "caption" field
   } catch (error) {
     console.error("Error fetching caption:", error.message);
     throw error;
@@ -643,4 +643,34 @@ export const maskEmail = (email) => {
   const last = name[name.length - 1]; // Make last uppercase, as requested
   const masked = "*".repeat(name.length - 2);
   return `${first}${masked}${last}@${domain}`;
+};
+
+export const calculateAmountOwedToMember_ = (expenses, loggedInUser, memberEmail) => {
+  let rawAmountOwed = 0;
+  let totalSettledAmount = 0;
+
+  expenses.forEach((expense) => {
+    if (expense.isdeleted !== 1) {
+      if (expense.splitType !== "settleup-group") {
+        const paidBy = expense.paidBy;
+        const userShare = expense.shares?.[loggedInUser?.email] || 0;
+        const memberShare = expense.shares?.[memberEmail] || 0;
+
+        if (paidBy === memberEmail && userShare > 0) {
+          rawAmountOwed += parseFloat(userShare);
+        } else if (paidBy === loggedInUser?.email && memberShare > 0) {
+          rawAmountOwed -= parseFloat(memberShare);
+        }
+      } else {
+        const settlement = expense.settlementData;
+        const isBetween = (settlement?.payerEmail === loggedInUser?.email && settlement?.recipientEmail === memberEmail) || (settlement?.payerEmail === memberEmail && settlement?.recipientEmail === loggedInUser?.email);
+        if (isBetween) {
+          totalSettledAmount += Math.abs(parseFloat(expense.amount || 0));
+        }
+      }
+    }
+  });
+
+  const finalAmount = Math.abs(rawAmountOwed) - totalSettledAmount;
+  return rawAmountOwed >= 0 ? finalAmount : -finalAmount;
 };

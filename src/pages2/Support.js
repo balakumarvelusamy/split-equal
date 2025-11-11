@@ -7,7 +7,12 @@ import { fetchUsers, deleteUser, sendEmail, UpdateUser, getCountryCurrency, mask
 import { Modal, Button } from "react-bootstrap";
 import close from "../images/delete.png";
 import secureLocalStorage from "react-secure-storage";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser, setLoggedInUser } from "../store/userSlice";
+import { persistor } from "../store/store";
 const Profile = () => {
+  const dispatch = useDispatch();
+  const loggedInUserStore = useSelector((state) => state.user.loggedInUser);
   const [sessionInitialized, setSessionInitialized] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [alertVisible, setAlertVisible] = useState(false);
@@ -28,7 +33,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate(); // Initialize navigate
   const [deleteSuccess, setDeleteSuccess] = useState(false);
-  const loggedInUserEmail = secureLocalStorage.getItem("loggedInUserEmail");
+  const loggedInUserEmail = loggedInUserStore?.email;
   const [showModal, setShowModal] = useState(false);
   useEffect(() => {
     const initializeUserSession = async () => {
@@ -40,9 +45,10 @@ const Profile = () => {
       setCountries(countryList);
       const isBiometricEnabled = secureLocalStorage.getItem("biometricEnabled") === "true";
       setBiometricEnabled(isBiometricEnabled);
-      const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+      const sessionUser = loggedInUserStore;
+      console.log("loggedInUserStore profile", loggedInUserStore);
       const guestUser = JSON.parse(secureLocalStorage.getItem("guestUser"));
-      if (sessionUser && loggedInUserEmail != "guest") {
+      if (sessionUser != null && sessionUser && loggedInUserEmail != "guest") {
         setLoggedInUser(sessionUser.email);
         setLoggedInUserName(sessionUser.name);
         setCountry(sessionUser.country || "");
@@ -88,7 +94,11 @@ const Profile = () => {
       secureLocalStorage.removeItem("loggedInUser");
       secureLocalStorage.removeItem("guestUser");
       secureLocalStorage.setItem("isLoggedOut", true);
-      navigate("/");
+      dispatch(logoutUser());
+      persistor.purge().then(() => {
+        window.location.reload(); // reloads fresh without old persisted state
+      });
+      //navigate("/");
     }
   };
   const handleDeleteProfile = async () => {
@@ -244,19 +254,19 @@ const Profile = () => {
                 </span>{" "}
                 Support
               </button>
-              <button className="btn btn-danger p-1 px-1 btn-sm w-auto" onClick={() => (setShowDeleteSection(!showDeleteSection), setFinalConfirm(false))}>
-                <span>
-                  <i className="fi fi-rr-trash"></i>
-                </span>{" "}
-                Delete Profile{" "}
-                {showDeleteSection && (
-                  <span>
-                    <i className="fi fi-rr-cross"></i>
-                  </span>
-                )}
-              </button>
             </div>
           )}
+          <button className="btn btn-danger p-1 px-1 btn-sm w-auto" onClick={() => (setShowDeleteSection(!showDeleteSection), setFinalConfirm(false))}>
+            <span>
+              <i className="fi fi-rr-trash"></i>
+            </span>{" "}
+            Delete Profile{" "}
+            {showDeleteSection && (
+              <span>
+                <i className="fi fi-rr-cross"></i>
+              </span>
+            )}
+          </button>
           {showDeleteSection && (
             <div className="mt-3 border rounded p-3 bg-light" align="left">
               {" "}
@@ -323,13 +333,13 @@ const Profile = () => {
           </div>
         </div>
       )}
-      <div className="container d-none">
+      <div className="container">
         <span>
-          <button className="share-button" onClick={() => copyToClipboard(config.iosurl)}>
+          <button className="share-button bg-myapp" onClick={() => copyToClipboard(config.iosurl)}>
             <i className="fa fa-apple"></i>
           </button>
         </span>
-        <span>
+        <span className="d-none">
           <button className="share-button" style={{ bottom: "145px" }} onClick={() => copyToClipboard(config.androidurl)}>
             <i className="fa fa-android"></i>
           </button>
@@ -351,7 +361,7 @@ const Profile = () => {
                 zIndex: 1000,
               }}
             >
-              Link copied to clipboard for Sharing
+              Link copied to clipboard for sharing
             </div>
           </div>
         )}

@@ -18,17 +18,12 @@ import { FaEye } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { FaSync } from "react-icons/fa";
 import SettleUp from "./SettleUp";
-import { setFriends, setExpenses, setLoggedInUser } from "../store/userSlice";
-import { useSelector, useDispatch } from "react-redux";
 const Home = () => {
   const location = useLocation();
-  const [loggedInUser, setLoggedInUser] = useState(JSON.parse(secureLocalStorage.getItem("loggedInUser")));
-
-  const dispatch = useDispatch();
-  const friendsStore = useSelector((state) => state.user.friends);
-  const expensesStore = useSelector((state) => state.user.expenses);
-  const loggedInUserStore = useSelector((state) => state.user.loggedInUser);
-
+  //const navigate = useNavigate(); // Initialize navigate
+  const [friends, setFriends] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+  const [loggedInUser, setLoggedInUser] = useState(null);
   const [showAddFriend, setShowAddFriend] = useState(false);
   const [refreshBalance_, setrefreshBalance_] = useState(0);
   const [settleupfiltercount, setSettleupfiltercount] = useState(5); // after 5 days if the balance is 0 then it will move settle up collapse
@@ -46,21 +41,20 @@ const Home = () => {
   const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
   const [refreshPosition, setRefreshPosition] = useState({ left: "50%", marginBottom: "75px" });
   const [isDragging, setIsDragging] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  console.log("location.state?.refresh ", location.state?.refresh);
   // Fetch friends and expenses on mount
   useEffect(() => {
     const initializeData = async () => {
       if (!loggedInUserEmail) return;
-
+      console.log("location.state?.refresh", location.state?.refresh || 0);
+      console.log("refreshBalance_", refreshBalance_);
+      console.log("loggedInUserEmail", loggedInUserEmail);
+      setLoading(true);
       try {
         const userFriends = await getData(loggedInUserEmail, "splitequal-friends");
         const userExpenses = await getData(loggedInUserEmail, "splitequal-expense");
 
-        // Update Redux store
-        dispatch(setFriends(userFriends));
-        dispatch(setExpenses(userExpenses));
-        console.log("saved to store");
+        setFriends(userFriends);
+        setExpenses(userExpenses);
         setLoggedInUser(sessionUser);
       } catch (error) {
         console.error("Error initializing data:", error);
@@ -68,11 +62,10 @@ const Home = () => {
         setLoading(false);
       }
     };
-    console.log("friendsStore", friendsStore);
-    console.log("expensesStore", expensesStore);
-    setLoading(true); // Show spinner or loading state only for background refresh
+
     initializeData();
   }, [loggedInUserEmail, location.state?.refresh || 0, refreshBalance_]);
+
   // Add a new friend
   const addFriend = async (friend) => {
     if (!loggedInUser) return;
@@ -97,8 +90,9 @@ const Home = () => {
       };
       console.log(newFriend);
       await addData(newFriend);
+      const updatedFriends = [...friends, newFriend];
+      setFriends(updatedFriends);
       setShowAddFriend(false);
-      await refreshBalance();
     } catch (error) {
       console.error("Error adding friend:", error);
     }
@@ -111,11 +105,11 @@ const Home = () => {
   };
   const refreshBalance = async () => {
     const userFriends = await getData(loggedInUser.email, "splitequal-friends");
-    dispatch(setFriends(userFriends));
+    setFriends(userFriends);
     groupedFriendsMain();
     setrefreshBalance_(refreshBalance_ + 1);
     console.log("update balance", refreshBalance_);
-    console.log("friends in home", friendsStore);
+    console.log("friends in home", friends);
   };
   // Remove a friend
   const removeFriend = async (friendId) => {
@@ -123,7 +117,8 @@ const Home = () => {
     if (!isConfirmed) return;
     setLoading(true);
     await deleteData(friendId);
-    await getData(loggedInUserEmail, "splitequal-friends");
+    const userFriends = await getData(loggedInUserEmail, "splitequal-friends");
+    setFriends(userFriends);
     setLoading(false);
   };
 
@@ -134,7 +129,7 @@ const Home = () => {
     await refreshBalance();
   };
   // Group friends by balance = 0
-  const groupedFriends = friendsStore.reduce(
+  const groupedFriends = friends.reduce(
     (acc, friend) => {
       const today = new Date();
       const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -157,7 +152,7 @@ const Home = () => {
     { settled: [], unsettled: [] }
   );
   console.log("groupedFriends", groupedFriends);
-  const groupedFriendsMain = friendsStore.reduce((acc, friend) => {
+  const groupedFriendsMain = friends.reduce((acc, friend) => {
     const today = new Date();
     const friendDate = new Date(friend.date);
     const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -211,7 +206,7 @@ const Home = () => {
             <small>Welcome, {loggedInUser?.name || "Guest"}!</small>
           </p>
         </div>
-        <BalanceSummary friends={[...friendsStore]} loggedInUser={loggedInUserEmail} onSettleUp={handleSettleUp} refreshBalance={refreshBalance_} loading={loading} />
+        <BalanceSummary friends={[...friends]} loggedInUser={loggedInUserEmail} onSettleUp={handleSettleUp} refreshBalance={refreshBalance_} loading={loading} />
 
         <div className="d-flex justify-content-between align-items-center mb-2">
           <div>
@@ -229,20 +224,20 @@ const Home = () => {
             )}
           </div>
         </div>
-        <div className="mb-2">
-          <input type="text" className="form-control" placeholder="Search friends by name or email" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-        </div>
 
-        {friendsStore.length === 0 ? (
+        {loading ? (
+          <p className="p-2 border rounded">
+            <span className="px-1">
+              <i className="fas fa-spinner fa-spin text-success"></i>
+            </span>
+            Loading... Please wait...
+          </p>
+        ) : friends.length === 0 ? (
           "No friends added yet."
         ) : (
           <>
             <ul className="list-group mb-4">
               {Object.entries(groupedFriendsMain)
-                .filter(([email, group]) => {
-                  const friend = group[0];
-                  return friend.friendname.toLowerCase().includes(searchTerm.toLowerCase()) || friend.friendemail.toLowerCase().includes(searchTerm.toLowerCase());
-                })
                 .sort(([emailA], [emailB]) => emailA.localeCompare(emailB))
                 .map(([friendEmail, friendGroup]) => (
                   <li key={friendEmail} className="p-1 list-group-item">
@@ -277,7 +272,7 @@ const Home = () => {
                         </div>
 
                         <div className="text-nowrap">
-                          <a className="mx-1 p-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/friend?id=${friend.id}&friendname=${friendGroup[0].friendname}&friendemail=${friend.friendemail}&currency=${friend.currency}&currencyname=${friend.currencyName}&balance=${Number(friend.balance)}`}>
+                          <a className="mx-1 p-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/friend?id=${friend.id}&friendemail=${friend.friendemail}`}>
                             View <FaArrowRight className="me-1 text-success" />
                           </a>
                           <img
@@ -342,7 +337,7 @@ const Home = () => {
                                 setFriendToSettle(friend);
                               }}
                             />
-                            <a className="ms-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/friend?id=${friend.id}&friendname=${friend.friendname}&friendemail=${friend.friendemail}&currency=${friend.currency}&currencyname=${friend.currencyName}&balance=${Number(friend.balance)}`}>
+                            <a className="ms-2 px-2 text-decoration-none border rounded badge text-success viewbutton" href={`/friend?id=${friend.id}&friendemail=${friend.friendemail}`}>
                               <FaArrowRight className="m-1 text-success" />
                             </a>
                           </span>

@@ -27,15 +27,31 @@ const FriendDetail = () => {
   const loggedInUserEmail = secureLocalStorage.getItem("loggedInUserEmail");
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [settleUpAmounts, setSettleUpAmounts] = useState("");
+  const [friendData, setFriendData] = useState({
+    friendemail: "",
+    friendname: "",
+    currency: "",
+    currencyname: "",
+    balance: "",
+  });
+
   const useQuery = () => {
     return new URLSearchParams(useLocation().search);
   };
   const query = new URLSearchParams(useLocation().search);
   const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+
   useEffect(() => {
+    setFriendData({
+      friendemail: query.get("friendemail") || "",
+      friendname: query.get("friendname") || "",
+      currency: query.get("currency") || "",
+      currencyname: query.get("currencyname") || "",
+      balance: query.get("balance") || "",
+    });
     setLoading(true);
     setLoggedInUser(sessionUser);
-    const friendemail = query.get("friendemail");
+    const friendemail = query.get("friendemail") || "";
     const id = query.get("id");
     setId(id);
     console.log("FriendDetail", friendemail);
@@ -44,7 +60,17 @@ const FriendDetail = () => {
       console.log("getItemsbyId id", id);
       console.log("getItemsbyId friendbyid", friendbyid);
       const selectedFriend = friendbyid.find((f) => f.friendemail === friendemail);
-      setFriend(selectedFriend);
+      if (selectedFriend?.length >= 1) {
+        setFriendData({
+          friendemail: selectedFriend.friendemail || "",
+          friendname: selectedFriend.friendname || "",
+          currency: selectedFriend.currency || "",
+          currencyname: selectedFriend.currencyName || "",
+          balance: selectedFriend.balance || "",
+        });
+      }
+
+      setFriend(selectedFriend || []);
       const data1 = await getData_Any2Column("friendemail", friendemail, "type", "splitequal-expense");
       const data2 = await getData_Any2Column("email", friendemail, "type", "splitequal-expense");
       const mergedData = data1.concat(data2);
@@ -90,20 +116,15 @@ const FriendDetail = () => {
   return (
     <>
       <div className="container">
-        {loading && 1 == 2 ? (
-          <p className="p-2 border rounded">
-            <span className="px-1">
-              <i className="fas fa-spinner fa-spin text-success"></i>
-            </span>
-            Loading... Please wait...
-          </p>
+        {friend.length === 0 ? (
+          <p className="p-2 border rounded">Friend not founds.</p>
         ) : (
           <>
             <div className="d-flex justify-content-between align-items-center mb-3">
               <span
                 onClick={() =>
-                  navigate(-1, {
-                    state: { refresh: refreshBalance_ + 1 }, // Pass a refresh flag
+                  navigate("/", {
+                    state: { refresh: Date.now() }, // Pass a refresh flag
                   })
                 }
                 style={{ cursor: "pointer" }}
@@ -116,12 +137,13 @@ const FriendDetail = () => {
                 </p>
               </span>
             </div>
-            <div className="d-flex justify-content-between align-items-center mb-3 border p-2 rounded" style={friend.balance < 0 ? cardStyleRed : cardStyleGreen}>
+            <div className="d-flex justify-content-between align-items-center mb-3 border p-2 rounded" style={friend && friend.balance < 0 ? cardStyleRed : cardStyleGreen}>
               <div>
                 {loading ? (
-                  <span className="px-1">
-                    <i className="fas fa-spinner fa-spin text-success"></i>
-                  </span>
+                  <>
+                    <h4 className="mb-0">{friendData.friendname}</h4>
+                    <small>{maskEmail(friendData.friendemail)}</small>
+                  </>
                 ) : (
                   <>
                     <h4 className="mb-0">{friend.friendname}</h4>
@@ -131,14 +153,21 @@ const FriendDetail = () => {
               </div>
               <div>
                 <h4 className="mb-0" align="right">
-                  {friend.balance == 0 ? (
+                  {friend && friend.balance == 0 ? (
                     <>
                       <b className="text-dark">{friend.currency + " " + 0}</b>
                       <span></span>
                     </>
                   ) : loading ? (
-                    <span className="px-1">
-                      <i className="fas fa-spinner fa-spin text-success"></i>
+                    <span className={friendData.balance < 0 ? "text-danger" : "text-success"}>
+                      <b>
+                        {0 ||
+                          friendData.currency +
+                            " " +
+                            Math.abs(friendData.balance)
+                              .toFixed(2)
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      </b>
                     </span>
                   ) : (
                     friend && (
@@ -156,26 +185,18 @@ const FriendDetail = () => {
                   )}
                 </h4>
                 <small align="right">
-                  {friend.balance === 0 ? (
+                  {friend && friend.balance === 0 ? (
                     <>
                       <span> (No Balance - {friend.currencyName})</span>
                     </>
                   ) : (
-                    <span className={friend.balance < 0 ? "text-danger" : "text-success"}>
-                      <span>{friend.balance < 0 ? " You Pay" : " You Receive"}</span>
-                      <span>({friend.currencyName})</span>
+                    <span className={friend && friend.balance < 0 ? "text-danger" : "text-success"}>
+                      <span>{friend && friend.balance < 0 ? " You Pay" : " You Receive"}</span>
+                      <span>({friendData.currencyname || (friend && friend.currencyName)})</span>
                     </span>
                   )}
                 </small>
               </div>
-            </div>
-            <div className="d-flex justify-content-between align-items-center mb-4 d-none">
-              <h4>
-                Balance:
-                <span className={friend.balance < 0 ? "text-danger" : "text-success"}>
-                  {friend.currency} {Math.abs(friend.balance).toFixed(2)}
-                </span>
-              </h4>
             </div>
             <div className="d-flex justify-content-between align-items-center mb-4">
               <Button onClick={() => setShowAddExpense(true)} variant="warning" className="me-2">
@@ -186,8 +207,8 @@ const FriendDetail = () => {
               </Button>
             </div>
             <div className="d-flex justify-content-between align-items-center mb-1">
-              <label className="fw-bold">Expenses {displayedExpenses.length + "/" + expenses.length}</label>
-              <input type="text" className="form-control w-75" placeholder="Search expenses" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+              <label className="fw-bold d-none">Expenses {"Showing " + displayedExpenses.length + " of " + expenses.length}</label>
+              <input type="text" className="form-control w-100" placeholder={"Search Expenses - Showing " + displayedExpenses.length + " of " + expenses.length} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
 
             <ul className="list-group">
@@ -234,60 +255,6 @@ const FriendDetail = () => {
               </Modal.Footer>
             </Modal>
 
-            {/* <Modal onHide={() => setShowSettleUp(false)} backdrop="static">
-            <div className="modal-header">
-              <p className="mb-0 text-dark">
-                Current Settle Up with <b>{friend.friendname}</b>
-              </p>
-              <a onClick={() => setShowSettleUp(false)}>
-                <img src={close} alt="Logo" className="" width="30" />
-              </a>
-            </div>
-            <Modal.Body>
-              <div className="grid p-1">
-                <div>
-                  <div>{friend.balance > 0 ? `You (${loggedInUser?.name}) receive from ${friend?.friendname}` : `You (${loggedInUser?.name}) pay ${friend?.friendname}`}</div>
-                </div>
-                <div className="input-group">
-                  <span className="form-control w-10" align="center">
-                    {friend?.currency}
-                  </span>
-                  <input
-                    type="number"
-                    className="form-control w-75"
-                    placeholder="Settle Amount"
-                    value={settleUpAmounts ? Math.abs(settleUpAmounts) : ""} // Display as positive
-                    onChange={(e) => {
-                      const value = parseFloat(e.target.value);
-                      // Always subtract value from balance during settle-up
-                      setSettleUpAmounts(value > 0 ? value : 0); // Store positive for easier calculation
-                    }}
-                    step="any"
-                    inputMode="decimal"
-                  />
-                </div>
-
-                <Button
-                  className="btn form-control btn-warning w-100 mt-2"
-                  disabled={
-                    loading || !settleUpAmounts // Disable when balance is 0
-                  }
-                  onClick={() => handleSettleUp(friend.email, parseFloat(friend.balance < 0 ? Math.abs(settleUpAmounts) : settleUpAmounts), friend)}
-                >
-                  {loading ? (
-                    <>
-                      <span className="px-1">
-                        <i className="fas fa-spinner fa-spin text-light"></i>
-                      </span>
-                      Please wait...
-                    </>
-                  ) : (
-                    "Confirm Settle Up"
-                  )}
-                </Button>
-              </div>
-            </Modal.Body>
-          </Modal> */}
             <SettleUp friend={friend} balance={parseFloat(Math.abs(friend.balance).toFixed(2))} loggedInUser={loggedInUser} showSettleUp={showSettleUp} setShowSettleUp={setShowSettleUp} refreshBalance={refreshBalance} />
           </>
         )}

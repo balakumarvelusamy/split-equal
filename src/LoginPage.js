@@ -1,5 +1,7 @@
 // src/LoginPage.js
 import React, { useState, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserInfo, setLoggedInUser } from "./store/userSlice";
 import { fetchUsers, saveUser, sendEmail, UpdateUser, getCountryCurrency } from "./service/APIService"; // Import UpdateUser function
 import { Col, Image, Row, Modal, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -18,6 +20,7 @@ import { GoogleOAuthProvider, GoogleLogin, useGoogleLogin } from "@react-oauth/g
 const SECRET_KEY = process.env.REACT_APP_KEY;
 
 const LoginPage = ({ onLogin }) => {
+  const userInfo = useSelector((state) => state.user.userInfo);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showLoginOptionModal, setShowLoginOptionModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -42,14 +45,19 @@ const LoginPage = ({ onLogin }) => {
   const GOOLGLE_SECRET_KEY = process.env.REACT_APP_SECRET_GOOGLE;
   const CLIENT_ID = process.env.REACT_APP_CLIENTID_GOOGLE;
   const googleButtonRef = useRef(null);
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
-    const useremail = secureLocalStorage.getItem("loggedInUserEmail");
+    //const sessionUser = JSON.parse(secureLocalStorage.getItem("loggedInUser"));
+    // const useremail = secureLocalStorage.getItem("loggedInUserEmail");
+    const sessionUser = userInfo;
+    const useremail = userInfo?.email;
     const countryList = getCountryCurrency().map((item) => item.country);
     setCountries(countryList);
     if (sessionUser) {
       setEmail(sessionUser.email === "guest" ? "" : sessionUser?.email);
       setName(sessionUser.name);
+      setPassword(userInfo?.password);
     } else {
       setEmail(useremail === "guest" ? "" : sessionUser?.email);
     }
@@ -90,11 +98,12 @@ const LoginPage = ({ onLogin }) => {
 
     try {
       await sendEmail(emailData);
+      console.log("email sent Sucessfully");
       setIsOtpSent(true);
       setError("");
       setOtp("");
     } catch (error) {
-      console.error("Failed to send OTP email", error);
+      console.log("Failed to send OTP email");
       setError("Failed to send OTP. Please try again.");
       setsendingOtp(false);
       setOtp("");
@@ -157,7 +166,22 @@ const LoginPage = ({ onLogin }) => {
       console.log("decryptedPassword", decryptedPassword);
       if (decryptedPassword === password) {
         setLoading(false);
-        onLogin({ email: storedUser.email, name: storedUser.name, country: storedUser.country || "", role: storedUser.role });
+        const user = {
+          email: storedUser.email,
+          name: storedUser.name,
+          password: decryptedPassword,
+          country: storedUser.country || "",
+          role: storedUser.role,
+        };
+        const userlogin = {
+          email: storedUser.email,
+          name: storedUser.name,
+          country: storedUser.country || "",
+          role: storedUser.role,
+        };
+        dispatch(setUserInfo(user));
+        dispatch(setLoggedInUser(userlogin));
+        onLogin(user);
         setError("");
         console.log(window.webkit, "window.webki");
       } else {
@@ -291,6 +315,7 @@ const LoginPage = ({ onLogin }) => {
               {error && <p className="error-text text-danger">{error}</p>}
               <div className="mb-3">
                 <div align="left">Email</div>
+
                 <div className="password-container" style={{ position: "relative", width: "100%" }}>
                   <input type="email" placeholder="Enter your Email" value={email} onChange={(e) => setEmail(e.target.value.toLowerCase())} required className="form-control" />
                   <button
